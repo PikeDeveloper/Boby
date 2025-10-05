@@ -19,6 +19,6 @@ class MainApp extends StatelessWidget {
       getPages: Routes.routes,
 
 
-    );;
+    );
   }
 }
