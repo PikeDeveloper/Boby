@@ -1,8 +1,6 @@
 import 'package:flutter/material.dart';
 
-import 'card_sound.dart';
-
-
+import 'widgets/card_sound.dart';
 
 class ListCardSounds extends StatelessWidget {
   ListCardSounds({super.key});
@@ -162,8 +160,25 @@ class ListCardSounds extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return  GridView.builder(
-      gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(crossAxisCount: 2),
+    final screenWidth = MediaQuery.of(context).size.width;
+    final screenHeight = MediaQuery.of(context).size.height;
+    double width = 0;
+    if (screenWidth < 300) {
+      width = screenWidth * 0.3;
+    } else {
+      width = screenWidth * 0.2;
+    }
+
+    return GridView.builder(
+      gridDelegate: SliverGridDelegateWithMaxCrossAxisExtent(
+        maxCrossAxisExtent: width, // máximo ancho por item
+        crossAxisSpacing: 30,
+        mainAxisSpacing: 30,
+        childAspectRatio: 1, // cuadrado (ancho = alto)
+      ),
+
+      itemCount: assets.length,
+
       itemBuilder: (context, index) {
         return CardSound(
           image: assets[index]["image"]!,
