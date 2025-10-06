@@ -1,6 +1,7 @@
 import 'dart:async';
 import 'dart:math';
 
+import 'package:just_audio/just_audio.dart';
 import 'package:boby/controllers/app_controller.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
@@ -11,13 +12,11 @@ class CardSound extends StatefulWidget {
     required this.sound,
     required this.name,
     required this.image,
-    required this.onPressed,
   });
 
   final String sound;
   final String name;
   final String image;
-  final VoidCallback onPressed;
 
   @override
   State<CardSound> createState() => _CardSoundState();
@@ -97,7 +96,8 @@ class _CardSoundState extends State<CardSound>
 
     // Stop bouncing after 4 seconds
     _stopTimer = Timer(const Duration(seconds: 4), () {
-      if (mounted && _isSelected) {  // Only stop if still selected
+      if (mounted && _isSelected) {
+        // Only stop if still selected
         _stopBouncing();
       }
     });
@@ -133,6 +133,7 @@ class _CardSoundState extends State<CardSound>
   @override
   Widget build(BuildContext context) {
     final appController = Get.find<AppController>();
+    final AudioPlayer _player = AudioPlayer();
     List<Color> borderColors = [
       const Color(0xFFF1C40F),
       const Color(0xffBE5EED),
@@ -175,7 +176,9 @@ class _CardSoundState extends State<CardSound>
         } else {
           // If not selected, select and start animation
           appController.cardSelected.value = widget.name;
-          widget.onPressed();
+           // play sound
+          _player.setAsset(widget.sound);
+          _player.play();
         }
       },
       child: AnimatedBuilder(
