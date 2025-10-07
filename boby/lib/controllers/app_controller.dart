@@ -6,4 +6,5 @@ class AppController extends GetxController {
   var backGroundImage = "".obs;
   var currentPage = 0.obs;
   var cardSelected = "".obs;
+  var menuOpen = false.obs;
 }

@@ -1,4 +1,5 @@
 import 'dart:async';
+import 'dart:io';
 import 'dart:math';
 
 import 'package:just_audio/just_audio.dart';
@@ -29,6 +30,8 @@ class _CardSoundState extends State<CardSound>
   Timer? _bounceTimer;
   Timer? _stopTimer;
   bool _isSelected = false;
+  final AudioPlayer _player = AudioPlayer();
+  bool _isPlaying = false;
 
   @override
   void initState() {
@@ -63,6 +66,7 @@ class _CardSoundState extends State<CardSound>
     _bounceTimer?.cancel();
     _stopTimer?.cancel();
     _controller.dispose();
+    _player.dispose();
     super.dispose();
   }
 
@@ -167,18 +171,48 @@ class _CardSoundState extends State<CardSound>
     }
 
     return GestureDetector(
-      onTap: () {
+      onTap: () async {
         if (appController.cardSelected.value == widget.name) {
-          // If already selected, stop the animation
+          // If already selected, stop the animation and sound
           _stopBouncing(resetState: true);
+          if (!Platform.isLinux) {
+            await _player.stop();
+            _isPlaying = false;
+          }
           appController.cardSelected.value = ''; // Clear selection
           return; // Exit early to prevent restarting
         } else {
           // If not selected, select and start animation
           appController.cardSelected.value = widget.name;
-           // play sound
-          _player.setAsset(widget.sound);
-          _player.play();
+          
+          try {
+            // Solo reproducir audio en plataformas compatibles (no Linux)
+            if (!Platform.isLinux) {
+              await _player.setAsset(widget.sound);
+              _player.play();
+              _isPlaying = true;
+            } else {
+              // En Linux, solo mostrar feedback visual
+              print('Audio deshabilitado en Linux: ${widget.sound}');
+            }
+            
+            // Handle when audio finishes playing
+            _player.playerStateStream.listen((state) {
+              if (state.processingState == ProcessingState.completed) {
+                _stopBouncing();
+                if (mounted) {
+                  setState(() {
+                    _isPlaying = false;
+                  });
+                }
+              }
+            });
+            
+          } catch (e) {
+            debugPrint('Error playing sound: $e');
+            _stopBouncing();
+            _isPlaying = false;
+          }
         }
       },
       child: AnimatedBuilder(
@@ -199,7 +233,9 @@ class _CardSoundState extends State<CardSound>
         child: Card(
           elevation: _controller.value * 8, // Add elevation for a "pop" effect
           color: appController.cardSelected.value == widget.name
-              ? Colors.green.withOpacity(0.8)
+              ? _isPlaying 
+                  ? Colors.green.withOpacity(0.8) 
+                  : Colors.blue.withOpacity(0.8)
               : const Color.fromARGB(255, 236, 8, 8),
           shape: RoundedRectangleBorder(
             borderRadius: BorderRadius.circular(20),

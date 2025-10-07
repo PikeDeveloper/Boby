@@ -1,3 +1,4 @@
+import 'package:boby/ui/screens/main_screen/main_screen.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 
@@ -15,7 +16,7 @@ class MainApp extends StatelessWidget {
     return      GetMaterialApp(
       debugShowCheckedModeBanner: false,
       title: 'Material App',
-      initialRoute: "/main_screen",
+      initialRoute: MainScreen.route,
       getPages: Routes.routes,
 
 

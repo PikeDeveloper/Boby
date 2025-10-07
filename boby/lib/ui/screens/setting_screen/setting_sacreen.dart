@@ -1,6 +1,4 @@
-import 'package:boby/controllers/app_controller.dart';
 import 'package:flutter/material.dart';
-import 'package:get/get.dart';
 
 import 'background_card.dart';
 
@@ -14,6 +12,7 @@ class SettingScreen extends StatelessWidget {
     "assets/backgrounds/grass.jpg",
     "assets/backgrounds/oceano.jpg",
     "assets/backgrounds/oso.jpg",
+    "assets/backgrounds/soft.png",
   ];
 
   @override
