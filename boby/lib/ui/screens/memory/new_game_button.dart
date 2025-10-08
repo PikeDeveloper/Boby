@@ -7,12 +7,14 @@ class NewGameButton extends StatelessWidget {
 
   List<String> gameLetters = ["G", "A", "M", "E"];
 
-  double letterSize = 20;
+  double letterSize = 25;
 
   final VoidCallback onTap;
 
   @override
   Widget build(BuildContext context) {
+    final screenWidth = MediaQuery.of(context).size.width;
+
     return Card(
       color: Colors.white,
       elevation: 5,
@@ -22,7 +24,6 @@ class NewGameButton extends StatelessWidget {
         child: GestureDetector(
           onTap: onTap,
           child: Row(
-            mainAxisAlignment: MainAxisAlignment.end,
             children: [
               for (var letter in newLetters)
                 Image.asset("assets/letters/$letter.png", width: letterSize),

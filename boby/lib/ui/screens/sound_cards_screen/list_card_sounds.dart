@@ -163,6 +163,8 @@ class ListCardSounds extends StatelessWidget {
     final screenWidth = MediaQuery.of(context).size.width;
     double width = 0;
     if (screenWidth < 300) {
+      width = screenWidth * 0.4;
+    } else if (screenWidth < 700) {
       width = screenWidth * 0.3;
     } else {
       width = screenWidth * 0.2;

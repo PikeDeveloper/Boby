@@ -210,7 +210,8 @@ class _MemoryScreenState extends State<MemoryScreen>
         Padding(
           padding: const EdgeInsets.all(16.0),
           child: Row(
-            mainAxisAlignment: MainAxisAlignment.spaceAround,
+            mainAxisAlignment: MainAxisAlignment.end,
+            mainAxisSize: MainAxisSize.max,
             children: [
               NewGameButton(
                 onTap: () {
