@@ -1,4 +1,5 @@
 import 'dart:math';
+import 'package:boby/ui/screens/memory/new_game_button.dart';
 import 'package:flutter/material.dart';
 
 class MemoryScreen extends StatefulWidget {
@@ -204,22 +205,40 @@ class _MemoryScreenState extends State<MemoryScreen>
 
   @override
   Widget build(BuildContext context) {
-    return Expanded(
-      child: Padding(
-        padding: const EdgeInsets.all(16.0),
-        child: GridView.builder(
-          gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
-            crossAxisCount: 3,
-            crossAxisSpacing: 8.0,
-            mainAxisSpacing: 8.0,
-            childAspectRatio: 0.8,
+    return Column(
+      children: [
+        Padding(
+          padding: const EdgeInsets.all(16.0),
+          child: Row(
+            mainAxisAlignment: MainAxisAlignment.spaceAround,
+            children: [
+              NewGameButton(
+                onTap: () {
+                  _initializeGame();
+                  setState(() {});
+                },
+              ),
+            ],
           ),
-          itemCount: 9,
-          itemBuilder: (context, index) {
-            return _buildCard(index);
-          },
         ),
-      ),
+        Expanded(
+          child: Padding(
+            padding: const EdgeInsets.all(16.0),
+            child: GridView.builder(
+              gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
+                crossAxisCount: 3,
+                crossAxisSpacing: 8.0,
+                mainAxisSpacing: 8.0,
+                childAspectRatio: 0.8,
+              ),
+              itemCount: 9,
+              itemBuilder: (context, index) {
+                return _buildCard(index);
+              },
+            ),
+          ),
+        ),
+      ],
     );
   }
 
@@ -264,9 +283,7 @@ class _MemoryScreenState extends State<MemoryScreen>
                           image: DecorationImage(
                             image: AssetImage(backGroundImage),
                           ),
-                          
                         ),
-                       
                       ),
               ),
             ),

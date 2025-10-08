@@ -1,4 +1,5 @@
 import 'package:boby/controllers/app_controller.dart';
+import 'package:boby/ui/shared/word_menu.dart';
 import 'package:boby/utils/colors.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
@@ -7,11 +8,10 @@ class MainMenu extends StatelessWidget {
   MainMenu({super.key});
 
   List<Map<String, String>> options = [
-   {"name": "Sounds", "route": "0", "image": "assets/images/dog.jpg"},
-   {"name": "Memory", "route": "1","image": "assets/card.png"},
-   {"name": "Ballon", "route": "2","image": "assets/ballon.png"},
-   {"name": "Settings", "route": "3","image": "assets/settings.png"},
-  
+    {"name": "Sounds", "route": "0", "image": "assets/images/dog.jpg"},
+    {"name": "Memory", "route": "1", "image": "assets/card.png"},
+    {"name": "Ballon", "route": "2", "image": "assets/ballon.png"},
+    {"name": "Settings", "route": "3", "image": "assets/settings.png"},
   ];
 
   @override
@@ -28,16 +28,19 @@ class MainMenu extends StatelessWidget {
 
     List<Widget> widgets = [];
     for (var option in options) {
-      widgets.add(GestureDetector(
-        onTap: () {
-          appController.menuOpen.value = false;
-          appController.currentPage.value = int.parse(option["route"]!);
-        },
-        child: SizedBox(
-          width: width,
-          height: width,
-          child: Image.asset(option["image"]!)),
-      ), );
+      widgets.add(
+        GestureDetector(
+          onTap: () {
+            appController.menuOpen.value = false;
+            appController.currentPage.value = int.parse(option["route"]!);
+          },
+          child: SizedBox(
+            width: width,
+            height: width,
+            child: Image.asset(option["image"]!),
+          ),
+        ),
+      );
     }
     //crea un grid con las opciones
     return Stack(
@@ -46,47 +49,44 @@ class MainMenu extends StatelessWidget {
           onTap: () {
             appController.menuOpen.value = false;
           },
-        child: Container(
-          color:   Colors.black.withOpacity(0.6),
-          width: screenSize.width,
-          height: screenSize.height,
+          child: Container(
+            color: Colors.black.withOpacity(0.6),
+            width: screenSize.width,
+            height: screenSize.height,
           ),
-          ),
+        ),
 
-
-           Center(
-             child: Container(
-              width: screenWidth < 350? 300: 350,
-              height: screenWidth < 350? 300: 350,
-              decoration: BoxDecoration(
-                image: DecorationImage(image: AssetImage("assets/backgrounds/soft.png"), fit: BoxFit.cover),
-                color: Colors.white,
-                borderRadius: BorderRadius.circular(20),
-                border: Border.all(color: MyColors.green, width: 6),
+        Center(
+          child: Container(
+            width: screenWidth < 350 ? 300 : 350,
+            height: screenWidth < 350 ? 300 : 350,
+            decoration: BoxDecoration(
+              image: DecorationImage(
+                image: AssetImage("assets/backgrounds/soft.png"),
+                fit: BoxFit.cover,
               ),
-              child: Column(
-             
-                crossAxisAlignment: CrossAxisAlignment.center,
-                mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-                children: [
-                             Row(
-                              mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-                              children: [
-                   widgets[0],
-                   widgets[1],
-                ],),
+              color: Colors.white,
+              borderRadius: BorderRadius.circular(20),
+              border: Border.all(color: MyColors.green, width: 6),
+            ),
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.center,
+              mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+              children: [
+                WordMenu(),
                 Row(
                   mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-                  children: [
-                  widgets[2],
-                  widgets[3],
-                ],),
-              ],),
-                       ),
-           ),
-        
+                  children: [widgets[0], widgets[1]],
+                ),
+                Row(
+                  mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+                  children: [widgets[2], widgets[3]],
+                ),
+              ],
+            ),
+          ),
+        ),
       ],
-      
     );
   }
 }
