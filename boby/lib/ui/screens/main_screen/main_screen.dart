@@ -48,10 +48,7 @@ class MainScreen extends StatelessWidget {
           alignment: Alignment.center,
           children: [
             Background(),
-            Padding(
-              padding: const EdgeInsets.all(20.0),
-              child: screens[appController.currentPage.value],
-            ),
+            screens[appController.currentPage.value],
             appController.menuOpen.value ? MainMenu() : SizedBox(),
           ],
         ),

@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 
-import 'background_card.dart';
+import 'widgets/background_card.dart';
+import 'widgets/background_word.dart';
 
 class SettingScreen extends StatelessWidget {
   static const String route = '/setting_screen';
@@ -29,7 +30,7 @@ class SettingScreen extends StatelessWidget {
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
         SizedBox(height: 50),
-        const Text("Backgrounds"),
+        BackgroundWord(),
         GridView.builder(
           shrinkWrap: true,
           physics: const NeverScrollableScrollPhysics(),

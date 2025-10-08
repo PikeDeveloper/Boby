@@ -14,7 +14,7 @@ class Background extends StatelessWidget {
         height: double.infinity,
         child: Image.asset(
           appController.backGroundImage.value == ""
-              ? "assets/backgrounds/sabana.jpg"
+              ? "assets/backgrounds/soft.png"
               : appController.backGroundImage.value,
           fit: BoxFit.cover,
         ),
