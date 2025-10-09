@@ -8,10 +8,10 @@ class MainMenu extends StatelessWidget {
   MainMenu({super.key});
 
   List<Map<String, String>> options = [
-    {"name": "Sounds", "route": "0", "image": "assets/images/dog.jpg"},
-    {"name": "Memory", "route": "1", "image": "assets/card.png"},
-    {"name": "Ballon", "route": "2", "image": "assets/ballon.png"},
-    {"name": "Settings", "route": "3", "image": "assets/settings.png"},
+    {"name": "Sounds", "route": "0", "image": "assets/sounds_icon.png"},
+    {"name": "Memory", "route": "1", "image": "assets/memory_icon.png"},
+    {"name": "Ballon", "route": "2", "image": "assets/ballon_icon.png"},
+    {"name": "Settings", "route": "3", "image": "assets/settings_icon.png"},
   ];
 
   @override

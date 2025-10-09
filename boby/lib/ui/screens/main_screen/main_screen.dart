@@ -29,6 +29,7 @@ class MainScreen extends StatelessWidget {
     final appController = Get.put<AppController>(AppController());
     return Scaffold(
       appBar: AppBar(
+        
         actions: [
           IconButton(
             onPressed: () {
@@ -39,7 +40,7 @@ class MainScreen extends StatelessWidget {
         ],
         title: const Text('Boby App'),
         centerTitle: true,
-        backgroundColor: Colors.blue,
+        backgroundColor: Colors.transparent,
         foregroundColor: Colors.white,
       ),
 
