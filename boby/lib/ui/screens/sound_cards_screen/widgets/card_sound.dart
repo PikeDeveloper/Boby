@@ -107,12 +107,22 @@ class _CardSoundState extends State<CardSound>
     });
   }
 
-  void _stopBouncing({bool resetState = true}) {
+  void _stopBouncing({bool resetState = true}) async {
     if (!mounted) return;
 
     // Cancel timers first
     _bounceTimer?.cancel();
     _stopTimer?.cancel();
+
+    // Detener el audio
+    if (_isPlaying) {
+      try {
+        await _player.stop();
+        _isPlaying = false;
+      } catch (e) {
+        debugPrint('Error stopping audio: $e');
+      }
+    }
 
     if (_isSelected) {
       // Immediately update the state to stop any ongoing animations
@@ -137,7 +147,6 @@ class _CardSoundState extends State<CardSound>
   @override
   Widget build(BuildContext context) {
     final appController = Get.find<AppController>();
-    final AudioPlayer _player = AudioPlayer();
     List<Color> borderColors = [
       const Color(0xFFF1C40F),
       const Color(0xffBE5EED),
@@ -175,10 +184,6 @@ class _CardSoundState extends State<CardSound>
         if (appController.cardSelected.value == widget.name) {
           // If already selected, stop the animation and sound
           _stopBouncing(resetState: true);
-          if (!Platform.isLinux) {
-            await _player.stop();
-            _isPlaying = false;
-          }
           appController.cardSelected.value = ''; // Clear selection
           return; // Exit early to prevent restarting
         } else {

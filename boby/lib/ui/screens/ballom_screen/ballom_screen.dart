@@ -3,8 +3,8 @@ import 'dart:math' as math;
 import 'wigdets/ballon_painter.dart';
 
 class Balloon {
-  final Color color;
   final double size;
+  final int colorIndex;
   double x;
   double y;
   double speed;
@@ -13,8 +13,8 @@ class Balloon {
   double xSpeed;
 
   Balloon({
-    required this.color,
     required this.size,
+    required this.colorIndex,
     required this.x,
     required this.y,
     required this.speed,
@@ -35,7 +35,7 @@ class Balloon {
       // Movimiento horizontal más suave
       xSpeed = xSpeed * 0.99 + (math.Random().nextDouble() - 0.5) * 0.0005;
 
-      // Limitar la velocidad horizontal
+      // Limitar la velocity horizontal
       if (xSpeed > 0.0005) xSpeed = 0.0005;
       if (xSpeed < -0.0005) xSpeed = -0.0005;
 
@@ -93,9 +93,8 @@ class _BallomScreenState extends State<BallomScreen>
           setState(() {
             _balloons.add(
               Balloon(
-                color:
-                    Colors.primaries[_random.nextInt(Colors.primaries.length)],
                 size: 50.0 + _random.nextDouble() * 50.0,
+                colorIndex: _random.nextInt(4), // 4 colores disponibles
                 x: 0.1 + _random.nextDouble() * 0.8, // Distribución entre 0.1 y 0.9 (con márgenes)
                 y: 1.0 + _random.nextDouble() * 0.2, // Comenzar desde abajo con variación
                 speed: 0.001 + _random.nextDouble() * 0.002, // Velocidad reducida para flotación suave
@@ -107,18 +106,9 @@ class _BallomScreenState extends State<BallomScreen>
     }
   }
 
-  // Mapa para rastrear los controladores de animación
-  final Map<int, AnimationController> _animationControllers = {};
-  int _animationCounter = 0;
-
   @override
   void dispose() {
     _controller.dispose();
-    // Eliminar todos los controladores de animación
-    for (var controller in _animationControllers.values) {
-      controller.dispose();
-    }
-    _animationControllers.clear();
     super.dispose();
   }
 
@@ -128,39 +118,19 @@ class _BallomScreenState extends State<BallomScreen>
     final balloon = _balloons[index];
     if (balloon.isPopped) return;
     
-    // Marcar como reventado sin reconstruir toda la interfaz
+    // Marcar como reventado
     balloon.isPopped = true;
     
-    // Crear un ID único para esta animación
-    final animationId = _animationCounter++;
-    
-    // Iniciar animación de desvanecimiento
-    final animationController = AnimationController(
-      vsync: this,
-      duration: const Duration(milliseconds: 200),
-    )..addStatusListener((status) {
-        if (status == AnimationStatus.completed) {
-          if (mounted) {
-            setState(() {
-              final index = _balloons.indexWhere((b) => b == balloon);
-              if (index != -1) {
-                _balloons.removeAt(index);
-                _addBalloon();
-              }
-              // Eliminar el controlador cuando ya no se necesite
-              _animationControllers.remove(animationId)?.dispose();
-            });
-          } else {
-            _animationControllers.remove(animationId)?.dispose();
-          }
+    // Remover el globo después de un breve delay sin llamar setState hasta el final
+    Future.delayed(const Duration(milliseconds: 200), () {
+      if (mounted) {
+        final balloonIndex = _balloons.indexWhere((b) => b == balloon);
+        if (balloonIndex != -1) {
+          _balloons.removeAt(balloonIndex);
+          _addBalloon();
         }
-      });
-    
-    // Guardar el controlador
-    _animationControllers[animationId] = animationController;
-    
-    // Iniciar la animación
-    animationController.forward();
+      }
+    });
   }
 
   @override
@@ -188,8 +158,7 @@ class _BallomScreenState extends State<BallomScreen>
                 child: balloon.isPopped 
                   ? const SizedBox.shrink()
                   : BalloonWidget(
-                      color: balloon.color,
-                      sizePx: balloon.size,
+                      colorIndex: balloon.colorIndex,
                     ),
               ),
             );

@@ -1,15 +1,14 @@
 import 'package:boby/controllers/app_controller.dart';
 import 'package:boby/ui/screens/main_screen/widgets/background.dart';
+import 'package:boby/ui/shared/word_menu.dart';   
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 
 import '../../shared/main_menu.dart';
-import '../about/about.dart';
 import '../ballom_screen/ballom_screen.dart';
 import '../memory/memory_screen.dart';
 import '../setting_screen/setting_sacreen.dart';
 import '../sound_cards_screen/list_card_sounds.dart';
-import 'widgets/drawer.dart';
 
 class MainScreen extends StatelessWidget {
   static const String route = '/main_screen';
@@ -35,23 +34,25 @@ class MainScreen extends StatelessWidget {
             onPressed: () {
               appController.menuOpen.value = !appController.menuOpen.value;
             },
-            icon: Icon(Icons.menu),
+            icon: Image.asset("assets/icon_burger.png"),
           ),
         ],
-        title: const Text('Boby App'),
+        title: Image.asset("assets/boby_app_logo.png", width: 100),
         centerTitle: true,
-        backgroundColor: Colors.transparent,
-        foregroundColor: Colors.white,
+      backgroundColor: const Color.fromARGB(222, 113, 178, 235),
+   
       ),
 
       body: Obx(
-        () => Stack(
-          alignment: Alignment.center,
-          children: [
-            Background(),
-            screens[appController.currentPage.value],
-            appController.menuOpen.value ? MainMenu() : SizedBox(),
-          ],
+        () => SafeArea(
+          child: Stack(
+            alignment: Alignment.center,
+            children: [
+              Background(),
+              screens[appController.currentPage.value],
+              appController.menuOpen.value ? MainMenu() : SizedBox(),
+            ],
+          ),
         ),
       ),
     );
