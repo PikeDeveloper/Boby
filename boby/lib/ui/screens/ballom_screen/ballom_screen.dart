@@ -1,5 +1,7 @@
+import 'package:boby/controllers/app_controller.dart';
 import 'package:flutter/material.dart';
 import 'dart:math' as math;
+import 'package:get/get.dart';
 import 'wigdets/ballon_painter.dart';
 
 class Balloon {
@@ -121,23 +123,20 @@ class _BallomScreenState extends State<BallomScreen>
     final balloon = _balloons[index];
     if (balloon.isPopped) return;
     
-    // Marcar como reventado (esto hará que se oculte en el siguiente frame del AnimatedBuilder)
+    // Reproducir sonido de explosión
+    final appController = Get.find<AppController>();
+    appController.playMenuSound("assets/sounds/ballon_pop.wav");
+    
+    // Marcar como reventado
     balloon.isPopped = true;
     
-    // Remover el globo de la lista y agregar uno nuevo después de un breve delay
-    Future.delayed(const Duration(milliseconds: 300), () {
-      if (mounted) {
-        final balloonIndex = _balloons.indexWhere((b) => b == balloon);
-        if (balloonIndex != -1) {
-          // Remover el globo explotado
-          _balloons.removeAt(balloonIndex);
-        }
-        // Agregar un nuevo globo si no hay suficientes
-        if (_balloons.length < _maxBalloons) {
-          _addBalloon();
-        }
-      }
-    });
+    // Remover el globo inmediatamente y agregar uno nuevo
+    _balloons.removeAt(index);
+    
+    // Agregar un nuevo globo con un pequeño delay
+    if (_balloons.length < _maxBalloons) {
+      _addBalloon();
+    }
   }
 
   @override
@@ -151,8 +150,9 @@ class _BallomScreenState extends State<BallomScreen>
         }
 
         return Stack(
-          children: _balloons.map((balloon) {
-            if (balloon.isPopped) return const SizedBox.shrink();
+          children: _balloons.asMap().entries.map((entry) {
+            final index = entry.key;
+            final balloon = entry.value;
 
             return Positioned(
               key: ValueKey(balloon.id), // Key única para cada globo
@@ -161,7 +161,7 @@ class _BallomScreenState extends State<BallomScreen>
                   balloon.size / 2,
               bottom: MediaQuery.of(context).size.height * balloon.y,
               child: GestureDetector(
-                onTap: () => _popBalloon(_balloons.indexOf(balloon)),
+                onTap: () => _popBalloon(index),
                 child: BalloonWidget(
                   colorIndex: balloon.colorIndex,
                 ),

@@ -32,6 +32,7 @@ class NewGameButton extends StatelessWidget {
             appController.playMenuSound(soundPath);   
           },
           child: Row(
+            mainAxisSize: MainAxisSize.min,
             children: [
               for (var letter in newLetters)
                 Image.asset("assets/letters/$letter.png", width: letterSize),

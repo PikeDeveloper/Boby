@@ -1,6 +1,9 @@
 import 'dart:math';
+import 'package:boby/controllers/app_controller.dart';
 import 'package:boby/ui/screens/memory/widgets/new_game_button.dart';
+import 'package:boby/ui/screens/memory/widgets/winner_screen.dart';
 import 'package:flutter/material.dart';
+import 'package:get/get.dart';
 
 class MemoryScreen extends StatefulWidget {
   const MemoryScreen({super.key});
@@ -17,6 +20,8 @@ class _MemoryScreenState extends State<MemoryScreen>
   bool isProcessing = false;
   int moves = 0;
   int pairsFound = 0;
+  final String soundPathFlip = "assets/sounds/bubble-pop.wav";
+  final String soundPathMatch = "assets/sounds/game-bonus.wav";
 
   late AnimationController _flipController;
   late Animation<double> _flipAnimation;
@@ -134,6 +139,10 @@ class _MemoryScreenState extends State<MemoryScreen>
       return;
     }
 
+    // Reproducir sonido al voltear la carta
+    final appController = Get.find<AppController>();
+    appController.playMenuSound(soundPathFlip);
+
     setState(() {
       flippedCards.add(index);
       cards[index].isFlipped = true;
@@ -150,7 +159,10 @@ class _MemoryScreenState extends State<MemoryScreen>
       final card2 = cards[flippedCards[1]];
 
       if (card1.name == card2.name) {
-        // ¡Coinciden!
+        // ¡Coinciden! - Reproducir sonido de match
+        final appController = Get.find<AppController>();
+        appController.playMenuSound(soundPathMatch);
+        
         setState(() {
           matchedCards.addAll(flippedCards);
           cards[flippedCards[0]].isMatched = true;
@@ -205,40 +217,48 @@ class _MemoryScreenState extends State<MemoryScreen>
 
   @override
   Widget build(BuildContext context) {
-    return Column(
+    return Stack(
       children: [
-        Padding(
-          padding: const EdgeInsets.all(16.0),
-          child: Row(
-            mainAxisAlignment: MainAxisAlignment.end,
-            mainAxisSize: MainAxisSize.max,
-            children: [
-              NewGameButton(
-                onTap: () {
-                  _initializeGame();
-                  setState(() {});
-                },
+        Column(
+          children: [
+            Padding(
+              padding: const EdgeInsets.all(16.0),
+              child: Row(
+                mainAxisAlignment: MainAxisAlignment.end,
+                mainAxisSize: MainAxisSize.max,
+                children: [
+                  NewGameButton(
+                    onTap: () {
+                      _initializeGame();
+                      setState(() {});
+                    },
+                  ),
+                ],
               ),
-            ],
-          ),
-        ),
-        Expanded(
-          child: Padding(
-            padding: const EdgeInsets.all(16.0),
-            child: GridView.builder(
-              gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
-                crossAxisCount: 3,
-                crossAxisSpacing: 8.0,
-                mainAxisSpacing: 8.0,
-                childAspectRatio: 0.8,
-              ),
-              itemCount: 9,
-              itemBuilder: (context, index) {
-                return _buildCard(index);
-              },
             ),
-          ),
+            Expanded(
+              child: Padding(
+                padding: const EdgeInsets.all(16.0),
+                child: GridView.builder(
+                  gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
+                    crossAxisCount: 3,
+                    crossAxisSpacing: 8.0,
+                    mainAxisSpacing: 8.0,
+                    childAspectRatio: 0.8,
+                  ),
+                  itemCount: 9,
+                  itemBuilder: (context, index) {
+                    return _buildCard(index);
+                  },
+                ),
+              ),
+            ),
+          ],
         ),
+        WinnerScreen(onTap: () {
+          _initializeGame();
+          setState(() {});
+        }, )
       ],
     );
   }

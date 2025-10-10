@@ -1,0 +1,66 @@
+import 'dart:math';
+
+import 'package:boby/ui/screens/memory/widgets/new_game_button.dart';
+import 'package:flutter/material.dart';
+
+class WinnerScreen extends StatelessWidget {
+  const WinnerScreen({super.key, required this.onTap});
+
+  final VoidCallback onTap;
+
+  @override
+  Widget build(BuildContext context) {
+    final screenSize = MediaQuery.of(context).size;
+    final screenWidth = screenSize.width;
+    final screenHeight = screenSize.height;
+
+   final minSize = min (screenWidth, screenHeight);
+   final winnerLetters = ["W", "I", "N", "N", "E", "R"];
+   final letterSize = screenWidth / 8;
+    
+
+    return Stack(
+      alignment: Alignment.center,
+      children: [
+               Center(child: Column(
+                 children: [
+                   Image.asset("assets/confeti.gif", height: screenHeight / 2.5, width: screenWidth, fit: BoxFit.cover  ,),
+                   Image.asset("assets/confeti.gif", height: screenHeight / 2.5, width: screenWidth, fit: BoxFit.cover  ,),
+                 ],
+               )),
+
+        Container(
+          color: const Color.fromARGB(220, 245, 245, 245),
+          child: Column(
+            mainAxisAlignment: MainAxisAlignment.center,
+            
+            children: [
+               Container(
+                decoration: BoxDecoration(
+                  color: Colors.white,
+                  borderRadius: BorderRadius.circular(10),
+                ),
+                padding: const EdgeInsets.all(10),
+                //color: Colors.white,
+                child: Row(
+                mainAxisAlignment: MainAxisAlignment.center,
+                mainAxisSize: MainAxisSize.min,
+            
+            
+                children: [
+                  for (var letter in winnerLetters)
+                Image.asset("assets/letters/$letter.png", height: letterSize.toDouble(), width: letterSize.toDouble()),
+                ],
+              )),
+               
+              const SizedBox(height: 20),
+              Center(child: Image.asset("assets/winner-cup.png", width: minSize, height: minSize, )),
+              const SizedBox(height: 20),
+              NewGameButton(onTap: onTap)
+            ],
+          ),
+        ),
+      ],
+    );
+  }
+}
