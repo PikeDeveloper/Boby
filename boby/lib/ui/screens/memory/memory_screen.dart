@@ -20,8 +20,10 @@ class _MemoryScreenState extends State<MemoryScreen>
   bool isProcessing = false;
   int moves = 0;
   int pairsFound = 0;
+  bool isGameWon = false;
   final String soundPathFlip = "assets/sounds/bubble-pop.wav";
   final String soundPathMatch = "assets/sounds/game-bonus.wav";
+  final String soundPathWinner = "assets/sounds/winner-game.wav";
 
   late AnimationController _flipController;
   late Animation<double> _flipAnimation;
@@ -94,6 +96,7 @@ class _MemoryScreenState extends State<MemoryScreen>
     matchedCards.clear();
     moves = 0;
     pairsFound = 0;
+    isGameWon = false;
   }
 
   final List<Map<String, String>> assets = [
@@ -175,7 +178,14 @@ class _MemoryScreenState extends State<MemoryScreen>
 
         // Verificar si el juego terminó
         if (pairsFound == 4) {
-          _showGameCompleteDialog();
+          // Reproducir música de victoria
+          final appController = Get.find<AppController>();
+          appController.playMenuSound(soundPathWinner);
+          
+          // Mostrar pantalla de victoria
+          setState(() {
+            isGameWon = true;
+          });
         }
       } else {
         // No coinciden, voltear de vuelta después de un delay
@@ -193,27 +203,6 @@ class _MemoryScreenState extends State<MemoryScreen>
     }
   }
 
-  void _showGameCompleteDialog() {
-    showDialog(
-      context: context,
-      builder: (BuildContext context) {
-        return AlertDialog(
-          title: const Text('¡Felicidades!'),
-          content: Text('¡Completaste el juego en $moves movimientos!'),
-          actions: [
-            TextButton(
-              onPressed: () {
-                Navigator.of(context).pop();
-                _initializeGame();
-                setState(() {});
-              },
-              child: const Text('Jugar de nuevo'),
-            ),
-          ],
-        );
-      },
-    );
-  }
 
   @override
   Widget build(BuildContext context) {
@@ -255,10 +244,11 @@ class _MemoryScreenState extends State<MemoryScreen>
             ),
           ],
         ),
-        WinnerScreen(onTap: () {
-          _initializeGame();
-          setState(() {});
-        }, )
+        if (isGameWon)
+          WinnerScreen(onTap: () {
+            _initializeGame();
+            setState(() {});
+          })
       ],
     );
   }
