@@ -113,7 +113,7 @@ class _MemoryScreenState extends State<MemoryScreen>
     {"image": "assets/images/duck.jpg", "name": "Duck"},
     {"image": "assets/images/firetruck.jpg", "name": "Firetruck"},
     {"image": "assets/images/fireworks.jpg", "name": "Fireworks"},
-    {"image": "assets/images/flute.jpg", "name": "Flute"},
+    {"image": "assets/images/flaute.jpg", "name": "Flute"},
     {"image": "assets/images/frog.jpg", "name": "Frog"},
     {"image": "assets/images/guitar.jpg", "name": "Guitar"},
     {"image": "assets/images/hen.jpg", "name": "Hen"},
@@ -206,6 +206,8 @@ class _MemoryScreenState extends State<MemoryScreen>
 
   @override
   Widget build(BuildContext context) {
+    final screenSize = MediaQuery.of(context).size;
+    final minSide = min(screenSize.width, screenSize.height);   
     return Stack(
       children: [
         Column(
@@ -228,24 +230,29 @@ class _MemoryScreenState extends State<MemoryScreen>
             Expanded(
               child: Padding(
                 padding: const EdgeInsets.all(16.0),
-                child: GridView.builder(
-                  gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
-                    crossAxisCount: 3,
-                    crossAxisSpacing: 8.0,
-                    mainAxisSpacing: 8.0,
-                    childAspectRatio: 0.8,
+                child: SizedBox(
+                  width: minSide * 0.8,
+                  height: minSide * 0.8,
+                  child: GridView.builder(
+                    gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
+                  
+                      crossAxisCount: 3,
+                      crossAxisSpacing: 8.0,
+                      mainAxisSpacing: 8.0,
+                      childAspectRatio: 0.8,
+                    ),
+                    itemCount: 9,
+                    itemBuilder: (context, index) {
+                      return _buildCard(index);
+                    },
                   ),
-                  itemCount: 9,
-                  itemBuilder: (context, index) {
-                    return _buildCard(index);
-                  },
                 ),
               ),
             ),
           ],
         ),
         if (isGameWon)
-          WinnerScreen(onTap: () {
+          WinnerScreenMemory(onTap: () {
             _initializeGame();
             setState(() {});
           })
@@ -269,6 +276,7 @@ class _MemoryScreenState extends State<MemoryScreen>
               ..setEntry(3, 2, 0.001)
               ..rotateY(isFlipped ? 0 : 3.14159),
             child: Container(
+                  
               decoration: BoxDecoration(
                 borderRadius: BorderRadius.circular(12),
                 boxShadow: [

@@ -1,7 +1,6 @@
 import 'package:boby/controllers/app_controller.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
-import 'package:get/get_core/src/get_main.dart';
 
 class MemorySoundButton extends StatelessWidget {
   const MemorySoundButton({super.key, });

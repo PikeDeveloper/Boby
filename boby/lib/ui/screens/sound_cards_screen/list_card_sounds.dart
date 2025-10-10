@@ -72,9 +72,9 @@ class ListCardSounds extends StatelessWidget {
       "sound": "assets/sounds/fireworks.wav",
     },
     {
-      "image": "assets/images/flute.jpg",
+      "image": "assets/images/flaute.jpg",
       "name": "Flute",
-      "sound": "assets/sounds/flute.wav",
+      "sound": "assets/sounds/flaute.wav",
     },
     {
       "image": "assets/images/frog.jpg",
@@ -109,7 +109,7 @@ class ListCardSounds extends StatelessWidget {
     {
       "image": "assets/images/phone.jpg",
       "name": "Phone",
-      "sound": "assets/sounds/phone.wav",
+      "sound": "assets/sounds/telephone.wav",
     },
     {
       "image": "assets/images/piano.jpg",

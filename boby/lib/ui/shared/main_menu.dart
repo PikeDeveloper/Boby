@@ -1,3 +1,5 @@
+import 'dart:math';
+
 import 'package:boby/controllers/app_controller.dart';
 import 'package:boby/ui/shared/word_menu.dart';
 import 'package:boby/utils/colors.dart';
@@ -20,13 +22,10 @@ class MainMenu extends StatelessWidget {
   Widget build(BuildContext context) {
     final appController = Get.find<AppController>();
     final screenSize = MediaQuery.of(context).size;
-    final screenWidth = screenSize.width;
-    double width = 0;
-    if (screenWidth < 300) {
-      width = screenWidth * 0.3;
-    } else {
-      width = screenWidth * 0.2;
-    }
+   
+   
+
+    double minSide = min(screenSize.width, screenSize.height);
 
     List<Widget> widgets = [];
     for (var option in options) {
@@ -39,9 +38,9 @@ class MainMenu extends StatelessWidget {
             appController.currentPage.value = int.parse(option["route"]!);
           },
           child: SizedBox(
-            width: width,
-            height: width,
-            child: Image.asset(option["image"]!),
+            width: minSide * 0.3,
+            height: minSide * 0.3,
+            child: Image.asset(option["image"]!, fit: BoxFit.cover,),
           ),
         ),
       );
@@ -62,14 +61,14 @@ class MainMenu extends StatelessWidget {
 
         Center(
           child: Container(
-            width: screenWidth < 350 ? 300 : 350,
-            height: screenWidth < 350 ? 300 : 350,
+            width: minSide *0.8,
+            height: minSide *0.8,
             decoration: BoxDecoration(
               image: DecorationImage(
                 image: AssetImage("assets/backgrounds/soft.png"),
                 fit: BoxFit.cover,
               ),
-              color: Colors.white,
+           
               borderRadius: BorderRadius.circular(20),
               border: Border.all(color: MyColors.green, width: 6),
             ),

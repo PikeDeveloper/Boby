@@ -33,8 +33,8 @@ class Balloon {
       x += xSpeed;
 
       // Mantener dentro de los límites de la pantalla (considerando el tamaño del globo)
-      if (x < 0.1) x = 0.1; // Margen izquierdo para que no se corte
-      if (x > 0.9) x = 0.9; // Margen derecho para que no se corte
+      if (x < 0.15) x = 0.15; // Margen izquierdo para que no se corte
+      if (x > 0.85) x = 0.85; // Margen derecho para que no se corte
 
       // Movimiento horizontal más suave
       xSpeed = xSpeed * 0.99 + (math.Random().nextDouble() - 0.5) * 0.0005;
@@ -46,7 +46,7 @@ class Balloon {
       // Si el globo sale por arriba, lo reiniciamos abajo
       if (y > 1.2) {
         y = -0.3 - math.Random().nextDouble() * 0.1; // Aparece completamente fuera de la pantalla por abajo
-        x = 0.1 + math.Random().nextDouble() * 0.8; // Distribución entre 0.1 y 0.9 (con márgenes)
+        x = 0.15 + math.Random().nextDouble() * 0.7; // Distribución entre 0.15 y 0.85 (con márgenes más amplios)
       }
     }
   }
@@ -63,7 +63,7 @@ class _BallomScreenState extends State<BallomScreen>
     with TickerProviderStateMixin {
   late AnimationController _controller;
   final List<Balloon> _balloons = [];
-  final int _maxBalloons = 4;
+  final int _maxBalloons = 6;
   final math.Random _random = math.Random();
   int _balloonIdCounter = 0; // Contador para IDs únicos
 
@@ -76,7 +76,7 @@ class _BallomScreenState extends State<BallomScreen>
             duration: const Duration(milliseconds: 16),
           )
           ..addListener(() {
-            // Check and maintain 4 balloons
+            // Check and maintain 6 balloons
             if (_balloons.length < _maxBalloons) {
               _addBalloon();
             }
@@ -100,7 +100,7 @@ class _BallomScreenState extends State<BallomScreen>
               size: 50.0 + _random.nextDouble() * 50.0,
               colorIndex: _random.nextInt(4), // 4 colores disponibles
               id: 'balloon_${_balloonIdCounter++}', // ID único
-              x: 0.1 + _random.nextDouble() * 0.8, // Distribución entre 0.1 y 0.9 (con márgenes)
+              x: 0.15 + _random.nextDouble() * 0.7, // Distribución entre 0.15 y 0.85 (con márgenes más amplios)
               y: -0.3 - _random.nextDouble() * 0.1, // Comenzar completamente fuera de la pantalla por abajo
               speed: 0.001 + _random.nextDouble() * 0.002, // Velocidad reducida para flotación suave
             ),

@@ -20,27 +20,27 @@ class NewGameButton extends StatelessWidget {
     final screenWidth = MediaQuery.of(context).size.width;
     final appController = Get.find<AppController>();
 
-    return Card(
-      color: Colors.white,
-      elevation: 5,
-      shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(10)),
-      child: Container(
-        margin: const EdgeInsets.all(10.0),
-        child: GestureDetector(
-          onTap: () {
-            onTap();
-            appController.playMenuSound(soundPath);   
-          },
-          child: Row(
-            mainAxisSize: MainAxisSize.min,
-            children: [
-              for (var letter in newLetters)
-                Image.asset("assets/letters/$letter.png", width: letterSize),
-              SizedBox(width: 10),
-              for (var letter in gameLetters)
-                Image.asset("assets/letters/$letter.png", width: letterSize),
-            ],
-          ),
+    return GestureDetector(
+      onTap: () {
+        onTap();
+        appController.playMenuSound(soundPath);   
+      },
+      child: Card(
+        color: Colors.white,
+        elevation: 5,
+        shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(10)),
+        child: Container(
+          margin: const EdgeInsets.all(10.0),
+          child:     Row(
+              mainAxisSize: MainAxisSize.min,
+              children: [
+                for (var letter in newLetters)
+                  Image.asset("assets/letters/$letter.png", width: letterSize),
+                SizedBox(width: 10),
+                for (var letter in gameLetters)
+                  Image.asset("assets/letters/$letter.png", width: letterSize),
+              ],
+            ),
         ),
       ),
     );
