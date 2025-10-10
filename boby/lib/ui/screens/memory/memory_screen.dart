@@ -1,5 +1,5 @@
 import 'dart:math';
-import 'package:boby/ui/screens/memory/new_game_button.dart';
+import 'package:boby/ui/screens/memory/widgets/new_game_button.dart';
 import 'package:flutter/material.dart';
 
 class MemoryScreen extends StatefulWidget {

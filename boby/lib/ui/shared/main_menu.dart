@@ -7,7 +7,9 @@ import 'package:get/get.dart';
 class MainMenu extends StatelessWidget {
   MainMenu({super.key});
 
-  List<Map<String, String>> options = [
+  final String soundPath = "assets/sounds/musical-game.wav";
+
+  final List<Map<String, String>> options = [
     {"name": "Sounds", "route": "0", "image": "assets/sounds_icon.png"},
     {"name": "Memory", "route": "1", "image": "assets/memory_icon.png"},
     {"name": "Ballon", "route": "2", "image": "assets/ballon_icon.png"},
@@ -31,6 +33,8 @@ class MainMenu extends StatelessWidget {
       widgets.add(
         GestureDetector(
           onTap: () {
+            // Reproduce el sonido usando el AppController (persiste entre navegaciones)
+            appController.playMenuSound(soundPath);
             appController.menuOpen.value = false;
             appController.currentPage.value = int.parse(option["route"]!);
           },

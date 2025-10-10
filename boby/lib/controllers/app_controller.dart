@@ -1,4 +1,8 @@
+import 'dart:io';
+
+import 'package:flutter/material.dart';
 import 'package:get/get.dart';
+import 'package:just_audio/just_audio.dart';
 
 class AppController extends GetxController {
   //------------General------------------------------
@@ -7,4 +11,29 @@ class AppController extends GetxController {
   var currentPage = 0.obs;
   var cardSelected = "".obs;
   var menuOpen = false.obs;
+  
+  //------------Audio Player para sonidos globales------------------------------
+  final AudioPlayer _menuAudioPlayer = AudioPlayer();
+  
+  @override
+  void onClose() {
+    _menuAudioPlayer.dispose();
+    super.onClose();
+  }
+  
+  Future<void> playMenuSound(String soundPath) async {
+    try {
+      if (!Platform.isLinux) {
+        debugPrint('Loading menu sound: $soundPath');
+        await _menuAudioPlayer.setAsset(soundPath);
+        debugPrint('Playing menu sound...');
+        _menuAudioPlayer.play();
+        debugPrint('Menu sound started playing');
+      } else {
+        debugPrint('Audio disabled on Linux');
+      }
+    } catch (e) {
+      debugPrint('Error playing menu sound: $e');
+    }
+  }
 }
