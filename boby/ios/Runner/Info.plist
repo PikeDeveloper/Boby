@@ -45,5 +45,9 @@
 		<string>UIInterfaceOrientationLandscapeLeft</string>
 		<string>UIInterfaceOrientationLandscapeRight</string>
 	</array>
+
+	<!-- 🔒 Permiso requerido por Apple para acceso al micrófono -->
+	<key>NSMicrophoneUsageDescription</key>
+	<string>This app includes components that may request access to the microphone, but it does not record or use audio directly.</string>
 </dict>
 </plist>

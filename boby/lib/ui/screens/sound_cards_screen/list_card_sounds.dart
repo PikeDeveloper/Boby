@@ -170,23 +170,26 @@ class ListCardSounds extends StatelessWidget {
       width = screenWidth * 0.2;
     }
 
-    return GridView.builder(
-      gridDelegate: SliverGridDelegateWithMaxCrossAxisExtent(
-        maxCrossAxisExtent: width, // máximo ancho por item
-        crossAxisSpacing: 30,
-        mainAxisSpacing: 30,
-        childAspectRatio: 1, // cuadrado (ancho = alto)
+    return Padding(
+      padding: const EdgeInsets.symmetric(horizontal: 30.0),
+      child: GridView.builder(
+        gridDelegate: SliverGridDelegateWithMaxCrossAxisExtent(
+          maxCrossAxisExtent: width, // máximo ancho por item
+          crossAxisSpacing: width * 0.1,
+          mainAxisSpacing: width * 0.1,
+          childAspectRatio: 1, // cuadrado (ancho = alto)
+        ),
+      
+        itemCount: assets.length,
+      
+        itemBuilder: (context, index) {
+          return CardSound(
+            image: assets[index]["image"]!,
+            name: assets[index]["name"]!,
+            sound: assets[index]["sound"]!,
+          );
+        },
       ),
-
-      itemCount: assets.length,
-
-      itemBuilder: (context, index) {
-        return CardSound(
-          image: assets[index]["image"]!,
-          name: assets[index]["name"]!,
-          sound: assets[index]["sound"]!,
-        );
-      },
     );
   }
 }

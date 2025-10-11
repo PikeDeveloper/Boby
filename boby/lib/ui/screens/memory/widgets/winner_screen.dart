@@ -49,7 +49,7 @@ class _WinnerScreenMemoryState extends State<WinnerScreenMemory>
     final screenHeight = screenSize.height;
 
    final minSize = min (screenWidth, screenHeight);
-   final winnerLetters = ["W", "I", "N", "N", "E", "R"];
+   final winnerMessages = ["W", "I", "N", "N", "E", "R"];
    final letterSize = minSize / 8;
     
 
@@ -82,8 +82,8 @@ class _WinnerScreenMemoryState extends State<WinnerScreenMemory>
             
             
                 children: [
-                  for (var letter in winnerLetters)
-                Image.asset("assets/letters/$letter.png", height: letterSize.toDouble(), width: letterSize.toDouble()),
+                  for (var letter in winnerMessages)
+                Image.asset("assets/letters_2/$letter.png", height: letterSize.toDouble(), ),
                 ],
               )),
                

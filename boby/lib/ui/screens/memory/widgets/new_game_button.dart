@@ -35,10 +35,10 @@ class NewGameButton extends StatelessWidget {
               mainAxisSize: MainAxisSize.min,
               children: [
                 for (var letter in newLetters)
-                  Image.asset("assets/letters/$letter.png", width: letterSize),
+                  Image.asset("assets/letters_2/$letter.png", height: letterSize),
                 SizedBox(width: 10),
                 for (var letter in gameLetters)
-                  Image.asset("assets/letters/$letter.png", width: letterSize),
+                  Image.asset("assets/letters_2/$letter.png", height: letterSize),
               ],
             ),
         ),

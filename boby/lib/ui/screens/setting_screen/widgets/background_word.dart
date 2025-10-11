@@ -28,7 +28,7 @@ class BackgroundWord extends StatelessWidget {
       child: Row(
         children: [
           for (var letter in newLetters)
-            Image.asset("assets/letters/$letter.png", width: letterSize),
+            Image.asset("assets/letters_2/$letter.png", width: letterSize),
         ],
       ),
     );

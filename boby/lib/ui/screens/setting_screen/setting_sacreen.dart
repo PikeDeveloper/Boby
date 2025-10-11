@@ -21,9 +21,9 @@ class SettingScreen extends StatelessWidget {
     final screenWidth = MediaQuery.of(context).size.width;
     double width = 0;
     if (screenWidth < 300) {
-      width = screenWidth * 0.3;
+      width = screenWidth * 0.4;
     } else {
-      width = screenWidth * 0.2;
+      width = screenWidth * 0.3;
     }
 
     return Column(
