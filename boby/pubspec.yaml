@@ -35,5 +35,7 @@ flutter:
     - assets/backgrounds/
     - assets/icon/
     - assets/letters/
+    - assets/shapes/
+    - assets/numbers/
     - assets/letters_2/
     - assets/backgrounds/
