@@ -1,6 +1,9 @@
+import 'package:boby/ui/screens/word_guess/widgets/word_guess_word.dart';
 import 'package:boby/utils/constants.dart';
 import 'package:flutter/material.dart';
 import 'dart:math';
+
+import '../../../utils/colors.dart';
 
 class WordGuessScreen extends StatefulWidget {
   const WordGuessScreen({super.key});
@@ -112,37 +115,35 @@ class _WordGuessScreenState extends State<WordGuessScreen> {
   Widget build(BuildContext context) {
     final imagePath = assets[currentIndex]["image"] ?? "";
 
+    final screenSize = MediaQuery.of(context).size;
+    final minSize = min(screenSize.width, screenSize.height);
+
     // Split keys into two rows
     final firstRow = keys.take((keys.length / 2).ceil()).toList();
     final secondRow = keys.skip((keys.length / 2).ceil()).toList();
 
-    return Scaffold(
-      appBar: AppBar(
-        title: const Text('Word Guess'),
-      ),
-      body: SafeArea(
-        child: Padding(
-          padding: const EdgeInsets.all(16.0),
-          child: Column(
-            crossAxisAlignment: CrossAxisAlignment.stretch,
+    final colors = [MyColors.yellow, MyColors.purple, MyColors.guayaba, MyColors.red, MyColors.green, MyColors.blue];
+
+    return Column(
+            crossAxisAlignment: CrossAxisAlignment.center,
+            mainAxisAlignment: MainAxisAlignment.center,
+            mainAxisSize: MainAxisSize.min, 
             children: [
-              // Image on top
-              Expanded(
-                flex: 5,
-                child: Center(
-                  child: AspectRatio(
-                    aspectRatio: 1,
+            
+             WordGuessWord(),
+                 const SizedBox(height: 30),
+              SizedBox(
+                    width: minSize * 0.8,
+                    height: minSize * 0.8,
                     child: ClipRRect(
                       borderRadius: BorderRadius.circular(16),
                       child: Image.asset(
                         imagePath,
-                        fit: BoxFit.cover,
+                        fit: BoxFit.contain,
                         errorBuilder: (c, e, s) => const Center(child: Icon(Icons.image_not_supported, size: 48)),
                       ),
                     ),
                   ),
-                ),
-              ),
               const SizedBox(height: 16),
 
               // Answer slots (lines to place letters)
@@ -163,10 +164,13 @@ class _WordGuessScreenState extends State<WordGuessScreen> {
                           border: Border.all(color: Colors.grey.shade400, width: 2),
                           color: s.char == null ? Colors.transparent : Theme.of(context).colorScheme.primary.withOpacity(0.1),
                         ),
-                        child: Text(
-                          s.char ?? "",
-                          style: Theme.of(context).textTheme.titleLarge?.copyWith(fontWeight: FontWeight.bold, letterSpacing: 1.5),
-                        ),
+                        child: s.char == null
+                            ? const SizedBox.shrink()
+                            : Image.asset(
+                                "assets/letters_2/${s.char}.png",
+                                height: 36,
+                                fit: BoxFit.contain,
+                              ),
                       ),
                     );
                   }),
@@ -176,7 +180,7 @@ class _WordGuessScreenState extends State<WordGuessScreen> {
               const SizedBox(height: 16),
 
               // Controls
-              Row(
+            /*  Row(
                 mainAxisAlignment: MainAxisAlignment.center,
                 children: [
                   FilledButton.tonal(
@@ -184,7 +188,7 @@ class _WordGuessScreenState extends State<WordGuessScreen> {
                     child: const Text('Limpiar'),
                   ),
                 ],
-              ),
+              ),*/
 
               const SizedBox(height: 12),
 
@@ -200,11 +204,9 @@ class _WordGuessScreenState extends State<WordGuessScreen> {
                 onTap: (idxInRow) => _onKeyTap((keys.length / 2).ceil() + idxInRow),
                 baseIndex: (keys.length / 2).ceil(),
               ),
+              const SizedBox(height: 16),
             ],
-          ),
-        ),
-      ),
-    );
+          );
   }
 }
 
