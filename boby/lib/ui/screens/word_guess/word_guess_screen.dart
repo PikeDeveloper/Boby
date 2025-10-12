@@ -1,6 +1,10 @@
+import 'package:boby/ui/screens/word_guess/widgets/celebration_image.dart';
+import 'package:boby/ui/screens/word_guess/widgets/control_buttons.dart';
 import 'package:boby/ui/screens/word_guess/widgets/word_guess_word.dart';
 import 'package:boby/utils/constants.dart';
 import 'package:flutter/material.dart';
+import 'package:get/get.dart';
+import 'package:boby/controllers/app_controller.dart';
 import 'dart:math';
 
 import '../../../utils/colors.dart';
@@ -16,13 +20,21 @@ class _WordGuessScreenState extends State<WordGuessScreen> {
   final List<Map<String, String>> assets = Constants.assets;
 
   int currentIndex = 0;
+  late final PageController _pageController;
   late String targetWord; // e.g., "CAT"
   late List<_Slot> slots; // answer slots
   late List<_KeyChar> keys; // keyboard keys (two rows)
+  bool _showError = false; // show red border when guess is incorrect
+
+  // Sounds
+  final String _wrongWordSound = "assets/sounds/game-over-trombone.wav";
+  final String _correctWordSound = "assets/sounds/winner-game.wav";
+  final String _letterSound = "assets/sounds/bubble-pop.wav";
 
   @override
   void initState() {
     super.initState();
+    _pageController = PageController(initialPage: currentIndex);
     _startRound();
   }
 
@@ -37,6 +49,7 @@ class _WordGuessScreenState extends State<WordGuessScreen> {
     const alphabet = "ABCDEFGHIJKLMNOPQRSTUVWXYZ";
     final required = targetWord.replaceAll(" ", "").split("");
     final pool = <String>[];
+
     pool.addAll(required);
 
     final rand = Random();
@@ -47,7 +60,9 @@ class _WordGuessScreenState extends State<WordGuessScreen> {
     pool.shuffle(rand);
 
     keys = pool.map((c) => _KeyChar(char: c)).toList();
-    setState(() {});
+    setState(() {
+      _showError = false;
+    });
   }
 
   void _onKeyTap(int keyIndex) {
@@ -58,9 +73,16 @@ class _WordGuessScreenState extends State<WordGuessScreen> {
     final slotIndex = slots.indexWhere((s) => s.char == null);
     if (slotIndex == -1) return;
 
+    // Play letter sound
+    final hasCtrl = Get.isRegistered<AppController>();
+    if (hasCtrl) {
+      Get.find<AppController>().playMenuSound(_letterSound);
+    }
+
     setState(() {
       slots[slotIndex] = _Slot(char: key.char, keyIndex: keyIndex);
       keys[keyIndex] = key.copyWith(used: true);
+      _showError = false; // clear error state on input
     });
 
     _checkIfCompleted();
@@ -75,6 +97,7 @@ class _WordGuessScreenState extends State<WordGuessScreen> {
       if (kIndex != null) {
         keys[kIndex] = keys[kIndex].copyWith(used: false);
       }
+      _showError = false; // clear error state on edit
     });
   }
 
@@ -86,35 +109,101 @@ class _WordGuessScreenState extends State<WordGuessScreen> {
       for (var i = 0; i < keys.length; i++) {
         keys[i] = keys[i].copyWith(used: false);
       }
+      _showError = false;
     });
+  }
+
+  void _next() {
+    if (!mounted) return;
+    final next = (currentIndex + 1) % assets.length;
+    _pageController.animateToPage(
+      next,
+      duration: const Duration(milliseconds: 250),
+      curve: Curves.easeOut,
+    );
+  }
+
+  void _back() {
+    if (!mounted) return;
+    final prev = (currentIndex - 1 + assets.length) % assets.length;
+    _pageController.animateToPage(
+      prev,
+      duration: const Duration(milliseconds: 250),
+      curve: Curves.easeOut,
+    );
+  }
+
+  void _clue() {
+    // Fill the first empty slot with the correct letter, if available in keys
+    final cleanTarget = targetWord.replaceAll(" ", "");
+    final emptyIndex = slots.indexWhere((s) => s.char == null);
+    if (emptyIndex == -1) return;
+
+    final correctChar = cleanTarget[emptyIndex];
+
+    // Find an unused key matching the correct character
+    final keyIndex = keys.indexWhere((k) => !k.used && k.char == correctChar);
+    if (keyIndex == -1) {
+      // If no free key with that char, do nothing gracefully
+      return;
+    }
+
+    // Play letter sound for clue assistance as well
+    final hasCtrl = Get.isRegistered<AppController>();
+    if (hasCtrl) {
+      Get.find<AppController>().playMenuSound(_letterSound);
+    }
+
+    setState(() {
+      slots[emptyIndex] = _Slot(char: correctChar, keyIndex: keyIndex);
+      keys[keyIndex] = keys[keyIndex].copyWith(used: true);
+      _showError = false;
+    });
+
+    _checkIfCompleted();
   }
 
   void _checkIfCompleted() {
     final guess = slots.map((s) => s.char ?? "").join("");
     if (guess.length == targetWord.replaceAll(" ", "").length) {
       if (guess == targetWord.replaceAll(" ", "")) {
-        ScaffoldMessenger.of(context).showSnackBar(
-          const SnackBar(content: Text('¡Correcto!')),
-        );
-        Future.delayed(const Duration(milliseconds: 600), () {
+        // Play success sound
+        final hasCtrl = Get.isRegistered<AppController>();
+        if (hasCtrl) {
+          Get.find<AppController>().playMenuSound(_correctWordSound);
+          // Show celebration overlay for 1 second
+          Get.find<AppController>().showCelebration(duration: const Duration(seconds: 1));
+        }
+        Future.delayed(const Duration(milliseconds: 1000), () {
           if (!mounted) return;
-          setState(() {
-            currentIndex = (currentIndex + 1) % assets.length;
-          });
-          _startRound();
+          final next = (currentIndex + 1) % assets.length;
+          _pageController.animateToPage(
+            next,
+            duration: const Duration(milliseconds: 300),
+            curve: Curves.easeOut,
+          );
         });
       } else {
-        ScaffoldMessenger.of(context).showSnackBar(
-          const SnackBar(content: Text('Intenta de nuevo')),
-        );
+        // Play wrong sound and show red border
+        final hasCtrl = Get.isRegistered<AppController>();
+        if (hasCtrl) {
+          Get.find<AppController>().playMenuSound(_wrongWordSound);
+        }
+        setState(() {
+          _showError = true; // highlight slots with red border
+        });
       }
     }
   }
 
   @override
-  Widget build(BuildContext context) {
-    final imagePath = assets[currentIndex]["image"] ?? "";
+  void dispose() {
+    _pageController.dispose();
+    super.dispose();
+  }
 
+  @override
+  Widget build(BuildContext context) {
     final screenSize = MediaQuery.of(context).size;
     final minSize = min(screenSize.width, screenSize.height);
 
@@ -124,89 +213,108 @@ class _WordGuessScreenState extends State<WordGuessScreen> {
 
     final colors = [MyColors.yellow, MyColors.purple, MyColors.guayaba, MyColors.red, MyColors.green, MyColors.blue];
 
-    return Column(
-            crossAxisAlignment: CrossAxisAlignment.center,
-            mainAxisAlignment: MainAxisAlignment.center,
-            mainAxisSize: MainAxisSize.min, 
-            children: [
-            
-             WordGuessWord(),
-                 const SizedBox(height: 30),
-              SizedBox(
+    // Celebration overlay controlled by AppController
+    Widget celebrationOverlay = const SizedBox.shrink();
+    if (Get.isRegistered<AppController>()) {  
+      final app = Get.find<AppController>();
+      celebrationOverlay = Obx(() => app.celebrationVisible.value ? const CelebrationImage() : const SizedBox.shrink());
+    }
+
+    return Stack(
+      fit: StackFit.expand,
+      children: [
+        celebrationOverlay,
+        Column(
+       
+                crossAxisAlignment: CrossAxisAlignment.center,
+                mainAxisAlignment: MainAxisAlignment.center,
+                mainAxisSize: MainAxisSize.min, 
+                children: [
+        
+                 WordGuessWord(),
+                     const SizedBox(height: 30),
+                  SizedBox(
                     width: minSize * 0.8,
                     height: minSize * 0.8,
                     child: ClipRRect(
                       borderRadius: BorderRadius.circular(16),
-                      child: Image.asset(
-                        imagePath,
-                        fit: BoxFit.contain,
-                        errorBuilder: (c, e, s) => const Center(child: Icon(Icons.image_not_supported, size: 48)),
+                      child: PageView.builder(
+                        controller: _pageController,
+                        physics: const BouncingScrollPhysics(),
+                        onPageChanged: (index) {
+                          setState(() {
+                            currentIndex = index;
+                          });
+                          _startRound();
+                        },
+                        itemCount: assets.length,
+                        itemBuilder: (context, index) {
+                          final path = assets[index]["image"] ?? "";
+                          return Image.asset(
+                            path,
+                            fit: BoxFit.contain,
+                            errorBuilder: (c, e, s) => const Center(child: Icon(Icons.image_not_supported, size: 48)),
+                          );
+                        },
                       ),
                     ),
                   ),
-              const SizedBox(height: 16),
-
-              // Answer slots (lines to place letters)
-              Center(
-                child: Wrap(
-                  spacing: 8,
-                  runSpacing: 8,
-                  children: List.generate(slots.length, (i) {
-                    final s = slots[i];
-                    return GestureDetector(
-                      onTap: () => _onSlotTap(i),
-                      child: Container(
-                        width: 36,
-                        height: 48,
-                        alignment: Alignment.center,
-                        decoration: BoxDecoration(
-                          borderRadius: BorderRadius.circular(8),
-                          border: Border.all(color: Colors.grey.shade400, width: 2),
-                          color: s.char == null ? Colors.transparent : Theme.of(context).colorScheme.primary.withOpacity(0.1),
-                        ),
-                        child: s.char == null
-                            ? const SizedBox.shrink()
-                            : Image.asset(
-                                "assets/letters_2/${s.char}.png",
-                                height: 36,
-                                fit: BoxFit.contain,
-                              ),
-                      ),
-                    );
-                  }),
-                ),
-              ),
-
-              const SizedBox(height: 16),
-
-              // Controls
-            /*  Row(
-                mainAxisAlignment: MainAxisAlignment.center,
-                children: [
-                  FilledButton.tonal(
-                    onPressed: _clearAll,
-                    child: const Text('Limpiar'),
+                  const SizedBox(height: 16),
+        
+                  // Answer slots (lines to place letters)
+                  Center(
+                    child: Wrap(
+                      spacing: 8,
+                      runSpacing: 8,
+                      children: List.generate(slots.length, (i) {
+                        final s = slots[i];
+                        return GestureDetector(
+                          onTap: () => _onSlotTap(i),
+                          child: Container(
+                            width: 36,
+                            height: 48,
+                            alignment: Alignment.center,
+                            decoration: BoxDecoration(
+                              borderRadius: BorderRadius.circular(8),
+                              border: Border.all(color: _showError ? Colors.red : Colors.grey.shade400, width: 2),
+                              color: s.char == null ? Colors.transparent : Theme.of(context).colorScheme.primary.withOpacity(0.1),
+                            ),
+                            child: s.char == null
+                                ? const SizedBox.shrink()
+                                : Image.asset(
+                                    "assets/letters_2/${s.char}.png",
+                                    height: 36,
+                                    fit: BoxFit.contain,
+                                  ),
+                          ),
+                        );
+                      }),
+                    ),
                   ),
+        
+                  const SizedBox(height: 16),
+        
+                ControlButtons(next: _next, back: _back, clue: _clue  ), 
+        
+                  const SizedBox(height: 20),
+        
+                  // Two rows of letters to choose
+                  _KeysRow(
+                    keysRow: firstRow,
+                    onTap: (idxInRow) => _onKeyTap(idxInRow),
+                    baseIndex: 0,
+                  ),
+                  const SizedBox(height: 8),
+                  _KeysRow(
+                    keysRow: secondRow,
+                    onTap: (idxInRow) => _onKeyTap((keys.length / 2).ceil() + idxInRow),
+                    baseIndex: (keys.length / 2).ceil(),
+                  ),
+                  const SizedBox(height: 16),
                 ],
-              ),*/
-
-              const SizedBox(height: 12),
-
-              // Two rows of letters to choose
-              _KeysRow(
-                keysRow: firstRow,
-                onTap: (idxInRow) => _onKeyTap(idxInRow),
-                baseIndex: 0,
               ),
-              const SizedBox(height: 8),
-              _KeysRow(
-                keysRow: secondRow,
-                onTap: (idxInRow) => _onKeyTap((keys.length / 2).ceil() + idxInRow),
-                baseIndex: (keys.length / 2).ceil(),
-              ),
-              const SizedBox(height: 16),
-            ],
-          );
+      ],
+    );
   }
 }
 

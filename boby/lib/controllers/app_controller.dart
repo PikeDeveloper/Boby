@@ -11,6 +11,7 @@ class AppController extends GetxController {
   var currentPage = 0.obs;
   var cardSelected = "".obs;
   var menuOpen = false.obs;
+  var celebrationVisible = false.obs; // controls celebration overlay visibility
   
   //------------Audio Player para sonidos globales------------------------------
   final AudioPlayer _menuAudioPlayer = AudioPlayer();
@@ -34,6 +35,15 @@ class AppController extends GetxController {
       }
     } catch (e) {
       debugPrint('Error playing menu sound: $e');
+    }
+  }
+
+  Future<void> showCelebration({Duration duration = const Duration(seconds: 1)}) async {
+    try {
+      celebrationVisible.value = true;
+      await Future.delayed(duration);
+    } finally {
+      celebrationVisible.value = false;
     }
   }
 }

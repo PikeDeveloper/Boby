@@ -61,7 +61,7 @@ class _WinnerScreenMemoryState extends State<WinnerScreenMemory>
                    Image.asset("assets/confeti.gif", height: screenHeight / 2.5, width: screenWidth, fit: BoxFit.cover  ,),
                    Image.asset("assets/confeti.gif", height: screenHeight / 2.5, width: screenWidth, fit: BoxFit.cover  ,),
                  ],
-               )),
+               ),),
 
         Container(
           color: const Color.fromARGB(220, 245, 245, 245),
