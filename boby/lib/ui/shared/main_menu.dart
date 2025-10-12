@@ -16,6 +16,7 @@ class MainMenu extends StatelessWidget {
     {"name": "Memory", "route": "1", "image": "assets/memory_icon.png"},
     {"name": "Ballon", "route": "2", "image": "assets/ballon_icon.png"},
     {"name": "Settings", "route": "3", "image": "assets/settings_icon.png"},
+    {"name": "Word Guess", "route": "4", "image": "assets/word_guess_icon.png"},
   ];
 
   @override
@@ -62,7 +63,7 @@ class MainMenu extends StatelessWidget {
         Center(
           child: Container(
             width: minSide *0.8,
-            height: minSide *0.8,
+            height: minSide *1.2,
             decoration: BoxDecoration(
               image: DecorationImage(
                 image: AssetImage("assets/backgrounds/soft.png"),
@@ -85,6 +86,15 @@ class MainMenu extends StatelessWidget {
                   mainAxisAlignment: MainAxisAlignment.spaceEvenly,
                   children: [widgets[2], widgets[3]],
                 ),
+                 Row(
+                  mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+                  children: [widgets[4], SizedBox(
+            width: minSide * 0.3,
+            height: minSide * 0.3,
+            
+          ),],
+                ),
+                
               ],
             ),
           ),

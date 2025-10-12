@@ -1,5 +1,6 @@
 import 'package:boby/controllers/app_controller.dart';
 import 'package:boby/ui/screens/main_screen/widgets/background.dart';
+import 'package:boby/ui/screens/word_guess/word_guess_screen.dart';
 import 'package:boby/ui/shared/word_menu.dart';   
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
@@ -20,6 +21,7 @@ class MainScreen extends StatelessWidget {
     MemoryScreen(),
     BallomScreen(),
     SettingScreen(),
+    WordGuessScreen(),
     //AbautScreen(),
   ];
 
