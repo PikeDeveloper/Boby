@@ -9,11 +9,7 @@ class Constants {
 
 
     static const List<Map<String, String>> assets = [
-    {
-      "image": "assets/images/accordeon.jpg",
-      "name": "Accordion",
-      "sound": "assets/sounds/accordeon.wav",
-    },
+   
     {
       "image": "assets/images/bee.jpg",
       "name": "Bee",
@@ -39,11 +35,7 @@ class Constants {
       "name": "Chick",
       "sound": "assets/sounds/chick.wav",
     },
-    {
-      "image": "assets/images/clapping.jpg",
-      "name": "Clapping",
-      "sound": "assets/sounds/clapping.wav",
-    },
+
     {
       "image": "assets/images/cow.jpg",
       "name": "Cow",
@@ -64,16 +56,8 @@ class Constants {
       "name": "Duck",
       "sound": "assets/sounds/duck.wav",
     },
-    {
-      "image": "assets/images/firetruck.jpg",
-      "name": "Firetruck",
-      "sound": "assets/sounds/firetruck.wav",
-    },
-    {
-      "image": "assets/images/fireworks.jpg",
-      "name": "Fireworks",
-      "sound": "assets/sounds/fireworks.wav",
-    },
+   
+   
     {
       "image": "assets/images/flaute.jpg",
       "name": "Flute",
@@ -154,11 +138,7 @@ class Constants {
       "name": "Whistle",
       "sound": "assets/sounds/whistle.wav",
     },
-    {
-      "image": "assets/images/xylophone.jpg",
-      "name": "Xylophone",
-      "sound": "assets/sounds/xylophone.wav",
-    },
+  
   ];
 
 }

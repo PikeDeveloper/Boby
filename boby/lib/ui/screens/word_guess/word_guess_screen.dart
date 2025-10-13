@@ -234,10 +234,10 @@ class _WordGuessScreenState extends State<WordGuessScreen> {
                  WordGuessWord(),
                      const SizedBox(height: 30),
                   SizedBox(
-                    width: minSize * 0.8,
-                    height: minSize * 0.8,
+                    width: minSize * 0.7,
+                    height: minSize * 0.70,
                     child: ClipRRect(
-                      borderRadius: BorderRadius.circular(16),
+                      borderRadius: BorderRadius.circular(25),
                       child: PageView.builder(
                         controller: _pageController,
                         physics: const BouncingScrollPhysics(),
