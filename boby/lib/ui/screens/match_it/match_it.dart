@@ -35,7 +35,8 @@ class _FigureOptionsGrid extends StatelessWidget {
   final List<String> options;
   final void Function(String) onTap;
   final bool Function(String) isWrong;
-  const _FigureOptionsGrid({required this.options, required this.onTap, required this.isWrong});
+  final bool Function(String) isCorrect;
+  const _FigureOptionsGrid({required this.options, required this.onTap, required this.isWrong, required this.isCorrect});
 
   @override
   Widget build(BuildContext context) {
@@ -55,6 +56,7 @@ class _FigureOptionsGrid extends StatelessWidget {
         return _GradientButton(
           onTap: () => onTap(label),
           isError: wrong,
+          isCorrect: isCorrect(label),
           child: Text(
             label,
             textAlign: TextAlign.center,
@@ -120,6 +122,9 @@ class _MatchItScreenState extends State<MatchItScreen> {
   final Set<String> _wrongColorLabels = {};
   final Set<int> _wrongNumberValues = {};
   final Set<String> _wrongFigureLabels = {};
+  // Feedback state
+  bool _isLocked = false; // prevents taps during feedback
+  bool _showCorrectOverlay = false; // show green check over the target
 
   @override
   void initState() {
@@ -222,9 +227,18 @@ class _MatchItScreenState extends State<MatchItScreen> {
   }
 
   void _onColorTap((String, Color) picked) {
+    if (_isLocked) return;
     if (picked == _targetColor) {
       _app.playMenuSound(soundPathCorrectAnswer);
-      _nextRound();
+      setState(() {
+        _isLocked = true;
+        _showCorrectOverlay = true;
+      });
+      Future.delayed(const Duration(milliseconds: 500), () {
+        _isLocked = false;
+        _showCorrectOverlay = false;
+        _nextRound();
+      });
     } else {
       _app.playMenuSound(soundPathIncorrectAnswer);
       setState(() {
@@ -234,9 +248,18 @@ class _MatchItScreenState extends State<MatchItScreen> {
   }
 
   void _onNumberTap(int picked) {
+    if (_isLocked) return;
     if (picked == _targetNumber) {
       _app.playMenuSound(soundPathCorrectAnswer);
-      _nextRound();
+      setState(() {
+        _isLocked = true;
+        _showCorrectOverlay = true;
+      });
+      Future.delayed(const Duration(milliseconds: 500), () {
+        _isLocked = false;
+        _showCorrectOverlay = false;
+        _nextRound();
+      });
     } else {
       _app.playMenuSound(soundPathIncorrectAnswer);
       setState(() {
@@ -246,9 +269,18 @@ class _MatchItScreenState extends State<MatchItScreen> {
   }
 
   void _onFigureTap(String picked) {
+    if (_isLocked) return;
     if (_targetFigure != null && picked == _targetFigure!["name"]) {
       _app.playMenuSound(soundPathCorrectAnswer);
-      _nextRound();
+      setState(() {
+        _isLocked = true;
+        _showCorrectOverlay = true;
+      });
+      Future.delayed(const Duration(milliseconds: 1000), () {
+        _isLocked = false;
+        _showCorrectOverlay = false;
+        _nextRound();
+      });
     } else {
       _app.playMenuSound(soundPathIncorrectAnswer);
       setState(() {
@@ -270,14 +302,26 @@ class _MatchItScreenState extends State<MatchItScreen> {
               const SizedBox(height: 12),
               Expanded(
                 child: Center(
-                  child: _roundType == _RoundType.shape
-                      ? _ShapeTarget(
+                  child: Stack(
+                    alignment: Alignment.center,
+                    children: [
+                      if (_roundType == _RoundType.shape)
+                        _ShapeTarget(
                           imagePath: _targetShapePath!,
                           color: _targetColor!.$2,
                         )
-                      : _roundType == _RoundType.number
-                          ? _NumberTarget(number: _targetNumber!)
-                          : _FigureTarget(imagePath: _targetFigure!["image"]!),
+                      else if (_roundType == _RoundType.number)
+                        _NumberTarget(number: _targetNumber!)
+                      else
+                        _FigureTarget(imagePath: _targetFigure!["image"]!),
+                      if (_showCorrectOverlay)
+                        const Icon(
+                          Icons.check_rounded,
+                          color: Colors.green,
+                          size: 120,
+                        ),
+                    ],
+                  ),
                 ),
               ),
               const SizedBox(height: 12),
@@ -286,17 +330,20 @@ class _MatchItScreenState extends State<MatchItScreen> {
                       options: _colorOptions,
                       onTap: _onColorTap,
                       isWrong: (label) => _wrongColorLabels.contains(label),
+                      isCorrect: (label) => _targetColor != null && label == _targetColor!.$1 && _isLocked,
                     )
                   : _roundType == _RoundType.number
                       ? _NumberOptionsGrid(
                           options: _numberOptions,
                           onTap: _onNumberTap,
                           isWrong: (value) => _wrongNumberValues.contains(value),
+                          isCorrect: (value) => _targetNumber != null && value == _targetNumber && _isLocked,
                         )
                       : _FigureOptionsGrid(
                           options: _figureOptions,
                           onTap: _onFigureTap,
                           isWrong: (label) => _wrongFigureLabels.contains(label),
+                          isCorrect: (label) => _targetFigure != null && label == _targetFigure!["name"] && _isLocked,
                         ),
             ],
           ),
@@ -362,7 +409,8 @@ class _ColorOptionsGrid extends StatelessWidget {
   final List<(String, Color)> options;
   final void Function((String, Color)) onTap;
   final bool Function(String) isWrong;
-  const _ColorOptionsGrid({required this.options, required this.onTap, required this.isWrong});
+  final bool Function(String) isCorrect;
+  const _ColorOptionsGrid({required this.options, required this.onTap, required this.isWrong, required this.isCorrect});
 
   @override
   Widget build(BuildContext context) {
@@ -383,6 +431,7 @@ class _ColorOptionsGrid extends StatelessWidget {
           label: opt.$1,
           color: opt.$2,
           isError: wrong,
+          isCorrect: isCorrect(opt.$1),
           onTap: () => onTap(opt),
         );
       },
@@ -395,13 +444,15 @@ class _ColorOptionButton extends StatelessWidget {
   final Color color;
   final VoidCallback onTap;
   final bool isError;
-  const _ColorOptionButton({required this.label, required this.color, required this.onTap, this.isError = false});
+  final bool isCorrect;
+  const _ColorOptionButton({required this.label, required this.color, required this.onTap, this.isError = false, this.isCorrect = false});
 
   @override
   Widget build(BuildContext context) {
     return _GradientButton(
       onTap: onTap,
       isError: isError,
+      isCorrect: isCorrect,
       child: Text(
         label,
         style: const TextStyle(
@@ -420,7 +471,8 @@ class _NumberOptionsGrid extends StatelessWidget {
   final List<int> options;
   final void Function(int) onTap;
   final bool Function(int) isWrong;
-  const _NumberOptionsGrid({required this.options, required this.onTap, required this.isWrong});
+  final bool Function(int) isCorrect;
+  const _NumberOptionsGrid({required this.options, required this.onTap, required this.isWrong, required this.isCorrect});
 
   @override
   Widget build(BuildContext context) {
@@ -445,6 +497,7 @@ class _NumberOptionsGrid extends StatelessWidget {
         return _GradientButton(
           onTap: () => onTap(n),
           isError: wrong,
+          isCorrect: isCorrect(n),
           child: Text(
             label,
             textAlign: TextAlign.center,
@@ -466,7 +519,8 @@ class _GradientButton extends StatelessWidget {
   final Widget child;
   final VoidCallback onTap;
   final bool isError;
-  const _GradientButton({required this.child, required this.onTap, this.isError = false});
+  final bool isCorrect;
+  const _GradientButton({required this.child, required this.onTap, this.isError = false, this.isCorrect = false});
 
   @override
   Widget build(BuildContext context) {
@@ -484,12 +538,20 @@ class _GradientButton extends StatelessWidget {
             gradient: LinearGradient(
               colors: isError
                   ? const [Color.fromARGB(255, 245, 159, 159), Color.fromARGB(255, 254, 131, 131)]
-                  : const [Color.fromARGB(255, 78, 72, 255), Color.fromARGB(255, 53, 97, 240)],
+                  : isCorrect
+                      ? const [Color.fromARGB(255, 76, 175, 80), Color.fromARGB(255, 56, 142, 60)]
+                      : const [Color.fromARGB(255, 78, 72, 255), Color.fromARGB(255, 53, 97, 240)],
               begin: Alignment.topLeft,
               end: Alignment.bottomRight,
             ),
             borderRadius: borderRadius,
-            border: Border.all(color: isError ? const Color(0xFFE57373) : const Color(0xFF4527A0)),
+            border: Border.all(
+              color: isError
+                  ? const Color(0xFFE57373)
+                  : isCorrect
+                      ? const Color(0xFF2E7D32)
+                      : const Color(0xFF4527A0),
+            ),
           ),
           padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 10),
           child: Center(child: child),
