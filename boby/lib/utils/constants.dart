@@ -138,6 +138,197 @@ class Constants {
       "name": "Whistle",
       "sound": "assets/sounds/whistle.wav",
     },
+ 
+    {
+      "image": "assets/images/airplane.jpg",
+      "name": "Airplane",
+      "sound": "assets/sounds/airplane.wav",
+    },
+    {
+      "image": "assets/images/apple.jpg",
+      "name": "Apple",
+      "sound": "assets/sounds/apple.wav",
+    },
+    {
+      "image": "assets/images/ball.jpg",
+      "name": "Ball",
+      "sound": "assets/sounds/ball.wav",
+    },
+    {
+      "image": "assets/images/banana.jpg",
+      "name": "Banana",
+      "sound": "assets/sounds/banana.wav",
+    },
+    {
+      "image": "assets/images/bed.jpg",
+      "name": "Bed",
+      "sound": "assets/sounds/bed.wav",
+    },
+    {
+      "image": "assets/images/bicycle.jpg",
+      "name": "Bicycle",
+      "sound": "assets/sounds/bicycle.wav",
+    },
+    {
+      "image": "assets/images/bird.jpg",
+      "name": "Bird",
+      "sound": "assets/sounds/bird.wav",
+    },
+    {
+      "image": "assets/images/book.jpg",
+      "name": "Book",
+      "sound": "assets/sounds/book.wav",
+    },
+    {
+      "image": "assets/images/boy.jpg",
+      "name": "Boy",
+      "sound": "assets/sounds/boy.wav",
+    },
+    {
+      "image": "assets/images/bread.jpg",
+      "name": "Bread",
+      "sound": "assets/sounds/bread.wav",
+    },
+    {
+      "image": "assets/images/car.jpg",
+      "name": "Car",
+      "sound": "assets/sounds/car.wav",
+    },
+    {
+      "image": "assets/images/chair.jpg",
+      "name": "Chair",
+      "sound": "assets/sounds/chair.wav",
+    },
+    {
+      "image": "assets/images/cherry.jpg",
+      "name": "Cherry",
+      "sound": "assets/sounds/cherry.wav",
+    },
+   
+    {
+      "image": "assets/images/cloud.jpg",
+      "name": "Cloud",
+      "sound": "assets/sounds/cloud.wav",
+    },
+    {
+      "image": "assets/images/cup.jpg",
+      "name": "Cup",
+      "sound": "assets/sounds/cup.wav",
+    },
+    {
+      "image": "assets/images/door.jpg",
+      "name": "Door",
+      "sound": "assets/sounds/door.wav",
+    },
+    {
+      "image": "assets/images/egg.jpg",
+      "name": "Egg",
+      "sound": "assets/sounds/egg.wav",
+    },
+    {
+      "image": "assets/images/elephant.jpg",
+      "name": "Elephant",
+      "sound": "assets/sounds/elephant.wav",
+    },
+    {
+      "image": "assets/images/eye.jpg",
+      "name": "Eye",
+      "sound": "assets/sounds/eye.wav",
+    },
+   
+   
+    {
+      "image": "assets/images/fish.jpg",
+      "name": "Fish",
+      "sound": "assets/sounds/fish.wav",
+    },
+    {
+      "image": "assets/images/flower.jpg",
+      "name": "Flower",
+      "sound": "assets/sounds/flower.wav",
+    },
+    {
+      "image": "assets/images/foot.jpg",
+      "name": "Foot",
+      "sound": "assets/sounds/foot.wav",
+    },
+    {
+      "image": "assets/images/girl.jpg",
+      "name": "Girl",
+      "sound": "assets/sounds/girl.wav",
+    },
+    {
+      "image": "assets/images/grapes.jpg",
+      "name": "Grapes",
+      "sound": "assets/sounds/grapes.wav",
+    },
+    {
+      "image": "assets/images/hand.jpg",
+      "name": "Hand",
+      "sound": "assets/sounds/hand.wav",
+    },
+    {
+      "image": "assets/images/milk.jpg",
+      "name": "Milk",
+      "sound": "assets/sounds/milk.wav",
+    },
+    {
+      "image": "assets/images/moon.jpg",
+      "name": "Moon",
+      "sound": "assets/sounds/moon.wav",
+    },
+    {
+      "image": "assets/images/mouth.jpg",
+      "name": "Mouth",
+      "sound": "assets/sounds/mouth.wav",
+    },
+    {
+      "image": "assets/images/nose.jpg",
+      "name": "Nose",
+      "sound": "assets/sounds/nose.wav",
+    },
+    {
+      "image": "assets/images/orange.jpg",
+      "name": "Orange",
+      "sound": "assets/sounds/orange.wav",
+    },
+    {
+      "image": "assets/images/pear.jpg",
+      "name": "Pear",
+      "sound": "assets/sounds/pear.wav",
+    },
+    {
+      "image": "assets/images/rain.jpg",
+      "name": "Rain",
+      "sound": "assets/sounds/rain.wav",
+    },
+    {
+      "image": "assets/images/rice.jpg",
+      "name": "Rice",
+      "sound": "assets/sounds/rice.wav",
+    },
+  
+    {
+      "image": "assets/images/sun.jpg",
+      "name": "Sun",
+      "sound": "assets/sounds/sun.wav",
+    },
+    {
+      "image": "assets/images/table.jpg",
+      "name": "Table",
+      "sound": "assets/sounds/table.wav",
+    },
+    {
+      "image": "assets/images/tree.jpg",
+      "name": "Tree",
+      "sound": "assets/sounds/tree.wav",
+    },
+    {
+      "image": "assets/images/watermelon.jpg",
+      "name": "Watermelon",
+      "sound": "assets/sounds/watermelon.wav",
+    },
+   
   
   ];
 
