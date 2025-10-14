@@ -3,6 +3,7 @@ import 'package:boby/controllers/app_controller.dart';
 import 'package:get/get.dart';
 import 'package:flutter/material.dart';
 import 'dart:math';
+import 'package:boby/utils/constants.dart';
 
 class MatchItScreen extends StatefulWidget {
   const MatchItScreen({super.key});
@@ -11,7 +12,67 @@ class MatchItScreen extends StatefulWidget {
   State<MatchItScreen> createState() => _MatchItScreenState();
 }
 
-enum _RoundType { shape, number }
+class _FigureTarget extends StatelessWidget {
+  final String imagePath;
+  const _FigureTarget({required this.imagePath});
+
+  @override
+  Widget build(BuildContext context) {
+    return AspectRatio(
+      aspectRatio: 1.3,
+      child: FittedBox(
+        fit: BoxFit.contain,
+        child: ClipRRect(
+          borderRadius: BorderRadius.circular(50),
+          child: Image.asset(imagePath),
+        ),
+      ),
+    );
+  }
+}
+
+class _FigureOptionsGrid extends StatelessWidget {
+  final List<String> options;
+  final void Function(String) onTap;
+  final bool Function(String) isWrong;
+  const _FigureOptionsGrid({required this.options, required this.onTap, required this.isWrong});
+
+  @override
+  Widget build(BuildContext context) {
+    return GridView.builder(
+      shrinkWrap: true,
+      physics: const NeverScrollableScrollPhysics(),
+      gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
+        crossAxisCount: 2,
+        mainAxisSpacing: 12,
+        crossAxisSpacing: 12,
+        childAspectRatio: 3.5,
+      ),
+      itemCount: options.length,
+      itemBuilder: (context, index) {
+        final label = options[index];
+        final wrong = isWrong(label);
+        return _GradientButton(
+          onTap: () => onTap(label),
+          isError: wrong,
+          child: Text(
+            label,
+            textAlign: TextAlign.center,
+            style: const TextStyle(
+              color: Colors.white,
+              fontSize: 20,
+              fontWeight: FontWeight.w800,
+              height: 1.0,
+              letterSpacing: 0.5,
+            ),
+          ),
+        );
+      },
+    );
+  }
+}
+
+enum _RoundType { shape, number, figure }
 
 class _MatchItScreenState extends State<MatchItScreen> {
   final _rng = Random();
@@ -52,9 +113,13 @@ class _MatchItScreenState extends State<MatchItScreen> {
   // Number round
   int? _targetNumber; // 1..20
   late List<int> _numberOptions;
+  // Figure round (from Constants.assets)
+  Map<String, String>? _targetFigure; // expects keys: image, name
+  late List<String> _figureOptions; // list of 4 names
   // Track wrong selections in current round
   final Set<String> _wrongColorLabels = {};
   final Set<int> _wrongNumberValues = {};
+  final Set<String> _wrongFigureLabels = {};
 
   @override
   void initState() {
@@ -69,13 +134,16 @@ class _MatchItScreenState extends State<MatchItScreen> {
   }
 
   void _nextRound() {
-    // Randomly choose between shape/color and number rounds
-    _roundType = _rng.nextBool() ? _RoundType.shape : _RoundType.number;
+    // Randomly choose between shape/color, number, and figure rounds
+    final choice = _rng.nextInt(3);
+    _roundType = choice == 0 ? _RoundType.shape : choice == 1 ? _RoundType.number : _RoundType.figure;
 
     if (_roundType == _RoundType.shape) {
       _generateShapeRound();
-    } else {
+    } else if (_roundType == _RoundType.number) {
       _generateNumberRound();
+    } else {
+      _generateFigureRound();
     }
     setState(() {});
   }
@@ -96,8 +164,10 @@ class _MatchItScreenState extends State<MatchItScreen> {
     opts.shuffle(_rng);
     _colorOptions = opts;
     _targetNumber = null;
+    _targetFigure = null;
     _wrongColorLabels.clear();
     _wrongNumberValues.clear();
+    _wrongFigureLabels.clear();
   }
 
   void _generateNumberRound() {
@@ -109,8 +179,46 @@ class _MatchItScreenState extends State<MatchItScreen> {
     _numberOptions = opts.toList()..shuffle(_rng);
     _targetShapePath = null;
     _targetColor = null;
+    _targetFigure = null;
     _wrongColorLabels.clear();
     _wrongNumberValues.clear();
+    _wrongFigureLabels.clear();
+  }
+
+  void _generateFigureRound() {
+    // Build a pool from Constants.assets that have required keys
+    final pool = Constants.assets;
+    if (pool.isEmpty) {
+      // fallback to shape round if no figures available
+      _generateShapeRound();
+      return;
+    }
+    _targetFigure = pool[_rng.nextInt(pool.length)];
+    final targetName = _targetFigure!["name"]!;
+    // Build 4 name options including the correct one
+    final Set<int> usedIdx = {};
+    final List<String> opts = [targetName];
+    while (opts.length < 4 && usedIdx.length < pool.length) {
+      final idx = _rng.nextInt(pool.length);
+      // avoid picking the same name twice
+      if (pool[idx]["name"] != null && pool[idx]["name"] != targetName) {
+        final name = pool[idx]["name"]!;
+        if (!opts.contains(name)) opts.add(name);
+      }
+      usedIdx.add(idx);
+    }
+    // In case of too few unique names, fill with duplicates (won't happen normally)
+    while (opts.length < 4) {
+      opts.add(targetName);
+    }
+    opts.shuffle(_rng);
+    _figureOptions = opts;
+    _targetShapePath = null;
+    _targetColor = null;
+    _targetNumber = null;
+    _wrongColorLabels.clear();
+    _wrongNumberValues.clear();
+    _wrongFigureLabels.clear();
   }
 
   void _onColorTap((String, Color) picked) {
@@ -137,6 +245,18 @@ class _MatchItScreenState extends State<MatchItScreen> {
     }
   }
 
+  void _onFigureTap(String picked) {
+    if (_targetFigure != null && picked == _targetFigure!["name"]) {
+      _app.playMenuSound(soundPathCorrectAnswer);
+      _nextRound();
+    } else {
+      _app.playMenuSound(soundPathIncorrectAnswer);
+      setState(() {
+        _wrongFigureLabels.add(picked);
+      });
+    }
+  }
+
   // Removed letterPath: PNG letters no longer used for options
 
   @override
@@ -155,7 +275,9 @@ class _MatchItScreenState extends State<MatchItScreen> {
                           imagePath: _targetShapePath!,
                           color: _targetColor!.$2,
                         )
-                      : _NumberTarget(number: _targetNumber!),
+                      : _roundType == _RoundType.number
+                          ? _NumberTarget(number: _targetNumber!)
+                          : _FigureTarget(imagePath: _targetFigure!["image"]!),
                 ),
               ),
               const SizedBox(height: 12),
@@ -165,11 +287,17 @@ class _MatchItScreenState extends State<MatchItScreen> {
                       onTap: _onColorTap,
                       isWrong: (label) => _wrongColorLabels.contains(label),
                     )
-                  : _NumberOptionsGrid(
-                      options: _numberOptions,
-                      onTap: _onNumberTap,
-                      isWrong: (value) => _wrongNumberValues.contains(value),
-                    ),
+                  : _roundType == _RoundType.number
+                      ? _NumberOptionsGrid(
+                          options: _numberOptions,
+                          onTap: _onNumberTap,
+                          isWrong: (value) => _wrongNumberValues.contains(value),
+                        )
+                      : _FigureOptionsGrid(
+                          options: _figureOptions,
+                          onTap: _onFigureTap,
+                          isWrong: (label) => _wrongFigureLabels.contains(label),
+                        ),
             ],
           ),
         );
