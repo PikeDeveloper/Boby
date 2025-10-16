@@ -4,6 +4,8 @@ import 'package:get/get.dart';
 import 'package:flutter/material.dart';
 import 'dart:math';
 import 'package:boby/utils/constants.dart';
+import 'package:boby/ui/screens/match_it/widgets/gradient_button.dart';
+import 'package:boby/ui/screens/match_it/widgets/number_options_grid.dart';
 
 class MatchItScreen extends StatefulWidget {
   const MatchItScreen({super.key});
@@ -53,7 +55,7 @@ class _FigureOptionsGrid extends StatelessWidget {
       itemBuilder: (context, index) {
         final label = options[index];
         final wrong = isWrong(label);
-        return _GradientButton(
+        return GradientButton(
           onTap: () => onTap(label),
           isError: wrong,
           isCorrect: isCorrect(label),
@@ -333,7 +335,7 @@ class _MatchItScreenState extends State<MatchItScreen> {
                       isCorrect: (label) => _targetColor != null && label == _targetColor!.$1 && _isLocked,
                     )
                   : _roundType == _RoundType.number
-                      ? _NumberOptionsGrid(
+                      ? NumberOptionsGrid(
                           options: _numberOptions,
                           onTap: _onNumberTap,
                           isWrong: (value) => _wrongNumberValues.contains(value),
@@ -449,7 +451,7 @@ class _ColorOptionButton extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return _GradientButton(
+    return GradientButton(
       onTap: onTap,
       isError: isError,
       isCorrect: isCorrect,
@@ -467,98 +469,5 @@ class _ColorOptionButton extends StatelessWidget {
   }
 }
 
-class _NumberOptionsGrid extends StatelessWidget {
-  final List<int> options;
-  final void Function(int) onTap;
-  final bool Function(int) isWrong;
-  final bool Function(int) isCorrect;
-  const _NumberOptionsGrid({required this.options, required this.onTap, required this.isWrong, required this.isCorrect});
-
-  @override
-  Widget build(BuildContext context) {
-    const List<String> wordsEn = [
-      'One', 'Two', 'Three', 'Four', 'Five', 'Six', 'Seven', 'Eight', 'Nine', 'Ten',
-      'Eleven', 'Twelve', 'Thirteen', 'Fourteen', 'Fifteen', 'Sixteen', 'Seventeen', 'Eighteen', 'Nineteen', 'Twenty',
-    ];
-    return GridView.builder(
-      shrinkWrap: true,
-      physics: const NeverScrollableScrollPhysics(),
-      gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
-        crossAxisCount: 2,
-        mainAxisSpacing: 12,
-        crossAxisSpacing: 12,
-        childAspectRatio: 3.5,
-      ),
-      itemCount: options.length,
-      itemBuilder: (context, index) {
-        final n = options[index];
-        final label = n >= 1 && n <= 20 ? wordsEn[n - 1] : '$n';
-        final wrong = isWrong(n);
-        return _GradientButton(
-          onTap: () => onTap(n),
-          isError: wrong,
-          isCorrect: isCorrect(n),
-          child: Text(
-            label,
-            textAlign: TextAlign.center,
-            style: const TextStyle(
-              color: Colors.white,
-              fontSize: 20,
-              fontWeight: FontWeight.w800,
-              height: 1.0,
-              letterSpacing: 0.5,
-            ),
-          ),
-        );
-      },
-    );
-  }
-}
-
-class _GradientButton extends StatelessWidget {
-  final Widget child;
-  final VoidCallback onTap;
-  final bool isError;
-  final bool isCorrect;
-  const _GradientButton({required this.child, required this.onTap, this.isError = false, this.isCorrect = false});
-
-  @override
-  Widget build(BuildContext context) {
-    final borderRadius = BorderRadius.circular(12);
-    return Material(
-      color: Colors.transparent,
-      elevation: 6,
-      shadowColor: Colors.black26,
-      borderRadius: borderRadius,
-      child: InkWell(
-        onTap: onTap,
-        borderRadius: borderRadius,
-        child: Ink(
-          decoration: BoxDecoration(
-            gradient: LinearGradient(
-              colors: isError
-                  ? const [Color.fromARGB(255, 245, 159, 159), Color.fromARGB(255, 254, 131, 131)]
-                  : isCorrect
-                      ? const [Color.fromARGB(255, 76, 175, 80), Color.fromARGB(255, 56, 142, 60)]
-                      : const [Color.fromARGB(255, 78, 72, 255), Color.fromARGB(255, 53, 97, 240)],
-              begin: Alignment.topLeft,
-              end: Alignment.bottomRight,
-            ),
-            borderRadius: borderRadius,
-            border: Border.all(
-              color: isError
-                  ? const Color(0xFFE57373)
-                  : isCorrect
-                      ? const Color(0xFF2E7D32)
-                      : const Color(0xFF4527A0),
-            ),
-          ),
-          padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 10),
-          child: Center(child: child),
-        ),
-      ),
-    );
-  }
-}
 
 // _WordPng removed: options now render direct Text labels

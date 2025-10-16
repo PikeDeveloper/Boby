@@ -235,8 +235,7 @@ class Constants {
       "name": "Eye",
       "sound": "assets/sounds/eye.wav",
     },
-   
-   
+     
     {
       "image": "assets/images/fish.jpg",
       "name": "Fish",
@@ -277,16 +276,7 @@ class Constants {
       "name": "Moon",
       "sound": "assets/sounds/moon.wav",
     },
-    {
-      "image": "assets/images/mouth.jpg",
-      "name": "Mouth",
-      "sound": "assets/sounds/mouth.wav",
-    },
-    {
-      "image": "assets/images/nose.jpg",
-      "name": "Nose",
-      "sound": "assets/sounds/nose.wav",
-    },
+ 
     {
       "image": "assets/images/orange.jpg",
       "name": "Orange",
