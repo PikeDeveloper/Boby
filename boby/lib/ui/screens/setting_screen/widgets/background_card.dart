@@ -24,7 +24,7 @@ class BackgroundCard extends StatelessWidget {
               color: appController.backGroundImage.value == image
                   ? MyColors.green
                   : Colors.white,
-              width: 4,
+              width: 3,
             ),
           ),
           child: ClipRRect(

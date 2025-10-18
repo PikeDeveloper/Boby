@@ -12,12 +12,25 @@ class StorageService {
   static const String _kColorsCorrect = 'colors_correct';
   static const String _kNumbersCorrect = 'numbers_correct';
   static const String _kThingsCorrect = 'things_correct';
+  static const String _kMathOpAdd = 'math_op_add';
+  static const String _kMathOpSub = 'math_op_sub';
+  static const String _kMathOpMul = 'math_op_mul';
+  static const String _kMathOpDiv = 'math_op_div';
+  static const String _kMemoryGrid = 'memory_grid'; // values: '3x3', '3x4'
 
   late Box _box;
 
   static Future<void> init() async {
     await Hive.initFlutter();
     instance._box = await Hive.openBox(_boxName);
+    // initialize defaults if null
+    instance._box.putAll({
+      if (instance._box.get(_kMathOpAdd) == null) _kMathOpAdd: true,
+      if (instance._box.get(_kMathOpSub) == null) _kMathOpSub: false,
+      if (instance._box.get(_kMathOpMul) == null) _kMathOpMul: false,
+      if (instance._box.get(_kMathOpDiv) == null) _kMathOpDiv: false,
+      if (instance._box.get(_kMemoryGrid) == null) _kMemoryGrid: '3x3',
+    });
   }
 
   String? getBackground() => _box.get(_kBackground) as String?;
@@ -57,4 +70,21 @@ class StorageService {
   ValueListenable<Box> listenable({List<dynamic>? keys}) => _box.listenable(keys: keys);
   static String get mathCorrectKey => _kMathCorrect;
   static String get mathWrongKey => _kMathWrong;
+  static String get mathOpAddKey => _kMathOpAdd;
+  static String get mathOpSubKey => _kMathOpSub;
+  static String get mathOpMulKey => _kMathOpMul;
+  static String get mathOpDivKey => _kMathOpDiv;
+  static String get memoryGridKey => _kMemoryGrid;
+
+  bool getMathOpAdd() => (_box.get(_kMathOpAdd) as bool?) ?? true;
+  Future<void> setMathOpAdd(bool v) => _box.put(_kMathOpAdd, v);
+  bool getMathOpSub() => (_box.get(_kMathOpSub) as bool?) ?? false;
+  Future<void> setMathOpSub(bool v) => _box.put(_kMathOpSub, v);
+  bool getMathOpMul() => (_box.get(_kMathOpMul) as bool?) ?? false;
+  Future<void> setMathOpMul(bool v) => _box.put(_kMathOpMul, v);
+  bool getMathOpDiv() => (_box.get(_kMathOpDiv) as bool?) ?? false;
+  Future<void> setMathOpDiv(bool v) => _box.put(_kMathOpDiv, v);
+
+  String getMemoryGrid() => (_box.get(_kMemoryGrid) as String?) ?? '3x3';
+  Future<void> setMemoryGrid(String value) => _box.put(_kMemoryGrid, value);
 }
