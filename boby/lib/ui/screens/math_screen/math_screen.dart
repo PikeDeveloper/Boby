@@ -105,7 +105,7 @@ class _MathScreenState extends State<MathScreen> {
                                   backgroundColor: _correctSelected == opt
                                       ? Colors.green
                                       : (_wrongSelecteds.contains(opt)
-                                          ? Colors.red
+                                          ? const Color.fromARGB(113, 244, 67, 54)
                                           : null),
                                   shape: RoundedRectangleBorder(
                                     borderRadius: BorderRadius.circular(16),

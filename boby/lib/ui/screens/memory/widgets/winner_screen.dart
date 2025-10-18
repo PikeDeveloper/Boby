@@ -1,6 +1,7 @@
 import 'dart:math';
 
 import 'package:boby/ui/screens/memory/widgets/new_game_button.dart';
+import 'package:boby/ui/shared/letter_button.dart';
 import 'package:flutter/material.dart';
 
 class WinnerScreenMemory extends StatefulWidget {
@@ -50,6 +51,9 @@ class _WinnerScreenMemoryState extends State<WinnerScreenMemory>
 
    final minSize = min (screenWidth, screenHeight);
    final winnerMessages = ["W", "I", "N", "N", "E", "R"];
+   final playAgain  = ["P", "L", "A", "Y", "A", " ", "G", "A", "I", "N"];
+   
+   
    final letterSize = minSize / 8;
     
 
@@ -69,23 +73,16 @@ class _WinnerScreenMemoryState extends State<WinnerScreenMemory>
             mainAxisAlignment: MainAxisAlignment.center,
             
             children: [
-               Container(
-                decoration: BoxDecoration(
-                  color: Colors.white,
-                  borderRadius: BorderRadius.circular(10),
-                ),
-                padding: const EdgeInsets.all(10),
-                //color: Colors.white,
-                child: Row(
-                mainAxisAlignment: MainAxisAlignment.center,
-                mainAxisSize: MainAxisSize.min,
-            
-            
-                children: [
-                  for (var letter in winnerMessages)
-                Image.asset("assets/letters_2/$letter.png", height: letterSize.toDouble(), ),
-                ],
-              )),
+               Row(
+               mainAxisAlignment: MainAxisAlignment.center,
+               mainAxisSize: MainAxisSize.min,
+                           
+                           
+               children: [
+                 for (var letter in winnerMessages)
+               Image.asset("assets/letters_2/$letter.png", height: letterSize.toDouble(), ),
+               ],
+                             ),
                
               const SizedBox(height: 20),
               Center(
@@ -94,8 +91,11 @@ class _WinnerScreenMemoryState extends State<WinnerScreenMemory>
                   child: Image.asset("assets/winner-cup.png", width: minSize / 2, height: minSize /2),
                 ),
               ),
-              const SizedBox(height: 20),
-              NewGameButton(onTap: widget.onTap)
+              const SizedBox(height: 50),
+          
+     
+              LetterButton(onTap: widget.onTap, letters: playAgain, letterSize: letterSize * 0.8),
+            
             ],
           ),
         ),
