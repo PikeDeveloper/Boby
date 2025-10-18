@@ -70,7 +70,7 @@ class _CardSoundState extends State<CardSound>
     super.dispose();
   }
 
-  // Timer for managing the 4-second timeout
+  // Timer for managing the 1-second timeout
 
   void _startBouncing() {
     if (!mounted) return;
@@ -98,16 +98,16 @@ class _CardSoundState extends State<CardSound>
       _controller.forward(from: 0);
     });
 
-    // Stop bouncing after 4 seconds
-    _stopTimer = Timer(const Duration(seconds: 4), () {
+    // Stop bouncing after 1 second
+    _stopTimer = Timer(const Duration(seconds: 1), () {
       if (mounted && _isSelected) {
         // Only stop if still selected
-        _stopBouncing();
+        _stopBouncing(stopAudio: false);
       }
     });
   }
 
-  void _stopBouncing({bool resetState = true}) async {
+  void _stopBouncing({bool resetState = true, bool stopAudio = true}) async {
     if (!mounted) return;
 
     // Cancel timers first
@@ -115,7 +115,7 @@ class _CardSoundState extends State<CardSound>
     _stopTimer?.cancel();
 
     // Detener el audio
-    if (_isPlaying) {
+    if (stopAudio && _isPlaying) {
       try {
         await _player.stop();
         _isPlaying = false;

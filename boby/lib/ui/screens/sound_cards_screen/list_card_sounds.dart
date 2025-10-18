@@ -1,162 +1,165 @@
 import 'package:flutter/material.dart';
 
+import '../../../utils/constants.dart';
 import 'widgets/card_sound.dart';
 
 class ListCardSounds extends StatelessWidget {
   ListCardSounds({super.key});
 
-  final List<Map<String, String>> assets = [
+  final List<Map<String, String>> assets = Constants.assets;  
+  /*
+   [
     {
       "image": "assets/images/accordeon.jpg",
       "name": "Accordion",
-      "sound": "assets/sounds/accordeon.wav",
+      "sound": "assets/sound_names/accordeon.wav",
     },
     {
       "image": "assets/images/bee.jpg",
       "name": "Bee",
-      "sound": "assets/sounds/bee.wav",
+      "sound": "assets/sound_names/bee.wav",
     },
     {
       "image": "assets/images/bell.jpg",
       "name": "Bell",
-      "sound": "assets/sounds/bell.wav",
+      "sound": "assets/sound_names/bell.wav",
     },
     {
       "image": "assets/images/bus.jpg",
       "name": "Bus",
-      "sound": "assets/sounds/bus.wav",
+      "sound": "assets/sound_names/bus.wav",
     },
     {
       "image": "assets/images/cat.jpg",
       "name": "Cat",
-      "sound": "assets/sounds/cat.wav",
+      "sound": "assets/sound_names/cat.wav",
     },
     {
       "image": "assets/images/chick.jpg",
       "name": "Chick",
-      "sound": "assets/sounds/chick.wav",
+      "sound": "assets/sound_names/chick.wav",
     },
     {
       "image": "assets/images/clapping.jpg",
       "name": "Clapping",
-      "sound": "assets/sounds/clapping.wav",
+      "sound": "assets/sound_names/clapping.wav",
     },
     {
       "image": "assets/images/cow.jpg",
       "name": "Cow",
-      "sound": "assets/sounds/cow.wav",
+      "sound": "assets/sound_names/cow.wav",
     },
     {
       "image": "assets/images/dog.jpg",
       "name": "Dog",
-      "sound": "assets/sounds/dog.wav",
+      "sound": "assets/sound_names/dog.wav",
     },
     {
       "image": "assets/images/drum.jpg",
       "name": "Drum",
-      "sound": "assets/sounds/drum.wav",
+      "sound": "assets/sound_names/drum.wav",
     },
     {
       "image": "assets/images/duck.jpg",
       "name": "Duck",
-      "sound": "assets/sounds/duck.wav",
+      "sound": "assets/sound_names/duck.wav",
     },
     {
       "image": "assets/images/firetruck.jpg",
       "name": "Firetruck",
-      "sound": "assets/sounds/firetruck.wav",
+      "sound": "assets/sound_names/firetruck.wav",
     },
     {
       "image": "assets/images/fireworks.jpg",
       "name": "Fireworks",
-      "sound": "assets/sounds/fireworks.wav",
+      "sound": "assets/sound_names/fireworks.wav",
     },
     {
       "image": "assets/images/flaute.jpg",
       "name": "Flute",
-      "sound": "assets/sounds/flaute.wav",
+      "sound": "assets/sound_names/flaute.wav",
     },
     {
       "image": "assets/images/frog.jpg",
       "name": "Frog",
-      "sound": "assets/sounds/frog.wav",
+      "sound": "assets/sound_names/frog.wav",
     },
     {
       "image": "assets/images/guitar.jpg",
       "name": "Guitar",
-      "sound": "assets/sounds/guitar.wav",
+      "sound": "assets/sound_names/guitar.wav",
     },
     {
       "image": "assets/images/hen.jpg",
       "name": "Hen",
-      "sound": "assets/sounds/hen.wav",
+      "sound": "assets/sound_names/hen.wav",
     },
     {
       "image": "assets/images/horse.jpg",
       "name": "Horse",
-      "sound": "assets/sounds/horse.wav",
+      "sound": "assets/sound_names/horse.wav",
     },
     {
       "image": "assets/images/lion.jpg",
       "name": "Lion",
-      "sound": "assets/sounds/lion.wav",
+      "sound": "assets/sound_names/lion.wav",
     },
     {
       "image": "assets/images/owl.jpg",
       "name": "Owl",
-      "sound": "assets/sounds/owl.wav",
+      "sound": "assets/sound_names/owl.wav",
     },
     {
       "image": "assets/images/phone.jpg",
       "name": "Phone",
-      "sound": "assets/sounds/telephone.wav",
+      "sound": "assets/sound_names/telephone.wav",
     },
     {
       "image": "assets/images/piano.jpg",
       "name": "Piano",
-      "sound": "assets/sounds/piano.wav",
+      "sound": "assets/sound_names/piano.wav",
     },
     {
       "image": "assets/images/pig.jpg",
       "name": "Pig",
-      "sound": "assets/sounds/pig.wav",
+      "sound": "assets/sound_names/pig.wav",
     },
     {
       "image": "assets/images/rooster.jpg",
       "name": "Rooster",
-      "sound": "assets/sounds/rooster.wav",
+      "sound": "assets/sound_names/rooster.wav",
     },
     {
       "image": "assets/images/sheep.jpg",
       "name": "Sheep",
-      "sound": "assets/sounds/sheep.wav",
+      "sound": "assets/sound_names/sheep.wav",
     },
     {
       "image": "assets/images/train.jpg",
       "name": "Train",
-      "sound": "assets/sounds/train.wav",
+      "sound": "assets/sound_names/train.wav",
     },
     {
       "image": "assets/images/trumpet.jpg",
       "name": "Trumpet",
-      "sound": "assets/sounds/trumpet.wav",
+      "sound": "assets/sound_names/trumpet.wav",
     },
     {
       "image": "assets/images/water.jpg",
       "name": "Water",
-      "sound": "assets/sounds/water.wav",
+      "sound": "assets/sound_names/water.wav",
     },
     {
       "image": "assets/images/whistle.jpg",
       "name": "Whistle",
-      "sound": "assets/sounds/whistle.wav",
+      "sound": "assets/sound_names/whistle.wav",
     },
     {
       "image": "assets/images/xylophone.jpg",
       "name": "Xylophone",
-      "sound": "assets/sounds/xylophone.wav",
+      "sound": "assets/sound_names/xylophone.wav",
     },
-  ];
+  ];*/
 
   @override
   Widget build(BuildContext context) {
