@@ -3,6 +3,7 @@ import 'dart:io';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:just_audio/just_audio.dart';
+import 'package:boby/services/storage_service.dart';
 
 class AppController extends GetxController {
   //------------General------------------------------
@@ -16,6 +17,16 @@ class AppController extends GetxController {
   //------------Audio Player para sonidos globales------------------------------
   final AudioPlayer _menuAudioPlayer = AudioPlayer();
   
+  @override
+  void onInit() {
+    super.onInit();
+    // Cargar background persistido
+    final saved = StorageService.instance.getBackground();
+    if (saved != null && saved.isNotEmpty) {
+      backGroundImage.value = saved;
+    }
+  }
+
   @override
   void onClose() {
     _menuAudioPlayer.dispose();

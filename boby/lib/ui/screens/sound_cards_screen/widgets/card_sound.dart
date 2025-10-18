@@ -23,20 +23,28 @@ class CardSound extends StatefulWidget {
   State<CardSound> createState() => _CardSoundState();
 }
 
-class _CardSoundState extends State<CardSound> {
+class _CardSoundState extends State<CardSound> with SingleTickerProviderStateMixin {
   AudioPlayer? _player; // lazy init
   StreamSubscription<PlayerState>? _stateSub;
   bool _isPlaying = false;
+  late final AnimationController _jumpCtrl;
+  late final Animation<double> _jumpY;
 
   @override
   void initState() {
     super.initState();
+    _jumpCtrl = AnimationController(vsync: this, duration: const Duration(milliseconds: 300));
+    _jumpY = TweenSequence<double>([
+      TweenSequenceItem(tween: Tween(begin: 0.0, end: -16.0).chain(CurveTween(curve: Curves.easeOut)), weight: 50),
+      TweenSequenceItem(tween: Tween(begin: -16.0, end: 0.0).chain(CurveTween(curve: Curves.easeIn)), weight: 50),
+    ]).animate(_jumpCtrl);
   }
 
   @override
   void dispose() {
     _stateSub?.cancel();
     _player?.dispose();
+    _jumpCtrl.dispose();
     super.dispose();
   }
 
@@ -66,6 +74,7 @@ class _CardSoundState extends State<CardSound> {
 
     return GestureDetector(
       onTap: () async {
+        _jumpCtrl.forward(from: 0);
         if (appController.cardSelected.value == widget.name) {
           // If already selected, stop the animation and sound
           try {
@@ -132,7 +141,13 @@ class _CardSoundState extends State<CardSound> {
           }
         }
       },
-      child: SizedBox(
+      child: AnimatedBuilder(
+        animation: _jumpY,
+        builder: (context, child) => Transform.translate(
+          offset: Offset(0, _jumpY.value),
+          child: child,
+        ),
+        child: SizedBox(
         width: 150,
         height: 150,
         child: Card(
@@ -153,6 +168,7 @@ class _CardSoundState extends State<CardSound> {
             borderRadius: BorderRadius.circular(20),
             child: Image.asset(widget.image, fit: BoxFit.cover),
           ),
+        ),
         ),
       ),
     );

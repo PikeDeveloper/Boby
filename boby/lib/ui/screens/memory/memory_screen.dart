@@ -4,6 +4,7 @@ import 'package:boby/ui/screens/memory/widgets/new_game_button.dart';
 import 'package:boby/ui/screens/memory/widgets/winner_screen.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
+import 'package:boby/services/storage_service.dart';
 
 class MemoryScreen extends StatefulWidget {
   const MemoryScreen({super.key});
@@ -27,6 +28,9 @@ class _MemoryScreenState extends State<MemoryScreen>
 
   late AnimationController _flipController;
   late Animation<double> _flipAnimation;
+  int _targetPairs = 0;
+  int _rows = 3;
+  int _cols = 3;
 
   @override
   void initState() {
@@ -48,16 +52,36 @@ class _MemoryScreenState extends State<MemoryScreen>
     super.dispose();
   }
 
-  void _initializeGame() {
-    // Seleccionar 4 pares (8 cartas) para la matriz 3x3
+  void _initializeGame({int? rows, int? cols}) {
+    // Leer configuración actual si no se pasa
+    final gridStr = StorageService.instance.getMemoryGrid();
+    if (rows == null || cols == null) {
+      final parts = gridStr.split('x');
+      if (parts.length == 2) {
+        final r = int.tryParse(parts[0]);
+        final c = int.tryParse(parts[1]);
+        if (r != null && c != null) {
+          _rows = r;
+          _cols = c;
+        }
+      }
+    } else {
+      _rows = rows;
+      _cols = cols;
+    }
+
+    final totalSlots = _rows * _cols;
+    _targetPairs = totalSlots ~/ 2; // floor
+
+    // Seleccionar pares según la matriz
     final random = Random();
     final selectedAssets = List.from(assets);
     selectedAssets.shuffle(random);
-    final gameAssets = selectedAssets.take(4).toList();
+    final gameAssets = selectedAssets.take(_targetPairs).toList();
 
-    // Crear 8 cartas (4 pares)
+    // Crear cartas (pares)
     cards = [];
-    for (int i = 0; i < 4; i++) {
+    for (int i = 0; i < _targetPairs; i++) {
       cards.add(
         MemoryCard(
           id: i * 2,
@@ -81,16 +105,18 @@ class _MemoryScreenState extends State<MemoryScreen>
     // Mezclar las cartas
     cards.shuffle(random);
 
-    // Agregar una carta vacía para completar 3x3 = 9
-    cards.add(
-      MemoryCard(
-        id: 8,
-        image: "",
-        name: "Empty",
-        isFlipped: false,
-        isMatched: true, // Siempre "emparejada" para que no se pueda voltear
-      ),
-    );
+    // Si el número de casillas es impar, agregar una carta vacía para completar
+    if (totalSlots.isOdd) {
+      cards.add(
+        MemoryCard(
+          id: totalSlots - 1,
+          image: "",
+          name: "Empty",
+          isFlipped: false,
+          isMatched: true, // no se puede voltear
+        ),
+      );
+    }
 
     flippedCards.clear();
     matchedCards.clear();
@@ -113,7 +139,7 @@ class _MemoryScreenState extends State<MemoryScreen>
     {"image": "assets/images/duck.jpg", "name": "Duck"},
     {"image": "assets/images/firetruck.jpg", "name": "Firetruck"},
     {"image": "assets/images/fireworks.jpg", "name": "Fireworks"},
-    {"image": "assets/images/flaute.jpg", "name": "Flute"},
+    {"image": "assets/images/flute.jpg", "name": "Flute"},
     {"image": "assets/images/frog.jpg", "name": "Frog"},
     {"image": "assets/images/guitar.jpg", "name": "Guitar"},
     {"image": "assets/images/hen.jpg", "name": "Hen"},
@@ -177,7 +203,7 @@ class _MemoryScreenState extends State<MemoryScreen>
         isProcessing = false;
 
         // Verificar si el juego terminó
-        if (pairsFound == 4) {
+        if (pairsFound == _targetPairs) {
           // Reproducir música de victoria
           final appController = Get.find<AppController>();
           appController.playMenuSound(soundPathWinner);
@@ -233,17 +259,40 @@ class _MemoryScreenState extends State<MemoryScreen>
                 child: SizedBox(
                   width: minSide * 0.8,
                   height: minSide * 0.8,
-                  child: GridView.builder(
-                    gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
-                  
-                      crossAxisCount: 3,
-                      crossAxisSpacing: 8.0,
-                      mainAxisSpacing: 8.0,
-                      childAspectRatio: 0.8,
-                    ),
-                    itemCount: 9,
-                    itemBuilder: (context, index) {
-                      return _buildCard(index);
+                  child: ValueListenableBuilder(
+                    valueListenable: StorageService.instance.listenable(keys: [StorageService.memoryGridKey]),
+                    builder: (context, box, _) {
+                      // actualizar dimensiones según selección
+                      final gridStr = StorageService.instance.getMemoryGrid();
+                      final parts = gridStr.split('x');
+                      int rows = _rows;
+                      int cols = _cols;
+                      if (parts.length == 2) {
+                        final r = int.tryParse(parts[0]);
+                        final c = int.tryParse(parts[1]);
+                        if (r != null && c != null) {
+                          rows = r; cols = c;
+                        }
+                      }
+
+                      final totalSlots = rows * cols;
+                      // re-inicializar si cambió el tamaño
+                      if (rows != _rows || cols != _cols || cards.length != totalSlots) {
+                        _initializeGame(rows: rows, cols: cols);
+                      }
+
+                      return GridView.builder(
+                        gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
+                          crossAxisCount: cols,
+                          crossAxisSpacing: 8.0,
+                          mainAxisSpacing: 8.0,
+                          childAspectRatio: 0.8,
+                        ),
+                        itemCount: totalSlots,
+                        itemBuilder: (context, index) {
+                          return _buildCard(index);
+                        },
+                      );
                     },
                   ),
                 ),

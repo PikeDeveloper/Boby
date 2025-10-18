@@ -20,6 +20,7 @@ class _MathScreenState extends State<MathScreen> {
   late List<int> _options;
   int? _correctSelected;
   final Set<int> _wrongSelecteds = {};
+  String _opChar = '+';
 
   @override
   void initState() {
@@ -28,12 +29,65 @@ class _MathScreenState extends State<MathScreen> {
   }
 
   void _generate() {
-    _a = _rnd.nextInt(21); // 0..20
-    _b = _rnd.nextInt(21); // 0..20
-    _answer = _a + _b; // 0..40
+    // Leer opciones de Hive
+    final addOn = StorageService.instance.getMathOpAdd();
+    final subOn = StorageService.instance.getMathOpSub();
+    final mulOn = StorageService.instance.getMathOpMul();
+    final divOn = StorageService.instance.getMathOpDiv();
+
+    final enabled = <String>[];
+    if (addOn) enabled.add('+');
+    if (subOn) enabled.add('-');
+    if (mulOn) enabled.add('x');
+    if (divOn) enabled.add('/');
+    if (enabled.isEmpty) enabled.add('+');
+
+    _opChar = enabled[_rnd.nextInt(enabled.length)];
+
+    int maxResult = 40; // default similar to suma
+    switch (_opChar) {
+      case '+':
+        _a = _rnd.nextInt(21); // 0..20
+        _b = _rnd.nextInt(21); // 0..20
+        _answer = _a + _b; // 0..40
+        maxResult = 40;
+        break;
+      case '-':
+        _a = _rnd.nextInt(21); // 0..20
+        _b = _rnd.nextInt(_a + 1); // 0..a to avoid negative
+        _answer = _a - _b; // 0..20
+        maxResult = 20;
+        break;
+      case 'x':
+        _a = _rnd.nextInt(11); // 0..10
+        _b = _rnd.nextInt(11); // 0..10
+        _answer = _a * _b; // 0..100
+        maxResult = 100;
+        break;
+      case '/':
+        // integer division a / b = q
+        final divisor = max(1, _rnd.nextInt(10)); // 1..9
+        final quotient = _rnd.nextInt(11); // 0..10
+        _a = divisor * quotient;
+        _b = divisor;
+        _answer = quotient;
+        maxResult = 10;
+        break;
+    }
+
+    // Generar opciones
     final Set<int> opts = {_answer};
     while (opts.length < 4) {
-      final cand = _rnd.nextInt(41); // 0..40
+      int cand;
+      // valores cercanos al resultado para mayor reto
+      final delta = (_opChar == 'x') ? 10 : 5;
+      final minRange = max(0, _answer - delta);
+      final maxRange = min(maxResult, _answer + delta);
+      if (minRange < maxRange) {
+        cand = minRange + _rnd.nextInt(maxRange - minRange + 1);
+      } else {
+        cand = _rnd.nextInt(maxResult + 1);
+      }
       opts.add(cand);
     }
     _options = opts.toList()..shuffle(_rnd);
@@ -144,9 +198,9 @@ class _MathScreenState extends State<MathScreen> {
       children: [
         _buildDigitImages(_a, imgH),
         const SizedBox(width: 8),
-        const Text(
-          '+',
-          style: TextStyle(fontSize: 48, fontWeight: FontWeight.bold),
+        Text(
+          _opChar,
+          style: const TextStyle(fontSize: 48, fontWeight: FontWeight.bold),
         ),
         const SizedBox(width: 8),
         _buildDigitImages(_b, imgH),

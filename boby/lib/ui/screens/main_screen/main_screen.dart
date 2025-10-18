@@ -35,6 +35,8 @@ class MainScreen extends StatelessWidget {
       appBar: AppBar(
         leading: IconButton(
           onPressed: () {
+         
+            appController.menuOpen.value = false;
             appController.currentPage.value = 6;
           },
           icon: Image.asset("assets/settings_icon.png"),

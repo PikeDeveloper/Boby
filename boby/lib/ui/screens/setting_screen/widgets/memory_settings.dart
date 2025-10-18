@@ -76,9 +76,9 @@ class MemrySettings extends StatelessWidget {
          mainAxisAlignment: MainAxisAlignment.spaceEvenly,
           children: [
 
-            option('3x2', 2, 3),
+            option('3x2', 3, 2),
             option('3x3', 3, 3),
-            option('3x4', 4, 3),
+            option('4x4', 4, 4),
           ],
         );
       },

@@ -7,10 +7,10 @@ class BackgroundSettings extends StatelessWidget {
    BackgroundSettings({super.key});
 
    List<String> backGrounds = [
-    "assets/backgrounds/sabana.jpg",
+    "assets/backgrounds/sabana.png",
     "assets/backgrounds/farm.jpg",
     "assets/backgrounds/grass.jpg",
-    "assets/backgrounds/oceano.jpg",
+    "assets/backgrounds/oceano.png",
     "assets/backgrounds/oso.jpg",
     "assets/backgrounds/soft.png",
   ];

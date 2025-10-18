@@ -1,6 +1,6 @@
 import 'package:boby/ui/screens/setting_screen/widgets/background_settins.dart';
 import 'package:boby/ui/screens/setting_screen/widgets/math_settings.dart';
-import 'package:boby/ui/screens/setting_screen/widgets/memry_settings.dart';
+import 'package:boby/ui/screens/setting_screen/widgets/memory_settings.dart';
 import 'package:flutter/material.dart';
 
 import '../../shared/letter_button.dart';
