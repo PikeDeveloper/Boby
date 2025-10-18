@@ -51,7 +51,7 @@ class _WinnerScreenMemoryState extends State<WinnerScreenMemory>
 
    final minSize = min (screenWidth, screenHeight);
    final winnerMessages = ["W", "I", "N", "N", "E", "R"];
-   final playAgain  = ["P", "L", "A", "Y", "A", " ", "G", "A", "I", "N"];
+   final playAgain  = ["P", "L", "A", "Y", " ", "A", "G", "A", "I", "N"];
    
    
    final letterSize = minSize / 8;

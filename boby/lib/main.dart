@@ -3,6 +3,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:get/get.dart';
 import 'package:google_fonts/google_fonts.dart';
+import 'services/storage_service.dart';
 
 import 'utils/routes.dart';
 
@@ -11,6 +12,7 @@ Future<void> main() async {
   await SystemChrome.setPreferredOrientations([
     DeviceOrientation.portraitUp,
   ]);
+  await StorageService.init();
   runApp(const MainApp());
 }
 

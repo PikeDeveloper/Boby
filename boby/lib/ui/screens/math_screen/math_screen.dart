@@ -1,7 +1,9 @@
+import 'package:boby/ui/screens/math_screen/widgets/math_score.dart';
 import 'package:flutter/material.dart';
 import 'dart:math';
 import 'package:get/get.dart';
 import 'package:boby/controllers/app_controller.dart';
+import 'package:boby/services/storage_service.dart';
 
 class MathScreen extends StatefulWidget {
   const MathScreen({super.key});
@@ -40,17 +42,19 @@ class _MathScreenState extends State<MathScreen> {
     setState(() {});
   }
 
-  void _onSelect(BuildContext context, int value) {
+  Future<void> _onSelect(BuildContext context, int value) async {
     if (_correctSelected != null) return; // ya contestado correctamente
     final appController = Get.find<AppController>();
     if (value == _answer) {
       appController.playMenuSound(soundPathCorrectAnswer);
+      await StorageService.instance.incMathCorrect();
       setState(() {
         _correctSelected = value;
       });
       Future.delayed(const Duration(milliseconds: 900), _generate);
     } else {
       appController.playMenuSound(soundPathIncorrectAnswer);
+      await StorageService.instance.incMathWrong();
       setState(() {
         _wrongSelecteds.add(value);
       });
@@ -67,61 +71,64 @@ class _MathScreenState extends State<MathScreen> {
         child: Center(
           child: Padding(
             padding: const EdgeInsets.all(16.0),
-            child: Column(
-              mainAxisAlignment: MainAxisAlignment.center,
-              crossAxisAlignment: CrossAxisAlignment.center,
+            child: Stack(
+              alignment: Alignment.topCenter,
               children: [
-                Stack(
-                  alignment: Alignment.center,
+                Column(
+                  mainAxisAlignment: MainAxisAlignment.center,
+                  crossAxisAlignment: CrossAxisAlignment.center,
                   children: [
-                    _buildSumRow(),
-                    if (_correctSelected != null)
-                      const Positioned(
-                        right: -8,
-                        top: -8,
-                        child: Icon(
-                          Icons.check_circle,
-                          color: Colors.green,
-                          size: 40,
-                        ),
-                      ),
-                  ],
-                ),
-                const SizedBox(height: 100),
-                LayoutBuilder(
-                  builder: (context, constraints) {
-                    final double buttonSize = (constraints.maxWidth - 48) / 2; // 2 columnas, 16px gaps
-                    return Wrap(
-                      alignment: WrapAlignment.center,
-                      spacing: 16,
-                      runSpacing: 16,
-                      children: _options
-                          .map(
-                            (opt) => SizedBox(
-                              width: buttonSize,
-                              height: 100,
-                              child: ElevatedButton(
-                                style: ElevatedButton.styleFrom(
-                                  backgroundColor: _correctSelected == opt
-                                      ? Colors.green
-                                      : (_wrongSelecteds.contains(opt)
-                                          ? const Color.fromARGB(113, 244, 67, 54)
-                                          : null),
-                                  shape: RoundedRectangleBorder(
-                                    borderRadius: BorderRadius.circular(16),
+                 
+                    Stack(
+                      alignment: Alignment.center,
+                      children: [
+                        _buildSumRow(),
+                        if (_correctSelected != null)
+                          const Icon(
+                              Icons.check,
+                              color: Colors.green,
+                              size: 60,
+                            ),
+                      ],
+                    ),
+                    const SizedBox(height: 100),
+                    LayoutBuilder(
+                      builder: (context, constraints) {
+                        final double buttonSize = (constraints.maxWidth - 48) / 2; // 2 columnas, 16px gaps
+                        return Wrap(
+                          alignment: WrapAlignment.center,
+                          spacing: 16,
+                          runSpacing: 16,
+                          children: _options
+                              .map(
+                                (opt) => SizedBox(
+                                  width: buttonSize,
+                                  height: 100,
+                                  child: ElevatedButton(
+                                    style: ElevatedButton.styleFrom(
+                                      backgroundColor: _correctSelected == opt
+                                          ? Colors.green
+                                          : (_wrongSelecteds.contains(opt)
+                                              ? const Color.fromARGB(113, 244, 67, 54)
+                                              : null),
+                                      shape: RoundedRectangleBorder(
+                                        borderRadius: BorderRadius.circular(16),
+                                      ),
+                                    ),
+                                    onPressed: _correctSelected != null
+                                        ? null
+                                        : () => _onSelect(context, opt),
+                                    child: _buildDigitImages(opt, 36),
                                   ),
                                 ),
-                                onPressed: _correctSelected != null
-                                    ? null
-                                    : () => _onSelect(context, opt),
-                                child: _buildDigitImages(opt, 36),
-                              ),
-                            ),
-                          )
-                          .toList(),
-                    );
-                  },
+                              )
+                              .toList(),
+                        );
+                      },
+                    ),
+                  ],
                 ),
+                   MathScore(),  
               ],
             ),
           ),
