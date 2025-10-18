@@ -23,126 +23,24 @@ class CardSound extends StatefulWidget {
   State<CardSound> createState() => _CardSoundState();
 }
 
-class _CardSoundState extends State<CardSound>
-    with SingleTickerProviderStateMixin {
-  late AnimationController _controller;
-  late Animation<Offset> _animation;
-  Timer? _bounceTimer;
-  Timer? _stopTimer;
-  bool _isSelected = false;
-  final AudioPlayer _player = AudioPlayer();
+class _CardSoundState extends State<CardSound> {
+  AudioPlayer? _player; // lazy init
+  StreamSubscription<PlayerState>? _stateSub;
   bool _isPlaying = false;
 
   @override
   void initState() {
     super.initState();
-    _controller = AnimationController(
-      duration: const Duration(milliseconds: 500),
-      vsync: this,
-    );
-
-    _animation =
-        Tween<Offset>(
-          begin: Offset.zero,
-          end: const Offset(0, -0.3), // More noticeable vertical movement
-        ).animate(
-          CurvedAnimation(
-            parent: _controller,
-            curve: Curves.elasticOut, // More bouncy effect
-          ),
-        );
-
-    _controller.addStatusListener((status) {
-      if (status == AnimationStatus.completed) {
-        _controller.reverse();
-      } else if (status == AnimationStatus.dismissed && _isSelected) {
-        _controller.forward();
-      }
-    });
   }
 
   @override
   void dispose() {
-    _bounceTimer?.cancel();
-    _stopTimer?.cancel();
-    _controller.dispose();
-    _player.dispose();
+    _stateSub?.cancel();
+    _player?.dispose();
     super.dispose();
   }
 
-  // Timer for managing the 1-second timeout
-
-  void _startBouncing() {
-    if (!mounted) return;
-
-    // Reset animation values
-    _controller.reset();
-
-    // Cancel any existing timers
-    _bounceTimer?.cancel();
-    _stopTimer?.cancel();
-
-    setState(() {
-      _isSelected = true;
-    });
-
-    // Start the bouncing animation
-    _controller.forward();
-
-    // Set up the bounce loop - faster bounces
-    _bounceTimer = Timer.periodic(const Duration(milliseconds: 800), (timer) {
-      if (!_isSelected || !mounted) {
-        timer.cancel();
-        return;
-      }
-      _controller.forward(from: 0);
-    });
-
-    // Stop bouncing after 1 second
-    _stopTimer = Timer(const Duration(seconds: 1), () {
-      if (mounted && _isSelected) {
-        // Only stop if still selected
-        _stopBouncing(stopAudio: false);
-      }
-    });
-  }
-
-  void _stopBouncing({bool resetState = true, bool stopAudio = true}) async {
-    if (!mounted) return;
-
-    // Cancel timers first
-    _bounceTimer?.cancel();
-    _stopTimer?.cancel();
-
-    // Detener el audio
-    if (stopAudio && _isPlaying) {
-      try {
-        await _player.stop();
-        _isPlaying = false;
-      } catch (e) {
-        debugPrint('Error stopping audio: $e');
-      }
-    }
-
-    if (_isSelected) {
-      // Immediately update the state to stop any ongoing animations
-      if (resetState) {
-        setState(() {
-          _isSelected = false;
-        });
-      }
-
-      // Smoothly return to original position
-      _controller.animateTo(0, duration: const Duration(milliseconds: 150));
-
-      // Reset the controller after animation completes
-      Future.delayed(const Duration(milliseconds: 150), () {
-        if (mounted && resetState) {
-          _controller.reset();
-        }
-      });
-    }
-  }
+ 
 
   @override
   Widget build(BuildContext context) {
@@ -163,27 +61,25 @@ class _CardSoundState extends State<CardSound>
     ];
 
     int colorSelected = Random().nextInt(borderColors.length);
-
-    // Use ever to react to cardSelected changes
-    ever(appController.cardSelected, (selectedName) {
-      final isSelectedNow = selectedName == widget.name;
-      if (isSelectedNow && !_isSelected) {
-        _startBouncing();
-      } else if (!isSelectedNow && _isSelected) {
-        _stopBouncing();
-      }
-    });
-
-    // Initial check
-    if (appController.cardSelected.value == widget.name && !_isSelected) {
-      _startBouncing();
-    }
+    
+    // Animations disabled: static card
 
     return GestureDetector(
       onTap: () async {
         if (appController.cardSelected.value == widget.name) {
           // If already selected, stop the animation and sound
-          _stopBouncing(resetState: true);
+          try {
+            await _player?.stop();
+          } catch (_) {}
+          _stateSub?.cancel();
+          _stateSub = null;
+          await _player?.dispose();
+          _player = null;
+          if (mounted) {
+            setState(() {
+              _isPlaying = false;
+            });
+          }
           appController.cardSelected.value = ''; // Clear selection
           return; // Exit early to prevent restarting
         } else {
@@ -193,18 +89,30 @@ class _CardSoundState extends State<CardSound>
           try {
             // Solo reproducir audio en plataformas compatibles (no Linux)
             if (!Platform.isLinux) {
-              await _player.setAsset(widget.sound);
-              _player.play();
-              _isPlaying = true;
+              _player ??= AudioPlayer();
+              await _player!.setAsset(widget.sound);
+              _player!.play();
+              if (mounted) {
+                setState(() {
+                  _isPlaying = true;
+                });
+              }
             } else {
               // En Linux, solo mostrar feedback visual
               print('Audio deshabilitado en Linux: ${widget.sound}');
             }
             
             // Handle when audio finishes playing
-            _player.playerStateStream.listen((state) {
+            _stateSub?.cancel();
+            _stateSub = _player?.playerStateStream.listen((state) async {
               if (state.processingState == ProcessingState.completed) {
-                _stopBouncing();
+                _stateSub?.cancel();
+                _stateSub = null;
+                try {
+                  await _player?.stop();
+                } catch (_) {}
+                await _player?.dispose();
+                _player = null;
                 if (mounted) {
                   setState(() {
                     _isPlaying = false;
@@ -215,28 +123,20 @@ class _CardSoundState extends State<CardSound>
             
           } catch (e) {
             debugPrint('Error playing sound: $e');
-            _stopBouncing();
-            _isPlaying = false;
+        
+            if (mounted) {
+              setState(() {
+                _isPlaying = false;
+              });
+            }
           }
         }
       },
-      child: AnimatedBuilder(
-        animation: _controller,
-        builder: (context, child) {
-          return Transform.translate(
-            offset:
-                _animation.value *
-                20, // Adjust the multiplier for more/less movement
-            child: Transform.rotate(
-              angle:
-                  _controller.value *
-                  0.1, // Slight rotation for more dynamic effect
-              child: child,
-            ),
-          );
-        },
+      child: SizedBox(
+        width: 150,
+        height: 150,
         child: Card(
-          elevation: _controller.value * 8, // Add elevation for a "pop" effect
+          elevation: 4,
           color: appController.cardSelected.value == widget.name
               ? _isPlaying 
                   ? Colors.green.withOpacity(0.8) 
@@ -246,7 +146,7 @@ class _CardSoundState extends State<CardSound>
             borderRadius: BorderRadius.circular(20),
             side: BorderSide(
               color: borderColors[colorSelected],
-              width: 3 + (_controller.value * 2), // Pulsing border effect
+              width: 3,
             ),
           ),
           child: ClipRRect(

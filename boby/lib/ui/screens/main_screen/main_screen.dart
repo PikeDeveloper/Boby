@@ -1,5 +1,6 @@
 import 'package:boby/controllers/app_controller.dart';
 import 'package:boby/ui/screens/main_screen/widgets/background.dart';
+import 'package:boby/ui/screens/math_screen/math_screen.dart';
 import 'package:boby/ui/screens/word_guess/word_guess_screen.dart'; 
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
@@ -20,9 +21,10 @@ class MainScreen extends StatelessWidget {
     ListCardSounds(),
     MemoryScreen(),
     BallomScreen(),
-    SettingScreen(),
+     MathScreen(),
     WordGuessScreen(),
     MatchItScreen(),
+    SettingScreen(),
     //AbautScreen(),
   ];
 
@@ -31,7 +33,12 @@ class MainScreen extends StatelessWidget {
     final appController = Get.put<AppController>(AppController());
     return Scaffold(
       appBar: AppBar(
-        
+        leading: IconButton(
+          onPressed: () {
+            appController.currentPage.value = 6;
+          },
+          icon: Image.asset("assets/settings_icon.png"),
+        ),
         actions: [
           IconButton(
             onPressed: () {
