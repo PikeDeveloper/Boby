@@ -1,22 +1,22 @@
+import 'package:boby/ui/screens/setting_screen/widgets/about_me.dart';
 import 'package:boby/ui/screens/setting_screen/widgets/background_settins.dart';
 import 'package:boby/ui/screens/setting_screen/widgets/math_settings.dart';
 import 'package:boby/ui/screens/setting_screen/widgets/memory_settings.dart';
+import 'package:boby/ui/screens/setting_screen/widgets/more_apps.dart';
 import 'package:flutter/material.dart';
 
-import '../../shared/letter_button.dart';
 import '../../shared/word_of_images.dart';
-import 'widgets/background_card.dart';
-import 'widgets/background_word.dart';
 
 class SettingScreen extends StatelessWidget {
   static const String route = '/setting_screen';
-  SettingScreen({super.key});
+  const SettingScreen({super.key}); 
 
  
 
   @override
   Widget build(BuildContext context) {
-    final screenWidth = MediaQuery.of(context).size.width;
+  
+   
   
 
     return SingleChildScrollView(
@@ -45,6 +45,11 @@ class SettingScreen extends StatelessWidget {
          SizedBox(height: 100),
          WordOfImages(  letters: ["M", "E", "M", "O", "R", "Y"], letterSize: 25),
          MemrySettings(),
+         SizedBox(height: 100),
+         WordOfImages(  letters: ["M", "O", "R", "E", ], letterSize: 25),
+         MoreApps(),
+         SizedBox(height: 100),
+         AboutMe(),
          SizedBox(height: 100),
         ],
       ),

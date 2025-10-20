@@ -1,5 +1,5 @@
-
 import 'package:flutter/material.dart';
+import 'package:url_launcher/url_launcher_string.dart';
 
 class Functions {
   //shw message
@@ -12,6 +12,10 @@ class Functions {
     );
   }
 
-
-
+  static Future<void> openUrlExternal(String url) async {
+    final ok = await launchUrlString(url);
+    if (!ok) {
+      throw Exception('Could not launch $url');
+    }
+  }
 }

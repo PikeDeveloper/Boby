@@ -21,16 +21,16 @@ class BackgroundCard extends StatelessWidget {
         },
         child: Card(
           shape: RoundedRectangleBorder(
-            borderRadius: BorderRadius.circular(25),
+            borderRadius: BorderRadius.circular(15),
             side: BorderSide(
               color: appController.backGroundImage.value == image
                   ? MyColors.green
                   : Colors.white,
-              width: 3,
+              width: 2,
             ),
           ),
           child: ClipRRect(
-            borderRadius: BorderRadius.circular(25),
+            borderRadius: BorderRadius.circular(15),
             child: Image.asset(image, fit: BoxFit.cover),
           ),
         ),

@@ -7,7 +7,6 @@ import 'package:get/get.dart';
 import 'package:boby/controllers/app_controller.dart';
 import 'dart:math';
 
-import '../../../utils/colors.dart';
 
 class WordGuessScreen extends StatefulWidget {
   const WordGuessScreen({super.key});
@@ -100,18 +99,7 @@ class _WordGuessScreenState extends State<WordGuessScreen> {
       _showError = false; // clear error state on edit
     });
   }
-
-  void _clearAll() {
-    setState(() {
-      for (var i = 0; i < slots.length; i++) {
-        slots[i] = _Slot.empty();
-      }
-      for (var i = 0; i < keys.length; i++) {
-        keys[i] = keys[i].copyWith(used: false);
-      }
-      _showError = false;
-    });
-  }
+ 
 
   void _next() {
     if (!mounted) return;
@@ -211,7 +199,7 @@ class _WordGuessScreenState extends State<WordGuessScreen> {
     final firstRow = keys.take((keys.length / 2).ceil()).toList();
     final secondRow = keys.skip((keys.length / 2).ceil()).toList();
 
-    final colors = [MyColors.yellow, MyColors.purple, MyColors.guayaba, MyColors.red, MyColors.green, MyColors.blue];
+    
 
     // Celebration overlay controlled by AppController
     Widget celebrationOverlay = const SizedBox.shrink();

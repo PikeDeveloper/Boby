@@ -3,13 +3,13 @@ import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 
 class NewGameButton extends StatelessWidget {
-  NewGameButton({super.key, required this.onTap});
+  const NewGameButton({super.key, required this.onTap}); 
 
-  List<String> newLetters = ["N", "E", "W"];
+  final List<String> newLetters = const ["N", "E", "W"];
 
-  List<String> gameLetters = ["G", "A", "M", "E"];
+  final List<String> gameLetters = const ["G", "A", "M", "E"];
 
-  double letterSize = 25;
+  final double letterSize = 25;
 
   final VoidCallback onTap;
 
@@ -17,7 +17,6 @@ class NewGameButton extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final screenWidth = MediaQuery.of(context).size.width;
     final appController = Get.find<AppController>();
 
     return GestureDetector(

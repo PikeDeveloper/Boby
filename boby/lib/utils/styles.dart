@@ -1,7 +1,5 @@
 import 'package:flutter/material.dart';
 
-import 'colors.dart';
-
 class MyStyles {
   static TextStyle title = TextStyle(
     fontSize: 20,

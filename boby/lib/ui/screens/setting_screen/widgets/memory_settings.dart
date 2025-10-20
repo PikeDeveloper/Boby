@@ -4,9 +4,9 @@ import 'package:flutter/material.dart';
 import 'package:boby/services/storage_service.dart';
 
 class MemrySettings extends StatelessWidget {
-  MemrySettings({super.key});
+  const MemrySettings({super.key});
 
-  String imagePath = "assets/card.png";
+  final String imagePath = "assets/card.png";
 
   @override
   Widget build(BuildContext context) {
@@ -58,7 +58,7 @@ class MemrySettings extends StatelessWidget {
                   if (selected)
                     const Padding(
                       padding: EdgeInsets.only(top: 6),
-                      child: Icon(Icons.  check_circle, color: Colors.indigo),
+                      child: Icon(Icons.check_circle, color: Colors.indigo),
                     ),
                     if (!selected)
                     const Padding(

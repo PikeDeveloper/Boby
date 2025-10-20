@@ -53,7 +53,7 @@ class MathSettings extends StatelessWidget {
   Widget _opItem(BuildContext context, {required String label, required bool value, required ValueChanged<bool?> onChanged}) {
     return Container(
       padding:  EdgeInsets.zero,
-      margin: const EdgeInsets.all(10),
+      margin: const EdgeInsets.all(5),
       decoration: BoxDecoration(
         borderRadius: BorderRadius.circular(25),
         border: Border.all(color: Colors.indigo),

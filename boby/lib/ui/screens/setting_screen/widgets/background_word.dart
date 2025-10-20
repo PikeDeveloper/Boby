@@ -1,9 +1,9 @@
 import 'package:flutter/material.dart';
 
 class BackgroundWord extends StatelessWidget {
-  BackgroundWord({super.key, required});
+  const BackgroundWord({super.key});
 
-  List<String> newLetters = [
+  final List<String> newLetters = const [
     "B",
     "A",
     "C",
@@ -17,11 +17,11 @@ class BackgroundWord extends StatelessWidget {
     "S",
   ];
 
-  double letterSize = 25;
+  final double letterSize = 25;
 
   @override
   Widget build(BuildContext context) {
-    final screenWidth = MediaQuery.of(context).size.width;
+    
 
     return Container(
       margin: const EdgeInsets.all(10.0),

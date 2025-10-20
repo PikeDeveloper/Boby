@@ -1,11 +1,11 @@
 import 'package:flutter/material.dart';
 
 class WordMenu extends StatelessWidget {
-  WordMenu({super.key});
+  const WordMenu({super.key});
 
-  List<String> letters = ["M", "E", "N", "U"];
+  final List<String> letters = const ["M", "E", "N", "U"];
 
-  double letterSize = 35;
+  final double letterSize = 35;
 
   @override
   Widget build(BuildContext context) {
