@@ -14,7 +14,7 @@ class MainMenu extends StatelessWidget {
   final List<Map<String, String>> options = [
     {"name": "Sounds", "route": "0", "image": "assets/sounds_icon.png"},
     {"name": "Memory", "route": "1", "image": "assets/memory_icon.png"},
-    {"name": "Ballon", "route": "2", "image": "assets/ballon_icon.png"},
+    {"name": "Letters Soup", "route": "2", "image": "assets/letters_soup_icon.png"},
     {"name": "Settings", "route": "3", "image": "assets/math_icon.png"},
     {"name": "Word Guess", "route": "4", "image": "assets/word_guess_icon.png"},
     {"name": "Match It", "route": "5", "image": "assets/match_it_icon.png"},

@@ -1,4 +1,5 @@
 import 'package:boby/controllers/app_controller.dart';
+import 'package:boby/ui/screens/letters_soup/letters_soup.dart';
 import 'package:boby/ui/screens/main_screen/widgets/background.dart';
 import 'package:boby/ui/screens/math_screen/math_screen.dart';
 import 'package:boby/ui/screens/word_guess/word_guess_screen.dart'; 
@@ -20,7 +21,8 @@ class MainScreen extends StatelessWidget {
   final List<Widget> screens = [
     ListCardSounds(),
     MemoryScreen(),
-    BallomScreen(),
+    LettersSoup(),
+   // BallomScreen(),
      MathScreen(),
     WordGuessScreen(),
     MatchItScreen(),
