@@ -49,8 +49,7 @@ class SettingScreen extends StatelessWidget {
          WordOfImages(  letters: ["M", "O", "R", "E", ], letterSize: 25),
          MoreApps(),
          SizedBox(height: 100),
-         AboutMe(),
-         SizedBox(height: 100),
+      
         ],
       ),
     );

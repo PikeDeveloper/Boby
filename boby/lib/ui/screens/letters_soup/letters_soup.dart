@@ -1,5 +1,9 @@
+import 'package:boby/controllers/app_controller.dart';
 import 'package:boby/ui/screens/letters_soup/widgets/words.dart';
+import 'package:boby/ui/shared/winner_screen.dart';
+import 'package:boby/ui/shared/word_of_images.dart';
 import 'package:flutter/material.dart';
+import 'package:get/get.dart';
 
 class LettersSoup extends StatefulWidget {
   const LettersSoup({super.key});
@@ -20,6 +24,9 @@ class _LettersSoupState extends State<LettersSoup> {
   List<Point> selectionPath = [];
   final _Rng _rng = _Rng();
 
+  final String winnerSound = "assets/sounds/winner-game.wav";
+  bool _playedWin = false;
+
   @override
   void initState() {
     super.initState();
@@ -29,25 +36,43 @@ class _LettersSoupState extends State<LettersSoup> {
 
   @override
   Widget build(BuildContext context) {
-    return Padding(
-        padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 12),
-        child: Column(
-          crossAxisAlignment: CrossAxisAlignment.stretch,
-          children: [
-            Text(
-              topicTitle,
-              textAlign: TextAlign.center,
-              style: const TextStyle(fontSize: 20, fontWeight: FontWeight.bold),
+    final appController = Get.find<AppController>();  
+    return Stack(
+      children: [
+        Padding(
+            padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 12),
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.stretch,
+              children: [
+                Text(
+                  topicTitle,
+                  textAlign: TextAlign.center,
+                  style: const TextStyle(fontSize: 20, fontWeight: FontWeight.bold),
+                ),
+                const SizedBox(height: 8),
+                _buildWordList(),
+                const SizedBox(height: 12),
+                Expanded(child: _buildGrid()),
+                const SizedBox(height: 8),
+                _buildControls(),
+              ],
             ),
-            const SizedBox(height: 8),
-            _buildWordList(),
-            const SizedBox(height: 12),
-            Expanded(child: _buildGrid()),
-            const SizedBox(height: 8),
-            _buildControls(),
-          ],
-        ),
-      );
+          ),
+          if (foundWords.length == words.length)
+          WinnerScreen(onTap: () {  
+            setState(() {
+              _selectRandomCategory();
+              grid = _generateGrid(size, words);
+              foundWords.clear();
+              foundCells.clear();
+              start = null;
+              end = null;
+              selectionPath = [];
+            });
+          
+          }),
+      ],
+    );
   }
 
   Widget _buildWordList() {
@@ -72,7 +97,8 @@ class _LettersSoupState extends State<LettersSoup> {
   }
 
   Widget _buildGrid() {
-    final gridWidth = MediaQuery.of(context).size.width - 20; // 10px margin each side
+    final available = MediaQuery.of(context).size.width - 20; // 10px margin each side
+    final gridWidth = available > 600 ? 600.0 : available;
     final cellSize = gridWidth / size;
     return Center(
       child: GestureDetector(
@@ -109,6 +135,7 @@ class _LettersSoupState extends State<LettersSoup> {
             if (matched != null) {
               foundWords.add(matched);
               foundCells.addAll(selectionPath);
+              _maybePlayWin();
             }
             start = null;
             end = null;
@@ -164,7 +191,7 @@ class _LettersSoupState extends State<LettersSoup> {
       children: [
         ElevatedButton(
           onPressed: _reset,
-          child: const Text('New Puzzle'),
+          child: WordOfImages(letters: ["N", "E", "W"], letterSize: 20),
         ),
         Text('${foundWords.length}/${words.length} found'),
       ],
@@ -180,6 +207,7 @@ class _LettersSoupState extends State<LettersSoup> {
       start = null;
       end = null;
       selectionPath = [];
+      _playedWin = false;
     });
   }
 
@@ -202,6 +230,7 @@ class _LettersSoupState extends State<LettersSoup> {
         if (matched != null) {
           foundWords.add(matched);
           foundCells.addAll(path);
+          _maybePlayWin();
         }
         start = null;
         end = null;
@@ -271,6 +300,15 @@ class _LettersSoupState extends State<LettersSoup> {
       selected.add(pool.removeAt(i));
     }
     words = selected;
+    _playedWin = false;
+  }
+
+  void _maybePlayWin() {
+    if (!_playedWin && foundWords.length == words.length) {
+      final appController = Get.find<AppController>();
+      appController.playMenuSound(winnerSound);
+      _playedWin = true;
+    }
   }
 
   String _lettersFrom(List<Point> path) {
@@ -301,7 +339,6 @@ class _LettersSoupState extends State<LettersSoup> {
   }
 
   List<List<String>> _generateGrid(int n, List<String> words) {
-    final grid = List.generate(n, (_) => List.generate(n, (_) => ''));
     final rng = _Rng();
     final dirs = [
       const Offset(1, 0),
@@ -314,29 +351,55 @@ class _LettersSoupState extends State<LettersSoup> {
       const Offset(-1, 1),
     ];
 
-    for (final w in words) {
-      var placed = false;
-      var attempts = 0;
-      while (!placed && attempts < 200) {
-        attempts++;
-        final dir = dirs[rng.nextInt(dirs.length)];
-        final sr = rng.nextInt(n);
-        final sc = rng.nextInt(n);
-        if (_canPlace(grid, w, sr, sc, dir)) {
-          _place(grid, w, sr, sc, dir);
-          placed = true;
+    // Try multiple times until all words are placed
+    for (var outer = 0; outer < 400; outer++) {
+      final grid = List.generate(n, (_) => List.generate(n, (_) => ''));
+      // Place in a randomized order to improve chances
+      final order = List<String>.from(words);
+      _shuffle(order, rng);
+
+      var allPlaced = true;
+      for (final w in order) {
+        var placed = false;
+        for (var attempts = 0; attempts < 600 && !placed; attempts++) {
+          final dir = dirs[rng.nextInt(dirs.length)];
+          final sr = rng.nextInt(n);
+          final sc = rng.nextInt(n);
+          if (_canPlace(grid, w, sr, sc, dir)) {
+            _place(grid, w, sr, sc, dir);
+            placed = true;
+          }
+        }
+        if (!placed) {
+          allPlaced = false;
+          break; // restart whole grid
         }
       }
+
+      if (!allPlaced) {
+        continue; // try a new empty grid
+      }
+
+      // Fill remaining cells
+      for (var r = 0; r < n; r++) {
+        for (var c = 0; c < n; c++) {
+          if (grid[r][c].isEmpty) {
+            grid[r][c] = _randomLetter(rng);
+          }
+        }
+      }
+      return grid;
     }
 
+    // Fallback: last-try naive grid (should rarely happen)
+    final fallback = List.generate(n, (_) => List.generate(n, (_) => ''));
+    final fbRng = _Rng();
     for (var r = 0; r < n; r++) {
       for (var c = 0; c < n; c++) {
-        if (grid[r][c].isEmpty) {
-          grid[r][c] = _randomLetter(rng);
-        }
+        fallback[r][c] = _randomLetter(fbRng);
       }
     }
-    return grid;
+    return fallback;
   }
 
   bool _canPlace(List<List<String>> g, String w, int sr, int sc, Offset dir) {
@@ -387,5 +450,14 @@ class _Rng {
   int nextInt(int max) {
     _seed = (_seed * 1103515245 + 12345) & 0x7fffffff;
     return _seed % max;
+  }
+}
+
+void _shuffle<T>(List<T> list, _Rng rng) {
+  for (var i = list.length - 1; i > 0; i--) {
+    final j = rng.nextInt(i + 1);
+    final tmp = list[i];
+    list[i] = list[j];
+    list[j] = tmp;
   }
 }

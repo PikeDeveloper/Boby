@@ -1,7 +1,7 @@
 import 'dart:math';
 import 'package:boby/controllers/app_controller.dart';
 import 'package:boby/ui/screens/memory/widgets/new_game_button.dart';
-import 'package:boby/ui/screens/memory/widgets/winner_screen.dart';
+import 'package:boby/ui/shared/winner_screen.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:boby/services/storage_service.dart';
@@ -301,7 +301,7 @@ class _MemoryScreenState extends State<MemoryScreen>
           ],
         ),
         if (isGameWon)
-          WinnerScreenMemory(onTap: () {
+          WinnerScreen(onTap: () {
             _initializeGame();
             setState(() {});
           })

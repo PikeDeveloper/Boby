@@ -3,16 +3,16 @@ import 'dart:math';
 import 'package:boby/ui/shared/letter_button.dart';
 import 'package:flutter/material.dart';
 
-class WinnerScreenMemory extends StatefulWidget {
-  const WinnerScreenMemory({super.key, required this.onTap});
+class WinnerScreen extends StatefulWidget {
+  const WinnerScreen({super.key, required this.onTap});
 
   final VoidCallback onTap;
 
   @override
-  State<WinnerScreenMemory> createState() => _WinnerScreenMemoryState();
+  State<WinnerScreen> createState() => _WinnerScreenState();
 }
 
-class _WinnerScreenMemoryState extends State<WinnerScreenMemory>
+class _WinnerScreenState extends State<WinnerScreen>
     with SingleTickerProviderStateMixin {
   late AnimationController _controller;
   late Animation<double> _scaleAnimation;

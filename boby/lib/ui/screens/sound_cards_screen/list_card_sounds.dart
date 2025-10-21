@@ -28,7 +28,7 @@ class ListCardSounds extends StatelessWidget {
           maxCrossAxisExtent: width, // máximo ancho por item
           crossAxisSpacing: width * 0.1,
           mainAxisSpacing: width * 0.1,
-          childAspectRatio: 1, // cuadrado (ancho = alto)
+          childAspectRatio: 0.6, // cuadrado (ancho = alto)
         ),
       
         itemCount: assets.length,

@@ -141,35 +141,60 @@ class _CardSoundState extends State<CardSound> with SingleTickerProviderStateMix
           }
         }
       },
-      child: AnimatedBuilder(
-        animation: _jumpY,
-        builder: (context, child) => Transform.translate(
-          offset: Offset(0, _jumpY.value),
-          child: child,
-        ),
-        child: SizedBox(
-        width: 150,
-        height: 150,
-        child: Card(
-          elevation: 4,
-          color: appController.cardSelected.value == widget.name
-              ? _isPlaying 
-                  ? Colors.green.withOpacity(0.8) 
-                  : Colors.blue.withOpacity(0.8)
-              : const Color.fromARGB(255, 236, 8, 8),
-          shape: RoundedRectangleBorder(
-            borderRadius: BorderRadius.circular(20),
-            side: BorderSide(
-              color: borderColors[colorSelected],
-              width: 3,
+      child: Column(
+        children: [
+          AnimatedBuilder(
+            animation: _jumpY,
+            builder: (context, child) => Transform.translate(
+              offset: Offset(0, _jumpY.value),
+              child: child,
+            ),
+            child: SizedBox(
+            width: 150,
+            height: 120,
+            child: Card(
+              elevation: 4,
+              color: appController.cardSelected.value == widget.name
+                  ? _isPlaying 
+                      ? Colors.green.withOpacity(0.8) 
+                      : Colors.blue.withOpacity(0.8)
+                  : const Color.fromARGB(255, 236, 8, 8),
+              shape: RoundedRectangleBorder(
+                borderRadius: BorderRadius.circular(20),
+                side: BorderSide(
+                  color: borderColors[colorSelected],
+                  width: 3,
+                ),
+              ),
+              child: ClipRRect(
+                borderRadius: BorderRadius.circular(20),
+                child: Stack(
+                  fit: StackFit.expand,
+                  children: [
+                    Image.asset(widget.image, fit: BoxFit.cover),
+                   
+                  ],
+                ),
+              ),
+            ),
             ),
           ),
-          child: ClipRRect(
-            borderRadius: BorderRadius.circular(20),
-            child: Image.asset(widget.image, fit: BoxFit.cover),
+          Container(
+            padding: const EdgeInsets.symmetric(vertical: 5),
+            alignment: Alignment.center,
+            decoration: BoxDecoration(
+              borderRadius: BorderRadius.circular(20),
+              color: const Color.fromARGB(232, 242, 242, 242).withValues(alpha: 0.8), 
+            ),
+            child: Text(widget.name,
+            style: const TextStyle(
+              fontSize: 16,
+              fontWeight: FontWeight.w600,
+              color: Color.fromARGB(255, 6, 45, 243),
+            ),
+            ),
           ),
-        ),
-        ),
+        ],
       ),
     );
   }
