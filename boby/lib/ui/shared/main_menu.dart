@@ -9,7 +9,7 @@ import 'package:get/get.dart';
 class MainMenu extends StatelessWidget {
   MainMenu({super.key});
 
-  final String soundPath = "assets/sounds/musical-game.wav";
+  final String soundPath = "assets/sounds/transition.wav";
 
   final List<Map<String, String>> options = [
     {"name": "Sounds", "route": "0", "image": "assets/sounds_icon.png"},

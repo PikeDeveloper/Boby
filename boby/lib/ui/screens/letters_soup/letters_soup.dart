@@ -127,10 +127,8 @@ class _LettersSoupState extends State<LettersSoup> {
         onPanEnd: (_) {
           if (start == null || selectionPath.isEmpty) return;
           final s = _lettersFrom(selectionPath);
-          final sRev = String.fromCharCodes(s.runes.toList().reversed);
           String? matched;
           if (words.contains(s)) matched = s;
-          if (words.contains(sRev)) matched = sRev;
           setState(() {
             if (matched != null) {
               foundWords.add(matched);
@@ -223,10 +221,8 @@ class _LettersSoupState extends State<LettersSoup> {
         final path = _straightPath(start!, end!);
         selectionPath = path;
         final s = _lettersFrom(path);
-        final sRev = String.fromCharCodes(s.runes.toList().reversed);
         String? matched;
         if (words.contains(s)) matched = s;
-        if (words.contains(sRev)) matched = sRev;
         if (matched != null) {
           foundWords.add(matched);
           foundCells.addAll(path);
@@ -341,14 +337,10 @@ class _LettersSoupState extends State<LettersSoup> {
   List<List<String>> _generateGrid(int n, List<String> words) {
     final rng = _Rng();
     final dirs = [
-      const Offset(1, 0),
-      const Offset(-1, 0),
-      const Offset(0, 1),
-      const Offset(0, -1),
-      const Offset(1, 1),
-      const Offset(-1, -1),
-      const Offset(1, -1),
-      const Offset(-1, 1),
+      // Only left-to-right orientations: horizontal right and rightward diagonals
+      const Offset(1, 0),   // →
+      const Offset(1, 1),   // ↘
+      const Offset(1, -1),  // ↗
     ];
 
     // Try multiple times until all words are placed
