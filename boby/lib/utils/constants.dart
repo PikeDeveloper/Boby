@@ -1,15 +1,13 @@
 import 'dart:io';
 
 class Constants {
-  static  late Directory appDocsDir;
+  static late Directory appDocsDir;
   static const int cellPhoneSize = 500;
   static const int tabletSize = 750;
   static const int desktopSize = 1200;
   static const String appName = "Fish";
 
-
-    static const List<Map<String, String>> assets = [
-   
+  static const List<Map<String, String>> assets = [
     {
       "image": "assets/images/bee.jpg",
       "name": "Bee",
@@ -35,7 +33,6 @@ class Constants {
       "name": "Chick",
       "sound": "assets/sound_names/chick.wav",
     },
-
     {
       "image": "assets/images/cow.jpg",
       "name": "Cow",
@@ -56,8 +53,6 @@ class Constants {
       "name": "Duck",
       "sound": "assets/sound_names/duck.wav",
     },
-   
-   
     {
       "image": "assets/images/flute.jpg",
       "name": "Flute",
@@ -138,7 +133,6 @@ class Constants {
       "name": "Whistle",
       "sound": "assets/sound_names/whistle.wav",
     },
- 
     {
       "image": "assets/images/airplane.jpg",
       "name": "Airplane",
@@ -204,7 +198,6 @@ class Constants {
       "name": "Cherry",
       "sound": "assets/sound_names/cherry.wav",
     },
-   
     {
       "image": "assets/images/cloud.jpg",
       "name": "Cloud",
@@ -235,7 +228,6 @@ class Constants {
       "name": "Eye",
       "sound": "assets/sound_names/eye.wav",
     },
-     
     {
       "image": "assets/images/fish.jpg",
       "name": "Fish",
@@ -276,7 +268,6 @@ class Constants {
       "name": "Moon",
       "sound": "assets/sound_names/moon.wav",
     },
- 
     {
       "image": "assets/images/orange.jpg",
       "name": "Orange",
@@ -297,7 +288,6 @@ class Constants {
       "name": "Rice",
       "sound": "assets/sound_names/rice.wav",
     },
-  
     {
       "image": "assets/images/sun.jpg",
       "name": "Sun",
@@ -318,8 +308,5 @@ class Constants {
       "name": "Watermelon",
       "sound": "assets/sound_names/watermelon.wav",
     },
-   
-  
   ];
-
 }

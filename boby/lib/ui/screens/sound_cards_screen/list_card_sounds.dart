@@ -6,8 +6,7 @@ import 'widgets/card_sound.dart';
 class ListCardSounds extends StatelessWidget {
   ListCardSounds({super.key});
 
-  final List<Map<String, String>> assets = Constants.assets;  
-
+  final List<Map<String, String>> assets = Constants.assets;
 
   @override
   Widget build(BuildContext context) {
@@ -30,9 +29,7 @@ class ListCardSounds extends StatelessWidget {
           mainAxisSpacing: width * 0.1,
           childAspectRatio: 0.6, // cuadrado (ancho = alto)
         ),
-      
         itemCount: assets.length,
-      
         itemBuilder: (context, index) {
           return CardSound(
             image: assets[index]["image"]!,

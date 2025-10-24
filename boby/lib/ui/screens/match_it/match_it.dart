@@ -38,7 +38,11 @@ class _FigureOptionsGrid extends StatelessWidget {
   final void Function(String) onTap;
   final bool Function(String) isWrong;
   final bool Function(String) isCorrect;
-  const _FigureOptionsGrid({required this.options, required this.onTap, required this.isWrong, required this.isCorrect});
+  const _FigureOptionsGrid(
+      {required this.options,
+      required this.onTap,
+      required this.isWrong,
+      required this.isCorrect});
 
   @override
   Widget build(BuildContext context) {
@@ -141,9 +145,19 @@ class _MatchItScreenState extends State<MatchItScreen> {
   }
 
   void _nextRound() {
-    // Randomly choose between shape/color, number, and figure rounds
-    final choice = _rng.nextInt(3);
-    _roundType = choice == 0 ? _RoundType.shape : choice == 1 ? _RoundType.number : _RoundType.figure;
+    // Pick next round type based on AppController flags
+    final enabled = <_RoundType>[];
+    if (_app.enableColors.value) enabled.add(_RoundType.shape);
+    if (_app.enableNumbers.value) enabled.add(_RoundType.number);
+    if (_app.enableObjects.value && Constants.assets.isNotEmpty)
+      enabled.add(_RoundType.figure);
+
+    // If nothing enabled, fallback to colors/shape
+    if (enabled.isEmpty) {
+      enabled.add(_RoundType.shape);
+    }
+
+    _roundType = enabled[_rng.nextInt(enabled.length)];
 
     if (_roundType == _RoundType.shape) {
       _generateShapeRound();
@@ -160,8 +174,8 @@ class _MatchItScreenState extends State<MatchItScreen> {
     _targetColor = _colors[_rng.nextInt(_colors.length)];
 
     // Build 4 color options including the correct one
-    final Set<int> usedIdx = { _colors.indexOf(_targetColor!) };
-    final List<(String, Color)> opts = [ _targetColor! ];
+    final Set<int> usedIdx = {_colors.indexOf(_targetColor!)};
+    final List<(String, Color)> opts = [_targetColor!];
     while (opts.length < 4) {
       final idx = _rng.nextInt(_colors.length);
       if (usedIdx.add(idx)) {
@@ -179,7 +193,7 @@ class _MatchItScreenState extends State<MatchItScreen> {
 
   void _generateNumberRound() {
     _targetNumber = _rng.nextInt(20) + 1; // 1..20
-    final Set<int> opts = { _targetNumber! };
+    final Set<int> opts = {_targetNumber!};
     while (opts.length < 4) {
       opts.add(_rng.nextInt(20) + 1);
     }
@@ -296,60 +310,69 @@ class _MatchItScreenState extends State<MatchItScreen> {
   @override
   Widget build(BuildContext context) {
     return Padding(
-          padding: const EdgeInsets.all(16.0),
-          child: Column(
-            children: [
-              const SizedBox(height: 20),
-              const MatchItWord(),   
-              const SizedBox(height: 12),
-              Expanded(
-                child: Center(
-                  child: Stack(
-                    alignment: Alignment.center,
-                    children: [
-                      if (_roundType == _RoundType.shape)
-                        _ShapeTarget(
-                          imagePath: _targetShapePath!,
-                          color: _targetColor!.$2,
-                        )
-                      else if (_roundType == _RoundType.number)
-                        _NumberTarget(number: _targetNumber!)
-                      else
-                        _FigureTarget(imagePath: _targetFigure!["image"]!),
-                      if (_showCorrectOverlay)
-                        const Icon(
-                          Icons.check_rounded,
-                          color: Colors.green,
-                          size: 120,
-                        ),
-                    ],
-                  ),
-                ),
-              ),
-              const SizedBox(height: 12),
-              _roundType == _RoundType.shape
-                  ? _ColorOptionsGrid(
-                      options: _colorOptions,
-                      onTap: _onColorTap,
-                      isWrong: (label) => _wrongColorLabels.contains(label),
-                      isCorrect: (label) => _targetColor != null && label == _targetColor!.$1 && _isLocked,
+      padding: const EdgeInsets.all(16.0),
+      child: Column(
+        children: [
+          const SizedBox(height: 20),
+          const MatchItWord(),
+          const SizedBox(height: 12),
+          Expanded(
+            child: Center(
+              child: Stack(
+                alignment: Alignment.center,
+                children: [
+                  if (_roundType == _RoundType.shape)
+                    _ShapeTarget(
+                      imagePath: _targetShapePath!,
+                      color: _targetColor!.$2,
                     )
-                  : _roundType == _RoundType.number
-                      ? NumberOptionsGrid(
-                          options: _numberOptions,
-                          onTap: _onNumberTap,
-                          isWrong: (value) => _wrongNumberValues.contains(value),
-                          isCorrect: (value) => _targetNumber != null && value == _targetNumber && _isLocked,
-                        )
-                      : _FigureOptionsGrid(
-                          options: _figureOptions,
-                          onTap: _onFigureTap,
-                          isWrong: (label) => _wrongFigureLabels.contains(label),
-                          isCorrect: (label) => _targetFigure != null && label == _targetFigure!["name"] && _isLocked,
-                        ),
-            ],
+                  else if (_roundType == _RoundType.number)
+                    _NumberTarget(number: _targetNumber!)
+                  else
+                    _FigureTarget(imagePath: _targetFigure!["image"]!),
+                  if (_showCorrectOverlay)
+                    const Icon(
+                      Icons.check_rounded,
+                      color: Colors.green,
+                      size: 120,
+                    ),
+                ],
+              ),
+            ),
           ),
-        );
+          const SizedBox(height: 12),
+          _roundType == _RoundType.shape
+              ? _ColorOptionsGrid(
+                  options: _colorOptions,
+                  onTap: _onColorTap,
+                  isWrong: (label) => _wrongColorLabels.contains(label),
+                  isCorrect: (label) =>
+                      _targetColor != null &&
+                      label == _targetColor!.$1 &&
+                      _isLocked,
+                )
+              : _roundType == _RoundType.number
+                  ? NumberOptionsGrid(
+                      options: _numberOptions,
+                      onTap: _onNumberTap,
+                      isWrong: (value) => _wrongNumberValues.contains(value),
+                      isCorrect: (value) =>
+                          _targetNumber != null &&
+                          value == _targetNumber &&
+                          _isLocked,
+                    )
+                  : _FigureOptionsGrid(
+                      options: _figureOptions,
+                      onTap: _onFigureTap,
+                      isWrong: (label) => _wrongFigureLabels.contains(label),
+                      isCorrect: (label) =>
+                          _targetFigure != null &&
+                          label == _targetFigure!["name"] &&
+                          _isLocked,
+                    ),
+        ],
+      ),
+    );
   }
 }
 
@@ -382,7 +405,7 @@ class _NumberTarget extends StatelessWidget {
     final screensize = MediaQuery.of(context).size;
     final width = screensize.width;
     final height = screensize.height;
-    final minSize = min(width , height);
+    final minSize = min(width, height);
 
     final letterSize = minSize * 0.5;
     const numbersPath = 'assets/numbers/';
@@ -412,7 +435,11 @@ class _ColorOptionsGrid extends StatelessWidget {
   final void Function((String, Color)) onTap;
   final bool Function(String) isWrong;
   final bool Function(String) isCorrect;
-  const _ColorOptionsGrid({required this.options, required this.onTap, required this.isWrong, required this.isCorrect});
+  const _ColorOptionsGrid(
+      {required this.options,
+      required this.onTap,
+      required this.isWrong,
+      required this.isCorrect});
 
   @override
   Widget build(BuildContext context) {
@@ -447,7 +474,12 @@ class _ColorOptionButton extends StatelessWidget {
   final VoidCallback onTap;
   final bool isError;
   final bool isCorrect;
-  const _ColorOptionButton({required this.label, required this.color, required this.onTap, this.isError = false, this.isCorrect = false});
+  const _ColorOptionButton(
+      {required this.label,
+      required this.color,
+      required this.onTap,
+      this.isError = false,
+      this.isCorrect = false});
 
   @override
   Widget build(BuildContext context) {
@@ -468,6 +500,5 @@ class _ColorOptionButton extends StatelessWidget {
     );
   }
 }
-
 
 // _WordPng removed: options now render direct Text labels

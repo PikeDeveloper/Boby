@@ -3,18 +3,16 @@ import 'package:get/get.dart';
 import 'package:boby/controllers/app_controller.dart';
 
 class ControlButtons extends StatelessWidget {
-  const ControlButtons({super.key, required this.next, required this.back, required this.clue});
+  const ControlButtons(
+      {super.key, required this.next, required this.back, required this.clue});
 
   final VoidCallback next;
   final VoidCallback back;
   final VoidCallback clue;
 
-  
-
   @override
   Widget build(BuildContext context) {
-
-        String clueSound = "assets/sounds/arcade-game.wav";
+    String clueSound = "assets/sounds/arcade-game.wav";
     String backSound = "assets/sounds/retro-game-over.wav";
     String nextSound = "assets/sounds/retro-game-over.wav";
     double iconSize = 48;
@@ -28,8 +26,8 @@ class ControlButtons extends StatelessWidget {
               await Get.find<AppController>().playMenuSound(backSound);
             }
             back();
-          },  
-          child: Image.asset( "assets/previous.png", height: iconSize),
+          },
+          child: Image.asset("assets/previous.png", height: iconSize),
         ),
         const SizedBox(width: 16),
         GestureDetector(
@@ -40,7 +38,7 @@ class ControlButtons extends StatelessWidget {
             }
             clue();
           },
-          child: Image.asset( "assets/clue-icon.png", height: iconSize),
+          child: Image.asset("assets/clue-icon.png", height: iconSize),
         ),
         const SizedBox(width: 16),
         GestureDetector(
@@ -51,7 +49,7 @@ class ControlButtons extends StatelessWidget {
             }
             next();
           },
-          child: Image.asset( "assets/next.png", height: iconSize),
+          child: Image.asset("assets/next.png", height: iconSize),
         ),
       ],
     );

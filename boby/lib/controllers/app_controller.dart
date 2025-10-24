@@ -13,10 +13,16 @@ class AppController extends GetxController {
   var cardSelected = "".obs;
   var menuOpen = false.obs;
   var celebrationVisible = false.obs; // controls celebration overlay visibility
-  
+
+  //------------MatchIt settings flags------------------------------
+  // Control which types of rounds are enabled in MatchItScreen
+  var enableNumbers = true.obs;
+  var enableColors = true.obs; // color matching round (shape+color)
+  var enableObjects = true.obs; // figures from Constants.assets
+
   //------------Audio Player para sonidos globales------------------------------
   final AudioPlayer _menuAudioPlayer = AudioPlayer();
-  
+
   @override
   void onInit() {
     super.onInit();
@@ -32,7 +38,7 @@ class AppController extends GetxController {
     _menuAudioPlayer.dispose();
     super.onClose();
   }
-  
+
   Future<void> playMenuSound(String soundPath) async {
     try {
       if (!Platform.isLinux) {
@@ -49,7 +55,8 @@ class AppController extends GetxController {
     }
   }
 
-  Future<void> showCelebration({Duration duration = const Duration(seconds: 1)}) async {
+  Future<void> showCelebration(
+      {Duration duration = const Duration(seconds: 1)}) async {
     try {
       celebrationVisible.value = true;
       await Future.delayed(duration);

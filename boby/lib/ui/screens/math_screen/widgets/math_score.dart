@@ -33,26 +33,27 @@ class MathScore extends StatelessWidget {
             final wrong = StorageService.instance.getMathWrong();
             final total = max(1, correct + wrong);
             final avg = correct / total; // 0..1
-        
-            TextStyle styleLabel = TextStyle(fontSize: letterSize * 0.28, fontWeight: FontWeight.w600);
-            TextStyle styleValue = TextStyle(fontSize: letterSize * 0.35, fontWeight: FontWeight.bold);
-        
+
+            TextStyle styleLabel = TextStyle(
+                fontSize: letterSize * 0.28, fontWeight: FontWeight.w600);
+            TextStyle styleValue = TextStyle(
+                fontSize: letterSize * 0.35, fontWeight: FontWeight.bold);
+
             Widget col(String label, String value, Color color) => Column(
                   mainAxisSize: MainAxisSize.min,
                   children: [
                     Text(label, style: styleLabel.copyWith(color: color)),
-                  
                     Text(value, style: styleValue.copyWith(color: color)),
                   ],
                 );
-        
+
             return Row(
               mainAxisAlignment: MainAxisAlignment.center,
               children: [
                 col('Correct', '$correct', Colors.green),
-                SizedBox(width: letterSize ),
-                col('Average', (avg *100).toStringAsFixed(2), Colors.blue),  
-                SizedBox(width: letterSize ),
+                SizedBox(width: letterSize),
+                col('Average', (avg * 100).toStringAsFixed(2), Colors.blue),
+                SizedBox(width: letterSize),
                 col('Wrong', '$wrong', Colors.red),
               ],
             );
@@ -61,16 +62,22 @@ class MathScore extends StatelessWidget {
       ),
     );
   }
-  warningRestoreCounter(context){
-     showDialog(
+
+  warningRestoreCounter(context) {
+    showDialog(
       context: context,
       builder: (context) => AlertDialog(
-        title: const Text('Restore Counter', style: TextStyle(fontSize: 20, fontWeight: FontWeight.bold)),
+        title: const Text('Restore Counter',
+            style: TextStyle(fontSize: 20, fontWeight: FontWeight.bold)),
         content: const Text('Are you sure you want to restore the counter?'),
         actions: [
           TextButton(
             onPressed: () => Navigator.pop(context),
-            child: const Text('Cancel', style: TextStyle(fontSize: 16, fontWeight: FontWeight.bold, color: Colors.blue)),
+            child: const Text('Cancel',
+                style: TextStyle(
+                    fontSize: 16,
+                    fontWeight: FontWeight.bold,
+                    color: Colors.blue)),
           ),
           TextButton(
             onPressed: () {
@@ -78,11 +85,14 @@ class MathScore extends StatelessWidget {
               StorageService.instance.setMathWrong(0);
               Navigator.pop(context);
             },
-            child: const Text('Restore', style: TextStyle(fontSize: 16, fontWeight: FontWeight.bold, color: Colors.red)),
+            child: const Text('Restore',
+                style: TextStyle(
+                    fontSize: 16,
+                    fontWeight: FontWeight.bold,
+                    color: Colors.red)),
           ),
         ],
       ),
     );
   }
-
 }

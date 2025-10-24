@@ -17,30 +17,27 @@ class BackgroundSettings extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-
     final screenSize = MediaQuery.of(context).size;
     final screenWidth = screenSize.width;
     final screenHeight = screenSize.height;
 
-    final minSize = min(screenWidth, screenHeight); 
+    final minSize = min(screenWidth, screenHeight);
 
     final cardWidth = minSize * 0.3;
-    
-    return   GridView.builder(
-            shrinkWrap: true,
-            physics: const NeverScrollableScrollPhysics(),
-            gridDelegate: SliverGridDelegateWithMaxCrossAxisExtent(
-              maxCrossAxisExtent: cardWidth, // máximo ancho por item
-              crossAxisSpacing: 10,
-              mainAxisSpacing: 10,
-              childAspectRatio: 1, // cuadrado (ancho = alto)
-            ),
-      
-            itemCount: backGrounds.length,
-      
-            itemBuilder: (context, index) {
-              return BackgroundCard(image: backGrounds[index]);
-            },
-          );
+
+    return GridView.builder(
+      shrinkWrap: true,
+      physics: const NeverScrollableScrollPhysics(),
+      gridDelegate: SliverGridDelegateWithMaxCrossAxisExtent(
+        maxCrossAxisExtent: cardWidth, // máximo ancho por item
+        crossAxisSpacing: 10,
+        mainAxisSpacing: 10,
+        childAspectRatio: 1, // cuadrado (ancho = alto)
+      ),
+      itemCount: backGrounds.length,
+      itemBuilder: (context, index) {
+        return BackgroundCard(image: backGrounds[index]);
+      },
+    );
   }
 }

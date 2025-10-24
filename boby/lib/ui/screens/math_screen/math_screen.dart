@@ -120,74 +120,74 @@ class _MathScreenState extends State<MathScreen> {
 
   @override
   Widget build(BuildContext context) {
-    
     return SafeArea(
-        child: Center(
-          child: Padding(
-            padding: const EdgeInsets.all(16.0),
-            child: Stack(
-              alignment: Alignment.topCenter,
-              children: [
-                Column(
-                  mainAxisAlignment: MainAxisAlignment.center,
-                  crossAxisAlignment: CrossAxisAlignment.center,
-                  children: [
-                 
-                    Stack(
-                      alignment: Alignment.center,
-                      children: [
-                        _buildSumRow(),
-                        if (_correctSelected != null)
-                          const Icon(
-                              Icons.check,
-                              color: Colors.green,
-                              size: 60,
-                            ),
-                      ],
-                    ),
-                    const SizedBox(height: 100),
-                    LayoutBuilder(
-                      builder: (context, constraints) {
-                        final double buttonSize = (constraints.maxWidth - 48) / 2; // 2 columnas, 16px gaps
-                        return Wrap(
-                          alignment: WrapAlignment.center,
-                          spacing: 16,
-                          runSpacing: 16,
-                          children: _options
-                              .map(
-                                (opt) => SizedBox(
-                                  width: buttonSize,
-                                  height: 100,
-                                  child: ElevatedButton(
-                                    style: ElevatedButton.styleFrom(
-                                      backgroundColor: _correctSelected == opt
-                                          ? Colors.green
-                                          : (_wrongSelecteds.contains(opt)
-                                              ? const Color.fromARGB(113, 244, 67, 54)
-                                              : null),
-                                      shape: RoundedRectangleBorder(
-                                        borderRadius: BorderRadius.circular(16),
-                                      ),
+      child: Center(
+        child: Padding(
+          padding: const EdgeInsets.all(16.0),
+          child: Stack(
+            alignment: Alignment.topCenter,
+            children: [
+              Column(
+                mainAxisAlignment: MainAxisAlignment.center,
+                crossAxisAlignment: CrossAxisAlignment.center,
+                children: [
+                  Stack(
+                    alignment: Alignment.center,
+                    children: [
+                      _buildSumRow(),
+                      if (_correctSelected != null)
+                        const Icon(
+                          Icons.check,
+                          color: Colors.green,
+                          size: 60,
+                        ),
+                    ],
+                  ),
+                  const SizedBox(height: 100),
+                  LayoutBuilder(
+                    builder: (context, constraints) {
+                      final double buttonSize = (constraints.maxWidth - 48) /
+                          2; // 2 columnas, 16px gaps
+                      return Wrap(
+                        alignment: WrapAlignment.center,
+                        spacing: 16,
+                        runSpacing: 16,
+                        children: _options
+                            .map(
+                              (opt) => SizedBox(
+                                width: buttonSize,
+                                height: 100,
+                                child: ElevatedButton(
+                                  style: ElevatedButton.styleFrom(
+                                    backgroundColor: _correctSelected == opt
+                                        ? Colors.green
+                                        : (_wrongSelecteds.contains(opt)
+                                            ? const Color.fromARGB(
+                                                113, 244, 67, 54)
+                                            : null),
+                                    shape: RoundedRectangleBorder(
+                                      borderRadius: BorderRadius.circular(16),
                                     ),
-                                    onPressed: _correctSelected != null
-                                        ? null
-                                        : () => _onSelect(context, opt),
-                                    child: _buildDigitImages(opt, 36),
                                   ),
+                                  onPressed: _correctSelected != null
+                                      ? null
+                                      : () => _onSelect(context, opt),
+                                  child: _buildDigitImages(opt, 36),
                                 ),
-                              )
-                              .toList(),
-                        );
-                      },
-                    ),
-                  ],
-                ),
-                   MathScore(),  
-              ],
-            ),
+                              ),
+                            )
+                            .toList(),
+                      );
+                    },
+                  ),
+                ],
+              ),
+              MathScore(),
+            ],
           ),
         ),
-      );
+      ),
+    );
   }
 
   Widget _buildSumRow() {

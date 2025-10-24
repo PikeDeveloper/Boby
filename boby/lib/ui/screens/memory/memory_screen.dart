@@ -191,7 +191,7 @@ class _MemoryScreenState extends State<MemoryScreen>
         // ¡Coinciden! - Reproducir sonido de match
         final appController = Get.find<AppController>();
         appController.playMenuSound(soundPathMatch);
-        
+
         setState(() {
           matchedCards.addAll(flippedCards);
           cards[flippedCards[0]].isMatched = true;
@@ -207,7 +207,7 @@ class _MemoryScreenState extends State<MemoryScreen>
           // Reproducir música de victoria
           final appController = Get.find<AppController>();
           appController.playMenuSound(soundPathWinner);
-          
+
           // Mostrar pantalla de victoria
           setState(() {
             isGameWon = true;
@@ -229,11 +229,10 @@ class _MemoryScreenState extends State<MemoryScreen>
     }
   }
 
-
   @override
   Widget build(BuildContext context) {
     final screenSize = MediaQuery.of(context).size;
-    final minSide = min(screenSize.width, screenSize.height);   
+    final minSide = min(screenSize.width, screenSize.height);
     return Stack(
       children: [
         Column(
@@ -260,7 +259,8 @@ class _MemoryScreenState extends State<MemoryScreen>
                   width: minSide * 0.8,
                   height: minSide * 0.8,
                   child: ValueListenableBuilder(
-                    valueListenable: StorageService.instance.listenable(keys: [StorageService.memoryGridKey]),
+                    valueListenable: StorageService.instance
+                        .listenable(keys: [StorageService.memoryGridKey]),
                     builder: (context, box, _) {
                       // actualizar dimensiones según selección
                       final gridStr = StorageService.instance.getMemoryGrid();
@@ -271,13 +271,16 @@ class _MemoryScreenState extends State<MemoryScreen>
                         final r = int.tryParse(parts[0]);
                         final c = int.tryParse(parts[1]);
                         if (r != null && c != null) {
-                          rows = r; cols = c;
+                          rows = r;
+                          cols = c;
                         }
                       }
 
                       final totalSlots = rows * cols;
                       // re-inicializar si cambió el tamaño
-                      if (rows != _rows || cols != _cols || cards.length != totalSlots) {
+                      if (rows != _rows ||
+                          cols != _cols ||
+                          cards.length != totalSlots) {
                         _initializeGame(rows: rows, cols: cols);
                       }
 
@@ -325,7 +328,6 @@ class _MemoryScreenState extends State<MemoryScreen>
               ..setEntry(3, 2, 0.001)
               ..rotateY(isFlipped ? 0 : 3.14159),
             child: Container(
-                  
               decoration: BoxDecoration(
                 borderRadius: BorderRadius.circular(12),
                 boxShadow: [
@@ -340,11 +342,11 @@ class _MemoryScreenState extends State<MemoryScreen>
                 borderRadius: BorderRadius.circular(12),
                 child: isFlipped
                     ? (card.name == "Empty"
-                          ? Container(
-                              color: Colors.grey[300],
-                              child: const Icon(Icons.close, size: 50),
-                            )
-                          : Image.asset(card.image, fit: BoxFit.cover))
+                        ? Container(
+                            color: Colors.grey[300],
+                            child: const Icon(Icons.close, size: 50),
+                          )
+                        : Image.asset(card.image, fit: BoxFit.cover))
                     : Container(
                         decoration: BoxDecoration(
                           //  String backGroundImage = "assets/card.png";

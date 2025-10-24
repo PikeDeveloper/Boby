@@ -37,11 +37,13 @@ class StorageService {
   Future<void> setBackground(String path) => _box.put(_kBackground, path);
 
   int getMathCorrect() => (_box.get(_kMathCorrect) as int?) ?? 0;
-  Future<void> incMathCorrect([int by = 1]) => _box.put(_kMathCorrect, getMathCorrect() + by);
+  Future<void> incMathCorrect([int by = 1]) =>
+      _box.put(_kMathCorrect, getMathCorrect() + by);
   Future<void> setMathCorrect(int value) => _box.put(_kMathCorrect, value);
 
   int getMathWrong() => (_box.get(_kMathWrong) as int?) ?? 0;
-  Future<void> incMathWrong([int by = 1]) => _box.put(_kMathWrong, getMathWrong() + by);
+  Future<void> incMathWrong([int by = 1]) =>
+      _box.put(_kMathWrong, getMathWrong() + by);
   Future<void> setMathWrong(int value) => _box.put(_kMathWrong, value);
 
   int getMathTotalAttempts() => getMathCorrect() + getMathWrong();
@@ -52,22 +54,28 @@ class StorageService {
   }
 
   int getColorsCorrect() => (_box.get(_kColorsCorrect) as int?) ?? 0;
-  Future<void> incColorsCorrect([int by = 1]) => _box.put(_kColorsCorrect, getColorsCorrect() + by);
+  Future<void> incColorsCorrect([int by = 1]) =>
+      _box.put(_kColorsCorrect, getColorsCorrect() + by);
   Future<void> setColorsCorrect(int value) => _box.put(_kColorsCorrect, value);
 
   int getNumbersCorrect() => (_box.get(_kNumbersCorrect) as int?) ?? 0;
-  Future<void> incNumbersCorrect([int by = 1]) => _box.put(_kNumbersCorrect, getNumbersCorrect() + by);
-  Future<void> setNumbersCorrect(int value) => _box.put(_kNumbersCorrect, value);
+  Future<void> incNumbersCorrect([int by = 1]) =>
+      _box.put(_kNumbersCorrect, getNumbersCorrect() + by);
+  Future<void> setNumbersCorrect(int value) =>
+      _box.put(_kNumbersCorrect, value);
 
   int getThingsCorrect() => (_box.get(_kThingsCorrect) as int?) ?? 0;
-  Future<void> incThingsCorrect([int by = 1]) => _box.put(_kThingsCorrect, getThingsCorrect() + by);
+  Future<void> incThingsCorrect([int by = 1]) =>
+      _box.put(_kThingsCorrect, getThingsCorrect() + by);
   Future<void> setThingsCorrect(int value) => _box.put(_kThingsCorrect, value);
 
   int getCounter(String key) => (_box.get(key) as int?) ?? 0;
   Future<void> setCounter(String key, int value) => _box.put(key, value);
-  Future<void> incCounter(String key, [int by = 1]) => _box.put(key, getCounter(key) + by);
+  Future<void> incCounter(String key, [int by = 1]) =>
+      _box.put(key, getCounter(key) + by);
 
-  ValueListenable<Box> listenable({List<dynamic>? keys}) => _box.listenable(keys: keys);
+  ValueListenable<Box> listenable({List<dynamic>? keys}) =>
+      _box.listenable(keys: keys);
   static String get mathCorrectKey => _kMathCorrect;
   static String get mathWrongKey => _kMathWrong;
   static String get mathOpAddKey => _kMathOpAdd;

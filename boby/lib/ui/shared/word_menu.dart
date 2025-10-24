@@ -14,7 +14,8 @@ class WordMenu extends StatelessWidget {
       mainAxisAlignment: MainAxisAlignment.center,
       children: [
         for (var letter in letters)
-          Image.asset("assets/letters_2/$letter.png", width: letterSize, height: letterSize),
+          Image.asset("assets/letters_2/$letter.png",
+              width: letterSize, height: letterSize),
       ],
     );
   }

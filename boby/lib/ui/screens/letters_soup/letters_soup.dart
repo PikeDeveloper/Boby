@@ -4,6 +4,7 @@ import 'package:boby/ui/shared/winner_screen.dart';
 import 'package:boby/ui/shared/word_of_images.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
+import 'dart:math' as math;
 
 class LettersSoup extends StatefulWidget {
   const LettersSoup({super.key});
@@ -18,7 +19,8 @@ class _LettersSoupState extends State<LettersSoup> {
   late String topicTitle;
   late List<List<String>> grid;
   final Set<String> foundWords = {};
-  final Set<Point> foundCells = {}; 
+  final Set<Point> foundCells = {};
+  final List<List<Point>> foundPaths = [];
   Point? start;
   Point? end;
   List<Point> selectionPath = [];
@@ -36,40 +38,41 @@ class _LettersSoupState extends State<LettersSoup> {
 
   @override
   Widget build(BuildContext context) {
-    final appController = Get.find<AppController>();  
+    final appController = Get.find<AppController>();
     return Stack(
       children: [
         Padding(
-            padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 12),
-            child: Column(
-              crossAxisAlignment: CrossAxisAlignment.stretch,
-              children: [
-                Text(
-                  topicTitle,
-                  textAlign: TextAlign.center,
-                  style: const TextStyle(fontSize: 20, fontWeight: FontWeight.bold),
-                ),
-                const SizedBox(height: 8),
-                _buildWordList(),
-                const SizedBox(height: 12),
-                Expanded(child: _buildGrid()),
-                const SizedBox(height: 8),
-                _buildControls(),
-              ],
-            ),
+          padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 12),
+          child: Column(
+            crossAxisAlignment: CrossAxisAlignment.stretch,
+            children: [
+              Text(
+                topicTitle,
+                textAlign: TextAlign.center,
+                style:
+                    const TextStyle(fontSize: 20, fontWeight: FontWeight.bold),
+              ),
+              const SizedBox(height: 8),
+              _buildWordList(),
+              const SizedBox(height: 12),
+              Expanded(child: _buildGrid()),
+              const SizedBox(height: 8),
+              _buildControls(),
+            ],
           ),
-          if (foundWords.length == words.length)
-          WinnerScreen(onTap: () {  
+        ),
+        if (foundWords.length == words.length)
+          WinnerScreen(onTap: () {
             setState(() {
               _selectRandomCategory();
               grid = _generateGrid(size, words);
               foundWords.clear();
               foundCells.clear();
+              foundPaths.clear();
               start = null;
               end = null;
               selectionPath = [];
             });
-          
           }),
       ],
     );
@@ -97,7 +100,8 @@ class _LettersSoupState extends State<LettersSoup> {
   }
 
   Widget _buildGrid() {
-    final available = MediaQuery.of(context).size.width - 20; // 10px margin each side
+    final available =
+        MediaQuery.of(context).size.width - 20; // 10px margin each side
     final gridWidth = available > 600 ? 600.0 : available;
     final cellSize = gridWidth / size;
     return Center(
@@ -133,6 +137,7 @@ class _LettersSoupState extends State<LettersSoup> {
             if (matched != null) {
               foundWords.add(matched);
               foundCells.addAll(selectionPath);
+              foundPaths.add(List<Point>.from(selectionPath));
               _maybePlayWin();
             }
             start = null;
@@ -143,40 +148,46 @@ class _LettersSoupState extends State<LettersSoup> {
         child: SizedBox(
           width: gridWidth,
           height: gridWidth,
-          child: GridView.builder(
-            physics: const NeverScrollableScrollPhysics(),
-            gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
-              crossAxisCount: size,
-            ),
-            itemCount: size * size,
-            itemBuilder: (context, index) {
-              final r = index ~/ size;
-              final c = index % size;
-              final p = Point(r, c);
-              final inFound = foundCells.contains(p);
-              final inSelection = selectionPath.contains(p);
-              return InkWell(
-                onTap: () => _onCellTap(p),
-                child: Container(
-                  decoration: BoxDecoration(
-                    color: inFound
-                        ? Colors.green.shade300
-                        : inSelection
-                            ? Colors.blue.shade300
-                            : Colors.grey.shade200,
-                    border: Border.all(color: Colors.black12),
-                  ),
-                  alignment: Alignment.center,
-                  child: Text(
-                    grid[r][c],
-                    style: const TextStyle(
-                      fontWeight: FontWeight.bold,
-                      fontSize: 18,
-                    ),
-                  ),
+          child: Stack(
+            children: [
+              GridView.builder(
+                physics: const NeverScrollableScrollPhysics(),
+                gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
+                  crossAxisCount: size,
                 ),
-              );
-            },
+                itemCount: size * size,
+                itemBuilder: (context, index) {
+                  final r = index ~/ size;
+                  final c = index % size;
+                  final p = Point(r, c);
+                  return InkWell(
+                    onTap: () => _onCellTap(p),
+                    child: Container(
+                      decoration: BoxDecoration(
+                        color: Colors.grey.shade200,
+                        border: Border.all(color: Colors.black12),
+                      ),
+                      alignment: Alignment.center,
+                      child: Text(
+                        grid[r][c],
+                        style: const TextStyle(
+                          fontWeight: FontWeight.bold,
+                          fontSize: 18,
+                        ),
+                      ),
+                    ),
+                  );
+                },
+              ),
+              CustomPaint(
+                size: Size(gridWidth, gridWidth),
+                painter: _SelectionPainter(
+                  cellSize: cellSize,
+                  currentPath: selectionPath,
+                  foundPaths: foundPaths,
+                ),
+              ),
+            ],
           ),
         ),
       ),
@@ -202,6 +213,7 @@ class _LettersSoupState extends State<LettersSoup> {
       grid = _generateGrid(size, words);
       foundWords.clear();
       foundCells.clear();
+      foundPaths.clear();
       start = null;
       end = null;
       selectionPath = [];
@@ -226,6 +238,7 @@ class _LettersSoupState extends State<LettersSoup> {
         if (matched != null) {
           foundWords.add(matched);
           foundCells.addAll(path);
+          foundPaths.add(List<Point>.from(path));
           _maybePlayWin();
         }
         start = null;
@@ -319,7 +332,9 @@ class _LettersSoupState extends State<LettersSoup> {
     final dr = (b.r - a.r).sign;
     final dc = (b.c - a.c).sign;
     if (dr == 0 && dc == 0) return [a];
-    if (!((dr == 0 && dc != 0) || (dr != 0 && dc == 0) || (dr != 0 && dc != 0 && (b.r - a.r).abs() == (b.c - a.c).abs()))) {
+    if (!((dr == 0 && dc != 0) ||
+        (dr != 0 && dc == 0) ||
+        (dr != 0 && dc != 0 && (b.r - a.r).abs() == (b.c - a.c).abs()))) {
       return [a];
     }
     final path = <Point>[];
@@ -338,9 +353,9 @@ class _LettersSoupState extends State<LettersSoup> {
     final rng = _Rng();
     final dirs = [
       // Only left-to-right orientations: horizontal right and rightward diagonals
-      const Offset(1, 0),   // →
-      const Offset(1, 1),   // ↘
-      const Offset(1, -1),  // ↗
+      const Offset(1, 0), // →
+      const Offset(1, 1), // ↘
+      const Offset(1, -1), // ↗
     ];
 
     // Try multiple times until all words are placed
@@ -451,5 +466,83 @@ void _shuffle<T>(List<T> list, _Rng rng) {
     final tmp = list[i];
     list[i] = list[j];
     list[j] = tmp;
+  }
+}
+
+class _SelectionPainter extends CustomPainter {
+  final double cellSize;
+  final List<Point> currentPath;
+  final List<List<Point>> foundPaths;
+
+  _SelectionPainter({
+    required this.cellSize,
+    required this.currentPath,
+    required this.foundPaths,
+  });
+
+  @override
+  void paint(Canvas canvas, Size size) {
+    for (final path in foundPaths) {
+      _drawCapsule(canvas, path, Colors.green);
+    }
+    if (currentPath.isNotEmpty) {
+      _drawCapsule(canvas, currentPath, Colors.blue);
+    }
+  }
+
+  void _drawCapsule(Canvas canvas, List<Point> path, Color color) {
+    if (path.isEmpty) return;
+    final a = path.first;
+    final b = path.last;
+
+    final aCenter =
+        Offset(a.c * cellSize + cellSize / 2, a.r * cellSize + cellSize / 2);
+    final bCenter =
+        Offset(b.c * cellSize + cellSize / 2, b.r * cellSize + cellSize / 2);
+
+    final mid =
+        Offset((aCenter.dx + bCenter.dx) / 2, (aCenter.dy + bCenter.dy) / 2);
+    final dx = bCenter.dx - aCenter.dx;
+    final dy = bCenter.dy - aCenter.dy;
+    final angle = math.atan2(dy, dx);
+    final length = math.sqrt(dx * dx + dy * dy);
+
+    final thickness = cellSize * 0.8;
+    final rect = Rect.fromCenter(
+        center: mid, width: length + thickness, height: thickness);
+    final rrect = RRect.fromRectAndRadius(rect, Radius.circular(thickness / 2));
+
+    canvas.save();
+    canvas.translate(mid.dx, mid.dy);
+    canvas.rotate(angle);
+    canvas.translate(-mid.dx, -mid.dy);
+
+    final paint = Paint()
+      ..style = PaintingStyle.stroke
+      ..strokeWidth = 2
+      ..color = color;
+    canvas.drawRRect(rrect, paint);
+    canvas.restore();
+  }
+
+  @override
+  bool shouldRepaint(covariant _SelectionPainter oldDelegate) {
+    return oldDelegate.cellSize != cellSize ||
+        oldDelegate.currentPath != currentPath ||
+        !_listEquals(oldDelegate.foundPaths, foundPaths);
+  }
+
+  bool _listEquals(List<List<Point>> a, List<List<Point>> b) {
+    if (identical(a, b)) return true;
+    if (a.length != b.length) return false;
+    for (var i = 0; i < a.length; i++) {
+      final la = a[i];
+      final lb = b[i];
+      if (la.length != lb.length) return false;
+      for (var j = 0; j < la.length; j++) {
+        if (la[j] != lb[j]) return false;
+      }
+    }
+    return true;
   }
 }

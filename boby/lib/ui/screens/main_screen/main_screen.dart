@@ -2,7 +2,7 @@ import 'package:boby/controllers/app_controller.dart';
 import 'package:boby/ui/screens/letters_soup/letters_soup.dart';
 import 'package:boby/ui/screens/main_screen/widgets/background.dart';
 import 'package:boby/ui/screens/math_screen/math_screen.dart';
-import 'package:boby/ui/screens/word_guess/word_guess_screen.dart'; 
+import 'package:boby/ui/screens/word_guess/word_guess_screen.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 
@@ -22,8 +22,8 @@ class MainScreen extends StatelessWidget {
     ListCardSounds(),
     MemoryScreen(),
     LettersSoup(),
-   // BallomScreen(),
-     MathScreen(),
+    // BallomScreen(),
+    MathScreen(),
     WordGuessScreen(),
     MatchItScreen(),
     SettingScreen(),
@@ -37,7 +37,6 @@ class MainScreen extends StatelessWidget {
       appBar: AppBar(
         leading: IconButton(
           onPressed: () {
-         
             appController.menuOpen.value = false;
             appController.currentPage.value = 6;
           },
@@ -53,10 +52,8 @@ class MainScreen extends StatelessWidget {
         ],
         title: Image.asset("assets/boby_app_logo.png", width: 100),
         centerTitle: true,
-      backgroundColor: const Color.fromARGB(222, 113, 178, 235),
-   
+        backgroundColor: const Color.fromARGB(222, 113, 178, 235),
       ),
-
       body: Obx(
         () => SafeArea(
           child: Stack(

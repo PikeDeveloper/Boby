@@ -23,7 +23,8 @@ class CardSound extends StatefulWidget {
   State<CardSound> createState() => _CardSoundState();
 }
 
-class _CardSoundState extends State<CardSound> with SingleTickerProviderStateMixin {
+class _CardSoundState extends State<CardSound>
+    with SingleTickerProviderStateMixin {
   AudioPlayer? _player; // lazy init
   StreamSubscription<PlayerState>? _stateSub;
   bool _isPlaying = false;
@@ -33,10 +34,17 @@ class _CardSoundState extends State<CardSound> with SingleTickerProviderStateMix
   @override
   void initState() {
     super.initState();
-    _jumpCtrl = AnimationController(vsync: this, duration: const Duration(milliseconds: 300));
+    _jumpCtrl = AnimationController(
+        vsync: this, duration: const Duration(milliseconds: 300));
     _jumpY = TweenSequence<double>([
-      TweenSequenceItem(tween: Tween(begin: 0.0, end: -16.0).chain(CurveTween(curve: Curves.easeOut)), weight: 50),
-      TweenSequenceItem(tween: Tween(begin: -16.0, end: 0.0).chain(CurveTween(curve: Curves.easeIn)), weight: 50),
+      TweenSequenceItem(
+          tween: Tween(begin: 0.0, end: -16.0)
+              .chain(CurveTween(curve: Curves.easeOut)),
+          weight: 50),
+      TweenSequenceItem(
+          tween: Tween(begin: -16.0, end: 0.0)
+              .chain(CurveTween(curve: Curves.easeIn)),
+          weight: 50),
     ]).animate(_jumpCtrl);
   }
 
@@ -47,8 +55,6 @@ class _CardSoundState extends State<CardSound> with SingleTickerProviderStateMix
     _jumpCtrl.dispose();
     super.dispose();
   }
-
- 
 
   @override
   Widget build(BuildContext context) {
@@ -69,7 +75,7 @@ class _CardSoundState extends State<CardSound> with SingleTickerProviderStateMix
     ];
 
     int colorSelected = Random().nextInt(borderColors.length);
-    
+
     // Animations disabled: static card
 
     return GestureDetector(
@@ -94,7 +100,7 @@ class _CardSoundState extends State<CardSound> with SingleTickerProviderStateMix
         } else {
           // If not selected, select and start animation
           appController.cardSelected.value = widget.name;
-          
+
           try {
             // Solo reproducir audio en plataformas compatibles (no Linux)
             if (!Platform.isLinux) {
@@ -110,7 +116,7 @@ class _CardSoundState extends State<CardSound> with SingleTickerProviderStateMix
               // En Linux, solo mostrar feedback visual
               print('Audio deshabilitado en Linux: ${widget.sound}');
             }
-            
+
             // Handle when audio finishes playing
             _stateSub?.cancel();
             _stateSub = _player?.playerStateStream.listen((state) async {
@@ -129,10 +135,9 @@ class _CardSoundState extends State<CardSound> with SingleTickerProviderStateMix
                 }
               }
             });
-            
           } catch (e) {
             debugPrint('Error playing sound: $e');
-        
+
             if (mounted) {
               setState(() {
                 _isPlaying = false;
@@ -150,33 +155,32 @@ class _CardSoundState extends State<CardSound> with SingleTickerProviderStateMix
               child: child,
             ),
             child: SizedBox(
-            width: 150,
-            height: 120,
-            child: Card(
-              elevation: 4,
-              color: appController.cardSelected.value == widget.name
-                  ? _isPlaying 
-                      ? Colors.green.withOpacity(0.8) 
-                      : Colors.blue.withOpacity(0.8)
-                  : const Color.fromARGB(255, 236, 8, 8),
-              shape: RoundedRectangleBorder(
-                borderRadius: BorderRadius.circular(20),
-                side: BorderSide(
-                  color: borderColors[colorSelected],
-                  width: 3,
+              width: 150,
+              height: 120,
+              child: Card(
+                elevation: 4,
+                color: appController.cardSelected.value == widget.name
+                    ? _isPlaying
+                        ? Colors.green.withOpacity(0.8)
+                        : Colors.blue.withOpacity(0.8)
+                    : const Color.fromARGB(255, 236, 8, 8),
+                shape: RoundedRectangleBorder(
+                  borderRadius: BorderRadius.circular(20),
+                  side: BorderSide(
+                    color: borderColors[colorSelected],
+                    width: 3,
+                  ),
+                ),
+                child: ClipRRect(
+                  borderRadius: BorderRadius.circular(20),
+                  child: Stack(
+                    fit: StackFit.expand,
+                    children: [
+                      Image.asset(widget.image, fit: BoxFit.cover),
+                    ],
+                  ),
                 ),
               ),
-              child: ClipRRect(
-                borderRadius: BorderRadius.circular(20),
-                child: Stack(
-                  fit: StackFit.expand,
-                  children: [
-                    Image.asset(widget.image, fit: BoxFit.cover),
-                   
-                  ],
-                ),
-              ),
-            ),
             ),
           ),
           Container(
@@ -184,14 +188,16 @@ class _CardSoundState extends State<CardSound> with SingleTickerProviderStateMix
             alignment: Alignment.center,
             decoration: BoxDecoration(
               borderRadius: BorderRadius.circular(20),
-              color: const Color.fromARGB(232, 242, 242, 242).withValues(alpha: 0.8), 
+              color: const Color.fromARGB(232, 242, 242, 242)
+                  .withValues(alpha: 0.8),
             ),
-            child: Text(widget.name,
-            style: const TextStyle(
-              fontSize: 16,
-              fontWeight: FontWeight.w600,
-              color: Color.fromARGB(255, 6, 45, 243),
-            ),
+            child: Text(
+              widget.name,
+              style: const TextStyle(
+                fontSize: 16,
+                fontWeight: FontWeight.w600,
+                color: Color.fromARGB(255, 6, 45, 243),
+              ),
             ),
           ),
         ],

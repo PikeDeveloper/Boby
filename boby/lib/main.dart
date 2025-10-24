@@ -30,8 +30,6 @@ class MainApp extends StatelessWidget {
         textTheme: GoogleFonts.comicNeueTextTheme(),
         useMaterial3: true,
       ),
-
-
     );
   }
 }

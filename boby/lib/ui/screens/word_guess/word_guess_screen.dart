@@ -7,7 +7,6 @@ import 'package:get/get.dart';
 import 'package:boby/controllers/app_controller.dart';
 import 'dart:math';
 
-
 class WordGuessScreen extends StatefulWidget {
   const WordGuessScreen({super.key});
 
@@ -17,6 +16,7 @@ class WordGuessScreen extends StatefulWidget {
 
 class _WordGuessScreenState extends State<WordGuessScreen> {
   final List<Map<String, String>> assets = Constants.assets;
+  late final List<Map<String, String>> shuffledAssets;
 
   int currentIndex = 0;
   late final PageController _pageController;
@@ -34,11 +34,14 @@ class _WordGuessScreenState extends State<WordGuessScreen> {
   void initState() {
     super.initState();
     _pageController = PageController(initialPage: currentIndex);
+    // Create a shuffled copy of assets so words appear in random order
+    final rand = Random();
+    shuffledAssets = List<Map<String, String>>.from(assets)..shuffle(rand);
     _startRound();
   }
 
   void _startRound() {
-    final raw = assets[currentIndex]["name"] ?? "";
+    final raw = shuffledAssets[currentIndex]["name"] ?? "";
     targetWord = raw.toUpperCase();
 
     // Initialize slots (empty)
@@ -99,11 +102,10 @@ class _WordGuessScreenState extends State<WordGuessScreen> {
       _showError = false; // clear error state on edit
     });
   }
- 
 
   void _next() {
     if (!mounted) return;
-    final next = (currentIndex + 1) % assets.length;
+    final next = (currentIndex + 1) % shuffledAssets.length;
     _pageController.animateToPage(
       next,
       duration: const Duration(milliseconds: 250),
@@ -113,7 +115,8 @@ class _WordGuessScreenState extends State<WordGuessScreen> {
 
   void _back() {
     if (!mounted) return;
-    final prev = (currentIndex - 1 + assets.length) % assets.length;
+    final prev =
+        (currentIndex - 1 + shuffledAssets.length) % shuffledAssets.length;
     _pageController.animateToPage(
       prev,
       duration: const Duration(milliseconds: 250),
@@ -160,11 +163,12 @@ class _WordGuessScreenState extends State<WordGuessScreen> {
         if (hasCtrl) {
           Get.find<AppController>().playMenuSound(_correctWordSound);
           // Show celebration overlay for 1 second
-          Get.find<AppController>().showCelebration(duration: const Duration(seconds: 1));
+          Get.find<AppController>()
+              .showCelebration(duration: const Duration(seconds: 1));
         }
         Future.delayed(const Duration(milliseconds: 1000), () {
           if (!mounted) return;
-          final next = (currentIndex + 1) % assets.length;
+          final next = (currentIndex + 1) % shuffledAssets.length;
           _pageController.animateToPage(
             next,
             duration: const Duration(milliseconds: 300),
@@ -199,13 +203,13 @@ class _WordGuessScreenState extends State<WordGuessScreen> {
     final firstRow = keys.take((keys.length / 2).ceil()).toList();
     final secondRow = keys.skip((keys.length / 2).ceil()).toList();
 
-    
-
     // Celebration overlay controlled by AppController
     Widget celebrationOverlay = const SizedBox.shrink();
-    if (Get.isRegistered<AppController>()) {  
+    if (Get.isRegistered<AppController>()) {
       final app = Get.find<AppController>();
-      celebrationOverlay = Obx(() => app.celebrationVisible.value ? const CelebrationImage() : const SizedBox.shrink());
+      celebrationOverlay = Obx(() => app.celebrationVisible.value
+          ? const CelebrationImage()
+          : const SizedBox.shrink());
     }
 
     return Stack(
@@ -213,101 +217,110 @@ class _WordGuessScreenState extends State<WordGuessScreen> {
       children: [
         celebrationOverlay,
         Column(
-       
-                crossAxisAlignment: CrossAxisAlignment.center,
-                mainAxisAlignment: MainAxisAlignment.center,
-                mainAxisSize: MainAxisSize.min, 
-                children: [
-        
-                 WordGuessWord(),
-                     const SizedBox(height: 30),
-                  SizedBox(
-                    width: minSize * 0.7,
-                    height: minSize * 0.70,
-                    child: ClipRRect(
-                      borderRadius: BorderRadius.circular(25),
-                      child: PageView.builder(
-                        controller: _pageController,
-                        physics: const BouncingScrollPhysics(),
-                        onPageChanged: (index) {
-                          setState(() {
-                            currentIndex = index;
-                          });
-                          _startRound();
-                        },
-                        itemCount: assets.length,
-                        itemBuilder: (context, index) {
-                          final path = assets[index]["image"] ?? "";
-                          return Image.asset(
-                            path,
-                            fit: BoxFit.contain,
-                            errorBuilder: (c, e, s) => const Center(child: Icon(Icons.image_not_supported, size: 48)),
-                          );
-                        },
-                      ),
-                    ),
-                  ),
-                  const SizedBox(height: 16),
-        
-                  // Answer slots (lines to place letters)
-                  Center(
-                    child: Wrap(
-                      spacing: 8,
-                      runSpacing: 8,
-                      children: List.generate(slots.length, (i) {
-                        final s = slots[i];
-                        return GestureDetector(
-                          onTap: () => _onSlotTap(i),
-                          child: Container(
-                            width: 36,
-                            height: 48,
-                            alignment: Alignment.center,
-                            decoration: BoxDecoration(
-                              borderRadius: BorderRadius.circular(8),
-                              border: Border.all(color: _showError ? Colors.red : Colors.grey.shade400, width: 2),
-                              color: s.char == null ? Colors.transparent : Theme.of(context).colorScheme.primary.withOpacity(0.1),
-                            ),
-                            child: s.char == null
-                                ? const SizedBox.shrink()
-                                : Image.asset(
-                                    "assets/letters_2/${s.char}.png",
-                                    height: 36,
-                                    fit: BoxFit.contain,
-                                  ),
-                          ),
-                        );
-                      }),
-                    ),
-                  ),
-        
-                  const SizedBox(height: 16),
-        
-                ControlButtons(next: _next, back: _back, clue: _clue  ), 
-        
-                  const SizedBox(height: 20),
-        
-                  // Two rows of letters to choose
-                  _KeysRow(
-                    keysRow: firstRow,
-                    onTap: (idxInRow) => _onKeyTap(idxInRow),
-                    baseIndex: 0,
-                  ),
-                  const SizedBox(height: 8),
-                  _KeysRow(
-                    keysRow: secondRow,
-                    onTap: (idxInRow) => _onKeyTap((keys.length / 2).ceil() + idxInRow),
-                    baseIndex: (keys.length / 2).ceil(),
-                  ),
-                  const SizedBox(height: 16),
-                ],
+          crossAxisAlignment: CrossAxisAlignment.center,
+          mainAxisAlignment: MainAxisAlignment.center,
+          mainAxisSize: MainAxisSize.min,
+          children: [
+            WordGuessWord(),
+            const SizedBox(height: 30),
+            SizedBox(
+              width: minSize * 0.7,
+              height: minSize * 0.70,
+              child: ClipRRect(
+                borderRadius: BorderRadius.circular(25),
+                child: PageView.builder(
+                  controller: _pageController,
+                  physics: const BouncingScrollPhysics(),
+                  onPageChanged: (index) {
+                    setState(() {
+                      currentIndex = index;
+                    });
+                    _startRound();
+                  },
+                  itemCount: shuffledAssets.length,
+                  itemBuilder: (context, index) {
+                    final path = shuffledAssets[index]["image"] ?? "";
+                    return Image.asset(
+                      path,
+                      fit: BoxFit.contain,
+                      errorBuilder: (c, e, s) => const Center(
+                          child: Icon(Icons.image_not_supported, size: 48)),
+                    );
+                  },
+                ),
               ),
+            ),
+            const SizedBox(height: 16),
+
+            // Answer slots (lines to place letters)
+            Center(
+              child: Wrap(
+                spacing: 8,
+                runSpacing: 8,
+                children: List.generate(slots.length, (i) {
+                  final s = slots[i];
+                  return GestureDetector(
+                    onTap: () => _onSlotTap(i),
+                    child: Container(
+                      width: 36,
+                      height: 48,
+                      alignment: Alignment.center,
+                      decoration: BoxDecoration(
+                        borderRadius: BorderRadius.circular(8),
+                        border: Border.all(
+                            color:
+                                _showError ? Colors.red : Colors.grey.shade400,
+                            width: 2),
+                        color: s.char == null
+                            ? Colors.transparent
+                            : Theme.of(context)
+                                .colorScheme
+                                .primary
+                                .withOpacity(0.1),
+                      ),
+                      child: s.char == null
+                          ? const SizedBox.shrink()
+                          : Image.asset(
+                              "assets/letters_2/${s.char}.png",
+                              height: 36,
+                              fit: BoxFit.contain,
+                            ),
+                    ),
+                  );
+                }),
+              ),
+            ),
+
+            const SizedBox(height: 16),
+
+            ControlButtons(next: _next, back: _back, clue: _clue),
+
+            const SizedBox(height: 20),
+
+            // Two rows of letters to choose
+            _KeysRow(
+              keysRow: firstRow,
+              onTap: (idxInRow) => _onKeyTap(idxInRow),
+              baseIndex: 0,
+            ),
+            const SizedBox(height: 8),
+            _KeysRow(
+              keysRow: secondRow,
+              onTap: (idxInRow) =>
+                  _onKeyTap((keys.length / 2).ceil() + idxInRow),
+              baseIndex: (keys.length / 2).ceil(),
+            ),
+            const SizedBox(height: 16),
+          ],
+        ),
       ],
     );
   }
 }
 
 class _KeysRow extends StatelessWidget {
-  const _KeysRow({required this.keysRow, required this.onTap, required this.baseIndex});
+  const _KeysRow(
+      {required this.keysRow, required this.onTap, required this.baseIndex});
 
   final List<_KeyChar> keysRow;
   final void Function(int idxInRow) onTap;
@@ -327,11 +340,15 @@ class _KeysRow extends StatelessWidget {
               onPressed: k.used ? null : () => onTap(i),
               style: ElevatedButton.styleFrom(
                 padding: EdgeInsets.zero,
-                shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(8)),
+                shape: RoundedRectangleBorder(
+                    borderRadius: BorderRadius.circular(8)),
               ),
               child: Text(
                 k.char,
-                style: Theme.of(context).textTheme.titleMedium?.copyWith(fontWeight: FontWeight.bold),
+                style: Theme.of(context)
+                    .textTheme
+                    .titleMedium
+                    ?.copyWith(fontWeight: FontWeight.bold),
               ),
             ),
           );
@@ -346,7 +363,8 @@ class _KeyChar {
   final String char;
   final bool used;
 
-  _KeyChar copyWith({String? char, bool? used}) => _KeyChar(char: char ?? this.char, used: used ?? this.used);
+  _KeyChar copyWith({String? char, bool? used}) =>
+      _KeyChar(char: char ?? this.char, used: used ?? this.used);
 }
 
 class _Slot {

@@ -23,8 +23,8 @@ class Balloon {
     required this.y,
     required this.speed,
     this.isPopped = false,
-  }) : rotation = 0,
-       xSpeed = (math.Random().nextDouble() - 0.5) * 0.5;
+  })  : rotation = 0,
+        xSpeed = (math.Random().nextDouble() - 0.5) * 0.5;
 
   void update() {
     if (!isPopped) {
@@ -45,8 +45,12 @@ class Balloon {
 
       // Si el globo sale por arriba, lo reiniciamos abajo
       if (y > 1.2) {
-        y = -0.3 - math.Random().nextDouble() * 0.1; // Aparece completamente fuera de la pantalla por abajo
-        x = 0.15 + math.Random().nextDouble() * 0.7; // Distribución entre 0.15 y 0.85 (con márgenes más amplios)
+        y = -0.3 -
+            math.Random().nextDouble() *
+                0.1; // Aparece completamente fuera de la pantalla por abajo
+        x = 0.15 +
+            math.Random().nextDouble() *
+                0.7; // Distribución entre 0.15 y 0.85 (con márgenes más amplios)
       }
     }
   }
@@ -70,19 +74,18 @@ class _BallomScreenState extends State<BallomScreen>
   @override
   void initState() {
     super.initState();
-    _controller =
-        AnimationController(
-            vsync: this,
-            duration: const Duration(milliseconds: 16),
-          )
-          ..addListener(() {
-            // Check and maintain 6 balloons
-            if (_balloons.length < _maxBalloons) {
-              _addBalloon();
-            }
-            // No need for setState here - AnimatedBuilder handles rebuilds
-          })
-          ..repeat();
+    _controller = AnimationController(
+      vsync: this,
+      duration: const Duration(milliseconds: 16),
+    )
+      ..addListener(() {
+        // Check and maintain 6 balloons
+        if (_balloons.length < _maxBalloons) {
+          _addBalloon();
+        }
+        // No need for setState here - AnimatedBuilder handles rebuilds
+      })
+      ..repeat();
 
     // Add initial balloons
     for (int i = 0; i < _maxBalloons; i++) {
@@ -100,9 +103,15 @@ class _BallomScreenState extends State<BallomScreen>
               size: 50.0 + _random.nextDouble() * 50.0,
               colorIndex: _random.nextInt(4), // 4 colores disponibles
               id: 'balloon_${_balloonIdCounter++}', // ID único
-              x: 0.15 + _random.nextDouble() * 0.7, // Distribución entre 0.15 y 0.85 (con márgenes más amplios)
-              y: -0.3 - _random.nextDouble() * 0.1, // Comenzar completamente fuera de la pantalla por abajo
-              speed: 0.001 + _random.nextDouble() * 0.002, // Velocidad reducida para flotación suave
+              x: 0.15 +
+                  _random.nextDouble() *
+                      0.7, // Distribución entre 0.15 y 0.85 (con márgenes más amplios)
+              y: -0.3 -
+                  _random.nextDouble() *
+                      0.1, // Comenzar completamente fuera de la pantalla por abajo
+              speed: 0.001 +
+                  _random.nextDouble() *
+                      0.002, // Velocidad reducida para flotación suave
             ),
           );
           // AnimatedBuilder will handle the rebuild automatically
@@ -119,20 +128,20 @@ class _BallomScreenState extends State<BallomScreen>
 
   void _popBalloon(int index) {
     if (index < 0 || index >= _balloons.length) return;
-    
+
     final balloon = _balloons[index];
     if (balloon.isPopped) return;
-    
+
     // Reproducir sonido de explosión
     final appController = Get.find<AppController>();
     appController.playMenuSound("assets/sounds/ballon_pop.wav");
-    
+
     // Marcar como reventado
     balloon.isPopped = true;
-    
+
     // Remover el globo inmediatamente y agregar uno nuevo
     _balloons.removeAt(index);
-    
+
     // Agregar un nuevo globo con un pequeño delay
     if (_balloons.length < _maxBalloons) {
       _addBalloon();
@@ -156,8 +165,7 @@ class _BallomScreenState extends State<BallomScreen>
 
             return Positioned(
               key: ValueKey(balloon.id), // Key única para cada globo
-              left:
-                  MediaQuery.of(context).size.width * balloon.x -
+              left: MediaQuery.of(context).size.width * balloon.x -
                   balloon.size / 2,
               bottom: MediaQuery.of(context).size.height * balloon.y,
               child: GestureDetector(

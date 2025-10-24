@@ -1,7 +1,11 @@
 import 'package:flutter/material.dart';
 
 class LetterButton extends StatelessWidget {
-  const LetterButton({super.key, required this.onTap, required this.letters, required this.letterSize});
+  const LetterButton(
+      {super.key,
+      required this.onTap,
+      required this.letters,
+      required this.letterSize});
 
   final VoidCallback onTap;
   final List<String> letters;
@@ -12,7 +16,6 @@ class LetterButton extends StatelessWidget {
     return GestureDetector(
       onTap: () {
         onTap();
-         
       },
       child: Card(
         color: Colors.white,

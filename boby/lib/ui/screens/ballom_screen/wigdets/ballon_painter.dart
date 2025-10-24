@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 
 class BalloonWidget extends StatelessWidget {
-   const BalloonWidget({super.key, required this.colorIndex});
+  const BalloonWidget({super.key, required this.colorIndex});
 
   final int colorIndex;
 
@@ -17,7 +17,6 @@ class BalloonWidget extends StatelessWidget {
     //retorna un widget con un balon de color fijo basado en colorIndex
     return Image.asset(
       colors[colorIndex],
-      
       height: 400,
     );
   }

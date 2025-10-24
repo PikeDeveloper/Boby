@@ -6,13 +6,36 @@ class NumberOptionsGrid extends StatelessWidget {
   final void Function(int) onTap;
   final bool Function(int) isWrong;
   final bool Function(int) isCorrect;
-  const NumberOptionsGrid({super.key, required this.options, required this.onTap, required this.isWrong, required this.isCorrect});
+  const NumberOptionsGrid(
+      {super.key,
+      required this.options,
+      required this.onTap,
+      required this.isWrong,
+      required this.isCorrect});
 
   @override
   Widget build(BuildContext context) {
     const List<String> wordsEn = [
-      'One', 'Two', 'Three', 'Four', 'Five', 'Six', 'Seven', 'Eight', 'Nine', 'Ten',
-      'Eleven', 'Twelve', 'Thirteen', 'Fourteen', 'Fifteen', 'Sixteen', 'Seventeen', 'Eighteen', 'Nineteen', 'Twenty',
+      'One',
+      'Two',
+      'Three',
+      'Four',
+      'Five',
+      'Six',
+      'Seven',
+      'Eight',
+      'Nine',
+      'Ten',
+      'Eleven',
+      'Twelve',
+      'Thirteen',
+      'Fourteen',
+      'Fifteen',
+      'Sixteen',
+      'Seventeen',
+      'Eighteen',
+      'Nineteen',
+      'Twenty',
     ];
     return GridView.builder(
       shrinkWrap: true,

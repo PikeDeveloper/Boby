@@ -3,14 +3,14 @@ import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 
 class MemorySoundButton extends StatelessWidget {
-  const MemorySoundButton({super.key, });
-
-  
+  const MemorySoundButton({
+    super.key,
+  });
 
   @override
   Widget build(BuildContext context) {
     final appController = Get.find<AppController>();
-    return  GestureDetector(
+    return GestureDetector(
       onTap: () {
         appController.playMenuSound("assets/sounds/retro-game-over.wav");
       },

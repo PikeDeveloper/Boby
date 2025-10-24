@@ -1,20 +1,23 @@
-  import 'package:flutter/material.dart';
-  import 'package:boby/utils/functions.dart';
+import 'package:flutter/material.dart';
+import 'package:boby/utils/functions.dart';
+
 class MoreApps extends StatelessWidget {
-   const MoreApps({super.key});
+  const MoreApps({super.key});
 
   final List<Map<String, String>> apps = const [
     {
       "name": "Amauta",
       "image": "assets/amauta.jpg",
       "url": "https://apps.apple.com/hn/app/amauta/id6670520429",
-      "description": "It’s an app for more advanced math topics such as free fall, triangle calculations using the Pythagorean theorem, the law of sines, and the law of cosines. It can also perform unit conversions like meters, yards, kilometers, etc. It calculates the area and volume of common shapes and performs electrical calculations for resistors in series and parallel.",
+      "description":
+          "It’s an app for more advanced math topics such as free fall, triangle calculations using the Pythagorean theorem, the law of sines, and the law of cosines. It can also perform unit conversions like meters, yards, kilometers, etc. It calculates the area and volume of common shapes and performs electrical calculations for resistors in series and parallel.",
     },
     {
       "name": "Four Images",
       "image": "assets/four_images.jpg",
       "url": "https://apps.apple.com/hn/app/four-images/id6745151375",
-      "description": "Four Images is a puzzle game where four famous pictures of places appear, and you have to guess the location. It’s fun and helps you learn about general culture and geography.",
+      "description":
+          "Four Images is a puzzle game where four famous pictures of places appear, and you have to guess the location. It’s fun and helps you learn about general culture and geography.",
     },
   ];
 
@@ -22,7 +25,6 @@ class MoreApps extends StatelessWidget {
   Widget build(BuildContext context) {
     return Column(
       children: [
-
         for (var app in apps)
           Padding(
             padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
@@ -58,7 +60,10 @@ class MoreApps extends StatelessWidget {
                           children: [
                             Text(
                               app["name"]!,
-                              style: Theme.of(context).textTheme.titleMedium?.copyWith(
+                              style: Theme.of(context)
+                                  .textTheme
+                                  .titleMedium
+                                  ?.copyWith(
                                     fontWeight: FontWeight.w600,
                                     color: Colors.black87,
                                   ),
@@ -68,7 +73,10 @@ class MoreApps extends StatelessWidget {
                               app["description"]!,
                               maxLines: 5,
                               overflow: TextOverflow.ellipsis,
-                              style: Theme.of(context).textTheme.bodyMedium?.copyWith(
+                              style: Theme.of(context)
+                                  .textTheme
+                                  .bodyMedium
+                                  ?.copyWith(
                                     color: Colors.black54,
                                     height: 1.2,
                                   ),

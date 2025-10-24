@@ -3,7 +3,7 @@ import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 
 class NewGameButton extends StatelessWidget {
-  const NewGameButton({super.key, required this.onTap}); 
+  const NewGameButton({super.key, required this.onTap});
 
   final List<String> newLetters = const ["N", "E", "W"];
 
@@ -22,7 +22,7 @@ class NewGameButton extends StatelessWidget {
     return GestureDetector(
       onTap: () {
         onTap();
-        appController.playMenuSound(soundPath);   
+        appController.playMenuSound(soundPath);
       },
       child: Card(
         color: Colors.white,
@@ -30,16 +30,16 @@ class NewGameButton extends StatelessWidget {
         shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(10)),
         child: Container(
           margin: const EdgeInsets.all(10.0),
-          child:     Row(
-              mainAxisSize: MainAxisSize.min,
-              children: [
-                for (var letter in newLetters)
-                  Image.asset("assets/letters_2/$letter.png", height: letterSize),
-                SizedBox(width: 10),
-                for (var letter in gameLetters)
-                  Image.asset("assets/letters_2/$letter.png", height: letterSize),
-              ],
-            ),
+          child: Row(
+            mainAxisSize: MainAxisSize.min,
+            children: [
+              for (var letter in newLetters)
+                Image.asset("assets/letters_2/$letter.png", height: letterSize),
+              SizedBox(width: 10),
+              for (var letter in gameLetters)
+                Image.asset("assets/letters_2/$letter.png", height: letterSize),
+            ],
+          ),
         ),
       ),
     );
