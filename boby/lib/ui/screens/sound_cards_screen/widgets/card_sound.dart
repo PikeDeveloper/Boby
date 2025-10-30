@@ -189,31 +189,35 @@ class _CardSoundState extends State<CardSound>
                     children: [
                       Image.asset(widget.image, fit: BoxFit.cover),
                       if (widget.name == widget.correctName)
-                      Center(
+                      Positioned(
+                        bottom: 10,
+                        left: 10,
+                        right: 10,
+                     
                         child: Container(
-          width: 150,
-          padding: const EdgeInsets.symmetric(vertical: 8, horizontal: 12),
-          decoration: BoxDecoration(
-            borderRadius: BorderRadius.circular(20),
-            color: const Color.fromARGB(232, 242, 242, 242).withOpacity(0.8),
-            boxShadow: [
-              BoxShadow(
-                color: Colors.black.withOpacity(0.2),
-                blurRadius: 5,
-                spreadRadius: 2,
-              ),
-            ],
-          ),
-          child: Text(
-            widget.name,
-            textAlign: TextAlign.center,
-            style: const TextStyle(
-              fontSize: 16,
-              fontWeight: FontWeight.w600,
-              color: Color.fromARGB(255, 6, 45, 243),
-            ),
-          ),
-        ),
+                                  width: 130,
+                                  padding: const EdgeInsets.symmetric(vertical: 8, horizontal: 12),
+                                  decoration: BoxDecoration(
+                                    borderRadius: BorderRadius.circular(20),
+                                    color: const Color.fromARGB(232, 242, 242, 242).withOpacity(0.8),
+                                    boxShadow: [
+                                      BoxShadow(
+                                        color: Colors.black.withOpacity(0.2),
+                                        blurRadius: 5,
+                                        spreadRadius: 2,
+                                      ),
+                                    ],
+                                  ),
+                                  child: Text(
+                                    widget.name,
+                                    textAlign: TextAlign.center,
+                                    style: const TextStyle(
+                                      fontSize: 16,
+                                      fontWeight: FontWeight.w600,
+                                      color: Color.fromARGB(255, 6, 45, 243),
+                                    ),
+                                  ),
+                                ),
                       )
                     ],
                   ),
