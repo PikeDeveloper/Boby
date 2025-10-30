@@ -70,6 +70,7 @@ class _CardSoundState extends State<CardSound>
   @override
   Widget build(BuildContext context) {
     final appController = Get.find<AppController>();
+    
     List<Color> borderColors = [
       const Color(0xFFF1C40F),
       const Color(0xffBE5EED),
