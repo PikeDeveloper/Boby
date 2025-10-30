@@ -156,7 +156,7 @@ class _CardSoundState extends State<CardSound>
             ),
             child: SizedBox(
               width: 150,
-              height: 120,
+              height: 150,
               child: Card(
                 elevation: 4,
                 color: appController.cardSelected.value == widget.name
