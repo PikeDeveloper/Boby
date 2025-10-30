@@ -7,17 +7,28 @@ import 'package:boby/controllers/app_controller.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 
+
 class CardSound extends StatefulWidget {
   const CardSound({
     super.key,
     required this.sound,
     required this.name,
     required this.image,
+    this.isActive = false,
   });
 
   final String sound;
   final String name;
   final String image;
+  final bool isActive;
+  
+  // Get the correct name for this card from the image path
+  String get correctName {
+    // Extract the name from the image path (assuming format like 'assets/images/cat.png')
+    final fileName = image.split('/').last.split('.').first;
+    // Capitalize first letter
+    return fileName[0].toUpperCase() + fileName.substring(1);
+  }
 
   @override
   State<CardSound> createState() => _CardSoundState();
@@ -174,32 +185,49 @@ class _CardSoundState extends State<CardSound>
                 child: ClipRRect(
                   borderRadius: BorderRadius.circular(20),
                   child: Stack(
-                    fit: StackFit.expand,
+                    
                     children: [
                       Image.asset(widget.image, fit: BoxFit.cover),
+                      Center(
+                        child: Container(
+                          width: 100,
+                          height: 60,
+                          decoration: BoxDecoration(
+                            borderRadius: BorderRadius.circular(12),
+                            border: Border.all(
+                              color: widget.isActive ? Colors.green : Colors.white,
+                              width: widget.isActive ? 4 : 2,
+                            ),
+                          ),
+                          child: widget.name == widget.correctName 
+                              ? Center(
+                                  child: Text(
+                                    widget.name,
+                                    style: const TextStyle(
+                                      color: Colors.white,
+                                      fontWeight: FontWeight.bold,
+                                      fontSize: 14,
+                                      shadows: [
+                                        Shadow(
+                                          offset: Offset(1, 1),
+                                          blurRadius: 3.0,
+                                          color: Colors.black,
+                                        ),
+                                      ],
+                                    ),
+                                    textAlign: TextAlign.center,
+                                  ),
+                                )
+                              : null,
+                        ),
+                      )
                     ],
                   ),
                 ),
               ),
             ),
           ),
-          Container(
-            padding: const EdgeInsets.symmetric(vertical: 5),
-            alignment: Alignment.center,
-            decoration: BoxDecoration(
-              borderRadius: BorderRadius.circular(20),
-              color: const Color.fromARGB(232, 242, 242, 242)
-                  .withValues(alpha: 0.8),
-            ),
-            child: Text(
-              widget.name,
-              style: const TextStyle(
-                fontSize: 16,
-                fontWeight: FontWeight.w600,
-                color: Color.fromARGB(255, 6, 45, 243),
-              ),
-            ),
-          ),
+          
         ],
       ),
     );
