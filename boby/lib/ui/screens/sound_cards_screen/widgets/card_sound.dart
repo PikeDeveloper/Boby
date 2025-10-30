@@ -188,38 +188,32 @@ class _CardSoundState extends State<CardSound>
                     
                     children: [
                       Image.asset(widget.image, fit: BoxFit.cover),
+                      if (widget.name == widget.correctName)
                       Center(
                         child: Container(
-                          width: 100,
-                          height: 60,
-                          decoration: BoxDecoration(
-                            borderRadius: BorderRadius.circular(12),
-                            border: Border.all(
-                              color: widget.isActive ? Colors.green : Colors.white,
-                              width: widget.isActive ? 4 : 2,
-                            ),
-                          ),
-                          child: widget.name == widget.correctName 
-                              ? Center(
-                                  child: Text(
-                                    widget.name,
-                                    style: const TextStyle(
-                                      color: Colors.white,
-                                      fontWeight: FontWeight.bold,
-                                      fontSize: 14,
-                                      shadows: [
-                                        Shadow(
-                                          offset: Offset(1, 1),
-                                          blurRadius: 3.0,
-                                          color: Colors.black,
-                                        ),
-                                      ],
-                                    ),
-                                    textAlign: TextAlign.center,
-                                  ),
-                                )
-                              : null,
-                        ),
+          width: 150,
+          padding: const EdgeInsets.symmetric(vertical: 8, horizontal: 12),
+          decoration: BoxDecoration(
+            borderRadius: BorderRadius.circular(20),
+            color: const Color.fromARGB(232, 242, 242, 242).withOpacity(0.8),
+            boxShadow: [
+              BoxShadow(
+                color: Colors.black.withOpacity(0.2),
+                blurRadius: 5,
+                spreadRadius: 2,
+              ),
+            ],
+          ),
+          child: Text(
+            widget.name,
+            textAlign: TextAlign.center,
+            style: const TextStyle(
+              fontSize: 16,
+              fontWeight: FontWeight.w600,
+              color: Color.fromARGB(255, 6, 45, 243),
+            ),
+          ),
+        ),
                       )
                     ],
                   ),
