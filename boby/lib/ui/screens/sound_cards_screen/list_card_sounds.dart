@@ -200,13 +200,7 @@ class _ListCardSoundsState extends State<ListCardSounds> {
         return true;
       },
       onAccept: (name) async {
-        // Play sound based on whether it's the correct name for this card
-        final correctName = _getCorrectNameForCard(index);
-        if (name == correctName) {
-          await _playSound(_correctMatchSound);
-        } else {
-          await _playSound(_wrongMatchSound);
-        }
+        // No sound feedback when dropping names
         
         setState(() {
           // Remove from previous position if it exists

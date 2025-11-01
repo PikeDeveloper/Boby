@@ -199,9 +199,7 @@ class _CardSoundState extends State<CardSound>
                           padding: const EdgeInsets.symmetric(vertical: 8, horizontal: 12),
                           decoration: BoxDecoration(
                             borderRadius: BorderRadius.circular(20),
-                            color: widget.name == widget.correctName 
-                                ? const Color.fromARGB(232, 200, 255, 200).withOpacity(0.8) // Green for correct
-                                : const Color.fromARGB(232, 255, 200, 200).withOpacity(0.8), // Red for incorrect
+                            color: const Color.fromARGB(232, 200, 220, 255).withOpacity(0.8), // Light blue background
                             boxShadow: [
                               BoxShadow(
                                 color: Colors.black.withOpacity(0.2),
@@ -213,12 +211,10 @@ class _CardSoundState extends State<CardSound>
                           child: Text(
                             widget.name,
                             textAlign: TextAlign.center,
-                            style: TextStyle(
+                            style: const TextStyle(
                               fontSize: 16,
                               fontWeight: FontWeight.w600,
-                              color: widget.name == widget.correctName
-                                  ? const Color.fromARGB(255, 0, 128, 0) // Dark green for correct
-                                  : const Color.fromARGB(255, 200, 0, 0), // Dark red for incorrect
+                              color: Color.fromARGB(255, 0, 0, 200), // Blue text
                             ),
                           ),
                         ),
