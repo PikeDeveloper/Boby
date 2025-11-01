@@ -15,6 +15,7 @@ class LettersSoup extends StatefulWidget {
 
 class _LettersSoupState extends State<LettersSoup> {
   static const int size = 6;
+  final Color colorLetter = const Color.fromARGB(238, 64, 64, 64);
   
   // List of colors for different words (darker shades for better text contrast)
   final List<Color> wordColors = [
@@ -102,18 +103,22 @@ class _LettersSoupState extends State<LettersSoup> {
           .map((w) => Container(
                 padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 6),
                 decoration: BoxDecoration(
-                  color: wordColorMap[w]?.withOpacity(0.7) ?? Colors.grey.shade300,
-                  borderRadius: BorderRadius.circular(16),
+                  color: wordColorMap[w]?.withValues(alpha: 0.9) ?? Colors.grey.shade300,
+                  borderRadius: BorderRadius.circular(10),
+                  border: Border.all(
+                    color: wordColorMap[w]?.withValues(alpha: 1) ?? Colors.grey.shade300,
+                    width: 1,
+                  ),
                 ),
                 child: Text(
                   w,
                   style: TextStyle(
-                    color: Colors.white,
+                    color: colorLetter,
                     fontWeight: FontWeight.bold,
                     decoration: foundWords.contains(w)
                         ? TextDecoration.lineThrough
                         : null,
-                    decorationColor: Colors.white,
+                    decorationColor: colorLetter,
                     decorationThickness: 2,
                   ),
                 ),
@@ -230,7 +235,7 @@ class _LettersSoupState extends State<LettersSoup> {
                         if (isPartOfFoundWord(p))
                           Container(
                             decoration: BoxDecoration(
-                              color: getHighlightColor(p)?.withOpacity(0.3),
+                            //  color: getHighlightColor(p)?.withOpacity(0.3),
                               borderRadius: _getBorderRadius(r, c, size),
                             ),
                           ),
