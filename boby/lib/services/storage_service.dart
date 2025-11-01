@@ -1,4 +1,5 @@
 import 'package:flutter/foundation.dart';
+import 'package:get/get.dart';
 import 'package:hive_flutter/hive_flutter.dart';
 
 class StorageService {
@@ -63,12 +64,29 @@ class StorageService {
   int getSoundCardsCorrect() => (_box.get('sound_cards_correct') as int?) ?? 0;
   Future<void> incSoundCardsCorrect([int by = 1]) =>
       _box.put('sound_cards_correct', getSoundCardsCorrect() + by);
-  Future<void> setSoundCardsCorrect(int value) => _box.put('sound_cards_correct', value);
+  // Make sound cards scores reactive
+  RxInt get soundCardsCorrect => (_box.get('sound_cards_correct') as int? ?? 0).obs;
+  RxInt get soundCardsWrong => (_box.get('sound_cards_wrong') as int? ?? 0).obs;
+
+  Future<void> setSoundCardsCorrect(int value) async {
+    await _box.put('sound_cards_correct', value);
+    soundCardsCorrect.value = value;
+  }
+
+ 
 
   int getSoundCardsWrong() => (_box.get('sound_cards_wrong') as int?) ?? 0;
-  Future<void> incSoundCardsWrong([int by = 1]) =>
-      _box.put('sound_cards_wrong', getSoundCardsWrong() + by);
-  Future<void> setSoundCardsWrong(int value) => _box.put('sound_cards_wrong', value);
+  
+  Future<void> setSoundCardsWrong(int value) async {
+    await _box.put('sound_cards_wrong', value);
+    soundCardsWrong.value = value;
+  }
+  
+  Future<void> incSoundCardsWrong([int by = 1]) async {
+    final newValue = getSoundCardsWrong() + by;
+    await _box.put('sound_cards_wrong', newValue);
+    soundCardsWrong.value = newValue;
+  }
 
   // Word guess game scores
   int getWordGuessCorrect() => (_box.get('word_guess_correct') as int?) ?? 0;
