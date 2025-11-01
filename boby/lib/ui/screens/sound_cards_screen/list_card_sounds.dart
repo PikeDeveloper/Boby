@@ -100,10 +100,36 @@ class _ListCardSoundsState extends State<ListCardSounds> {
     }
   }
 
+  // Calculate number of correct matches
+  int getCorrectCount() {
+    int count = 0;
+    for (int i = 0; i < assets.length; i++) {
+      if (cardNames[i] == assets[i]["name"]) {
+        count++;
+      }
+    }
+    return count;
+  }
+
+  // Get color based on number of correct matches
+  Color getScoreColor() {
+    final correctCount = getCorrectCount();
+    if (correctCount == 0) {
+      return Colors.red;
+    } else if (correctCount <= 2) {
+      return Colors.orange;
+    } else if (correctCount == 4) {
+      return Colors.green;
+    }
+    return Colors.orange; // default to orange for 3/4
+  }
+
   @override
   Widget build(BuildContext context) {
     final screenSize = MediaQuery.of(context).size;
     final safePadding = MediaQuery.of(context).padding;
+    final correctCount = getCorrectCount();
+    final totalCount = assets.length;
 
     return Stack(
       children: [
@@ -146,32 +172,54 @@ class _ListCardSoundsState extends State<ListCardSounds> {
                   ),
                 ),
               ),
-              // Bottom half of screen - All names
+              // Bottom half of screen - All names and score
               Expanded(
                 child: Container(
                   padding: const EdgeInsets.symmetric(horizontal: 20.0, vertical: 10.0),
                   child: Column(
                     mainAxisAlignment: MainAxisAlignment.center,
                     children: [
-                      // First row of names
-                      Row(
-                        mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-                        children: [
-                          if (assets.isNotEmpty) _buildNameContainer(assets[0]["name"]!, 0),
-                          if (assets.length > 1) _buildNameContainer(assets[1]["name"]!, 1),
-                        ],
-                      ),
-                      if (assets.length > 2) ...[
-                        const SizedBox(height: 20),
-                        // Second row of names
-                        Row(
-                          mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-                          children: [
-                            if (assets.length > 2) _buildNameContainer(assets[2]["name"]!, 2),
-                            if (assets.length > 3) _buildNameContainer(assets[3]["name"]!, 3),
-                          ],
+                      // Show score when all cards are filled
+                      if (cardNames.every((name) => name != null))
+                        Padding(
+                          padding: const EdgeInsets.only(bottom: 20.0),
+                          child: Text(
+                            '$correctCount/$totalCount',
+                            style: TextStyle(
+                              fontSize: 72, // Duplicado el tamaño de 36 a 72
+                              fontWeight: FontWeight.bold,
+                              color: getScoreColor(),
+                            ),
+                          ),
+                        )
+                      else
+                        // Show names when not all cards are filled
+                        Expanded(
+                          child: Column(
+                            mainAxisAlignment: MainAxisAlignment.center,
+                            children: [
+                              // First row of names
+                              Row(
+                                mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+                                children: [
+                                  if (assets.isNotEmpty) _buildNameContainer(assets[0]["name"]!, 0),
+                                  if (assets.length > 1) _buildNameContainer(assets[1]["name"]!, 1),
+                                ],
+                              ),
+                              if (assets.length > 2) ...[
+                                const SizedBox(height: 20),
+                                // Second row of names
+                                Row(
+                                  mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+                                  children: [
+                                    if (assets.length > 2) _buildNameContainer(assets[2]["name"]!, 2),
+                                    if (assets.length > 3) _buildNameContainer(assets[3]["name"]!, 3),
+                                  ],
+                                ),
+                              ],
+                            ],
+                          ),
                         ),
-                      ],
                     ],
                   ),
                 ),
@@ -200,7 +248,8 @@ class _ListCardSoundsState extends State<ListCardSounds> {
         return true;
       },
       onAccept: (name) async {
-        // No sound feedback when dropping names
+        // Play sound when dropping a name
+        await _playSound(_wrongMatchSound);
         
         setState(() {
           // Remove from previous position if it exists

@@ -114,22 +114,42 @@ class _CardSoundState extends State<CardSound>
           appController.cardSelected.value = widget.name;
 
           try {
-            // Solo reproducir audio en plataformas compatibles (no Linux)
-            if (!Platform.isLinux) {
-              _player ??= AudioPlayer();
-              await _player!.setAsset(widget.sound);
-              _player!.play();
+            // Initialize audio player if not already done
+            _player ??= AudioPlayer();
+            
+            // Stop any currently playing sound
+            await _player?.stop();
+            
+            // Set the audio source and play
+            await _player?.setAsset(widget.sound);
+            await _player?.setVolume(1.0);
+            await _player?.play();
+            
+            if (mounted) {
+              setState(() {
+                _isPlaying = true;
+              });
+            }
+            
+            // Add error listener
+            _player?.playerStateStream.listen((state) {
+              if (state.processingState == ProcessingState.completed) {
+                if (mounted) {
+                  setState(() {
+                    _isPlaying = false;
+                  });
+                }
+              }
+            }, onError: (e) {
+              debugPrint('Error playing sound: $e');
               if (mounted) {
                 setState(() {
-                  _isPlaying = true;
+                  _isPlaying = false;
                 });
               }
-            } else {
-              // En Linux, solo mostrar feedback visual
-              print('Audio deshabilitado en Linux: ${widget.sound}');
-            }
+            });
 
-            // Handle when audio finishes playing
+            // Clean up when audio finishes playing
             _stateSub?.cancel();
             _stateSub = _player?.playerStateStream.listen((state) async {
               if (state.processingState == ProcessingState.completed) {
@@ -137,13 +157,16 @@ class _CardSoundState extends State<CardSound>
                 _stateSub = null;
                 try {
                   await _player?.stop();
-                } catch (_) {}
-                await _player?.dispose();
-                _player = null;
-                if (mounted) {
-                  setState(() {
-                    _isPlaying = false;
-                  });
+                  await _player?.dispose();
+                  _player = null;
+                } catch (e) {
+                  debugPrint('Error cleaning up audio: $e');
+                } finally {
+                  if (mounted) {
+                    setState(() {
+                      _isPlaying = false;
+                    });
+                  }
                 }
               }
             });
