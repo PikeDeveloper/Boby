@@ -1,6 +1,7 @@
 import 'dart:async';
 import 'dart:math';
 
+import 'package:dotted_border/dotted_border.dart';
 import 'package:flutter/material.dart';
 import 'package:just_audio/just_audio.dart';
 
@@ -197,17 +198,62 @@ class _CardSoundState extends State<CardSound>
                     
                     children: [
                       Image.asset(widget.image, fit: BoxFit.cover),
-                      if (widget.name.isNotEmpty)
+                      
                       Positioned(
                         bottom: 10,
                         left: 10,
                         right: 10,
-                        child: Container(
+                        child:
+
+!widget.name.isNotEmpty?
+
+
+
+                         Container(
+        width: 150,
+        padding: const EdgeInsets.symmetric(vertical: 1, horizontal: 12),
+        child: DottedBorder(
+          options: RoundedRectDottedBorderOptions(
+            color: const Color(0xFF1E88E5),
+            strokeWidth: 2,
+            dashPattern: const [6, 4],
+            radius: const Radius.circular(20),
+       
+          ),
+          child: Container(
+            width: double.infinity,
+            padding: const EdgeInsets.symmetric(vertical: 8, horizontal: 12),
+            decoration: BoxDecoration(
+              borderRadius: BorderRadius.circular(20),
+              color: const Color.fromARGB(232, 242, 242, 242).withOpacity(0.2),
+            ),
+            child: Text(
+            "",
+              textAlign: TextAlign.center,
+              style: const TextStyle(
+                fontSize: 16,
+                fontWeight: FontWeight.w600,
+                color: Color.fromARGB(255, 6, 45, 243),
+              ),
+            ),
+          ),
+        ),
+      ):
+
+
+
+
+
+
+
+                        
+                        
+                         Container(
                           width: 130,
                           padding: const EdgeInsets.symmetric(vertical: 8, horizontal: 12),
                           decoration: BoxDecoration(
                             borderRadius: BorderRadius.circular(20),
-                            color: const Color.fromARGB(232, 200, 220, 255).withOpacity(0.8), // Light blue background
+                            color: const Color.fromARGB(232, 242, 242, 242).withOpacity(0.8), // Light blue background
                             boxShadow: [
                               BoxShadow(
                                 color: Colors.black.withOpacity(0.2),
@@ -226,7 +272,8 @@ class _CardSoundState extends State<CardSound>
                             ),
                           ),
                         ),
-                      )
+                      ),
+                     
                     ],
                   ),
                 ),

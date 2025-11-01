@@ -1,9 +1,10 @@
 import 'package:boby/ui/screens/word_guess/widgets/celebration_image.dart';
 import 'package:boby/ui/shared/score.dart';
 import 'package:flutter/material.dart';
+import 'package:get/get.dart';
+import 'package:dotted_border/dotted_border.dart' show DottedBorder, RoundedRectDottedBorderOptions;
 import '../../../utils/constants.dart';
 import 'widgets/card_sound.dart';
-import 'package:get/get.dart';
 import 'package:boby/controllers/app_controller.dart';
 import 'package:just_audio/just_audio.dart';
 import 'package:boby/services/storage_service.dart';
@@ -136,11 +137,8 @@ class _ListCardSoundsState extends State<ListCardSounds> {
     final safePadding = MediaQuery.of(context).padding;
     final currentCorrect = getCorrectCount();
     final totalCount = assets.length;
-    
-    // Get persistent scores
-    final storage = StorageService.instance;
-    final totalCorrect = storage.getSoundCardsCorrect();
-    final totalWrong = storage.getSoundCardsWrong();
+
+
 
     return Stack(
       children: [
@@ -252,16 +250,10 @@ class _ListCardSoundsState extends State<ListCardSounds> {
     );
   }
 
-  String _getCorrectNameForCard(int index) {
-    // Get the image path and extract the name from it
-    final imagePath = assets[index]["image"]!;
-    final fileName = imagePath.split('/').last.split('.').first;
-    return fileName[0].toUpperCase() + fileName.substring(1);
-  }
 
   Widget _buildCardTarget(int index) {
     return DragTarget<String>(
-      onWillAccept: (data) {
+      onWillAcceptWithDetails: (details) {
         // Always accept any name being dragged
         setState(() {
           activeCardIndex = index;
@@ -308,6 +300,7 @@ class _ListCardSoundsState extends State<ListCardSounds> {
     // Don't show the name if it's already on a card
     if (cardNames.contains(name)) {
       return Container(
+  
         width: 150,
         padding: const EdgeInsets.symmetric(vertical: 8, horizontal: 12),
         child: const SizedBox.shrink(),
@@ -317,62 +310,97 @@ class _ListCardSoundsState extends State<ListCardSounds> {
     return Draggable<String>(
       data: name,
       feedback: Material(
+        // Container con borde segmentado --------------//
         child: Container(
           width: 150,
           padding: const EdgeInsets.symmetric(vertical: 8, horizontal: 12),
-          decoration: BoxDecoration(
-            borderRadius: BorderRadius.circular(20),
-            color: const Color.fromARGB(232, 242, 242, 242).withOpacity(0.8),
-            boxShadow: [
-              BoxShadow(
-                color: Colors.black.withOpacity(0.2),
-                blurRadius: 5,
-                spreadRadius: 2,
+          child: DottedBorder(
+            options: RoundedRectDottedBorderOptions(
+              radius: const Radius.circular(20),
+              color: const Color(0xFF1E88E5),
+              strokeWidth: 2,
+              dashPattern: const [6, 4],
+            
+            ),
+            child: Container(
+              width: double.infinity,
+              padding: const EdgeInsets.symmetric(vertical: 8, horizontal: 12),
+              decoration: BoxDecoration(
+                borderRadius: BorderRadius.circular(16),
+                color: const Color.fromARGB(232, 242, 242, 242).withOpacity(0.8),
               ),
-            ],
-          ),
-          child: Text(
-            name,
-            textAlign: TextAlign.center,
-            style: const TextStyle(
-              fontSize: 16,
-              fontWeight: FontWeight.w600,
-              color: Color.fromARGB(255, 6, 45, 243),
+              child: Text(
+                name,
+                textAlign: TextAlign.center,
+                style: const TextStyle(
+                  fontSize: 16,
+                  fontWeight: FontWeight.w600,
+                  color: Color.fromARGB(255, 6, 45, 243),
+                ),
+              ),
             ),
           ),
         ),
       ),
+      // Container con borde segmentado --------------//
       childWhenDragging: Container(
         width: 150,
-        padding: const EdgeInsets.symmetric(vertical: 8, horizontal: 12),
-        decoration: BoxDecoration(
-          borderRadius: BorderRadius.circular(20),
-          color: Colors.grey[300],
-        ),
-        child: Text(
-          name,
-          textAlign: TextAlign.center,
-          style: TextStyle(
-            fontSize: 16,
-            fontWeight: FontWeight.w600,
-            color: Colors.grey[600],
+   //     padding: const EdgeInsets.symmetric(vertical: 8, horizontal: 12),
+        child: DottedBorder(
+          options: RoundedRectDottedBorderOptions(
+            color: const Color(0xFF1E88E5),
+            strokeWidth: 2,
+            dashPattern: const [6, 4],
+            radius: const Radius.circular(20),
+            
+          ),
+          child: Container(
+            width: double.infinity,
+            padding: const EdgeInsets.symmetric(vertical: 8, horizontal: 12),
+            decoration: BoxDecoration(
+              borderRadius: BorderRadius.circular(20),
+              color: Colors.grey[300],
+            ),
+            child: Text(
+              name,
+              textAlign: TextAlign.center,
+              style: TextStyle(
+                fontSize: 16,
+                fontWeight: FontWeight.w600,
+                color: Colors.grey[600],
+              ),
+            ),
           ),
         ),
       ),
+      // Container con borde segmentado --------------//
       child: Container(
         width: 150,
         padding: const EdgeInsets.symmetric(vertical: 8, horizontal: 12),
-        decoration: BoxDecoration(
-          borderRadius: BorderRadius.circular(20),
-          color: const Color.fromARGB(232, 242, 242, 242).withOpacity(0.8),
-        ),
-        child: Text(
-          name,
-          textAlign: TextAlign.center,
-          style: const TextStyle(
-            fontSize: 16,
-            fontWeight: FontWeight.w600,
-            color: Color.fromARGB(255, 6, 45, 243),
+        child: DottedBorder(
+          options: RoundedRectDottedBorderOptions(
+            color: const Color(0xFF1E88E5),
+            strokeWidth: 2,
+            dashPattern: const [6, 4],
+            radius: const Radius.circular(20),
+       
+          ),
+          child: Container(
+            width: double.infinity,
+            padding: const EdgeInsets.symmetric(vertical: 8, horizontal: 12),
+            decoration: BoxDecoration(
+              borderRadius: BorderRadius.circular(20),
+              color: const Color.fromARGB(232, 242, 242, 242).withOpacity(0.8),
+            ),
+            child: Text(
+              name,
+              textAlign: TextAlign.center,
+              style: const TextStyle(
+                fontSize: 16,
+                fontWeight: FontWeight.w600,
+                color: Color.fromARGB(255, 6, 45, 243),
+              ),
+            ),
           ),
         ),
       ),
