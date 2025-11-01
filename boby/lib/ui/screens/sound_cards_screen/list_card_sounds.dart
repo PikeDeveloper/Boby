@@ -160,7 +160,7 @@ class _ListCardSoundsState extends State<ListCardSounds> {
               ),
               // Top half of screen - Cards
               SizedBox(
-                height: (screenSize.height - safePadding.top - safePadding.bottom) * 0.5,
+                height: (screenSize.height - safePadding.top - safePadding.bottom) * 0.6,
                 child: Center(
                   child: SingleChildScrollView(
                     child: Column(
@@ -194,14 +194,14 @@ class _ListCardSoundsState extends State<ListCardSounds> {
               // Bottom half of screen - All names and score
               Expanded(
                 child: Container(
-                  padding: const EdgeInsets.symmetric(horizontal: 20.0, vertical: 10.0),
+                  padding: const EdgeInsets.symmetric(horizontal: 20.0, vertical: 0.0),
                   child: Column(
                     mainAxisAlignment: MainAxisAlignment.center,
                     children: [
                       // Show score when all cards are filled
                       if (cardNames.every((name) => name != null))
                         Padding(
-                          padding: const EdgeInsets.only(bottom: 20.0),
+                          padding: const EdgeInsets.only(bottom: 5.0),
                           child: Text(
                             '$currentCorrect/$totalCount',
                             style: TextStyle(
@@ -216,6 +216,7 @@ class _ListCardSoundsState extends State<ListCardSounds> {
                         Expanded(
                           child: Column(
                             mainAxisAlignment: MainAxisAlignment.center,
+                         
                             children: [
                               // First row of names
                               Row(
@@ -226,7 +227,7 @@ class _ListCardSoundsState extends State<ListCardSounds> {
                                 ],
                               ),
                               if (assets.length > 2) ...[
-                                const SizedBox(height: 20),
+                                const SizedBox(height: 5),
                                 // Second row of names
                                 Row(
                                   mainAxisAlignment: MainAxisAlignment.spaceEvenly,

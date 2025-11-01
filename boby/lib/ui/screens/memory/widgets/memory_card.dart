@@ -129,21 +129,11 @@ class _MemoryCardState extends State<MemoryCard> with SingleTickerProviderStateM
   }
 
   Widget _buildCardBack() {
-    return Container(
-      decoration: BoxDecoration(
-        borderRadius: BorderRadius.circular(12),
-        color: Colors.blue[100],
-        border: Border.all(
-          color: Colors.blue[300]!,
-          width: 2,
-        ),
-      ),
-      child: Center(
+    return Center(
         child: Image.asset(
           "assets/card.png",
           fit: BoxFit.cover,
         ),
-      ),
-    );
+      );
   }
 }

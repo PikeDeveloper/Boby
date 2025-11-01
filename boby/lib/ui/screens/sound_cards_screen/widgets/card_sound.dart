@@ -179,12 +179,10 @@ class _CardSoundState extends State<CardSound>
             ),
             child: SizedBox(
               width: 150,
-              height: 150,
+              height: 180,
               child: Card(
                 elevation: 4,
-                color: _isPlaying
-                    ? Colors.green.withOpacity(0.8)
-                    : const Color.fromARGB(255, 236, 8, 8),
+               color: Colors.white,
                 shape: RoundedRectangleBorder(
                   borderRadius: BorderRadius.circular(20),
                   side: BorderSide(
