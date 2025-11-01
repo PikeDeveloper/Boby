@@ -1,4 +1,5 @@
-import 'package:boby/ui/screens/math_screen/widgets/math_score.dart';
+
+import 'package:boby/ui/shared/score.dart';
 import 'package:flutter/material.dart';
 import 'dart:math';
 import 'package:get/get.dart';
@@ -182,7 +183,7 @@ class _MathScreenState extends State<MathScreen> {
                   ),
                 ],
               ),
-              MathScore(),
+              Score(),
             ],
           ),
         ),

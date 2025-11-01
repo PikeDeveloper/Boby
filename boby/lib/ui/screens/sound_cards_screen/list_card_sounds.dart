@@ -23,6 +23,7 @@ class _ListCardSoundsState extends State<ListCardSounds> {
     final String _winSound = "assets/sounds/winner-game.wav";
   final String _wrongMatchSound = "assets/sounds/bubble-pop.wav";
   final String _correctMatchSound = "assets/sounds/game-bonus.wav";
+  final String _gameOverSound = "assets/sounds/game-over-trombone.wav";
   final AudioPlayer _audioPlayer = AudioPlayer();
   
   @override
@@ -58,29 +59,44 @@ class _ListCardSoundsState extends State<ListCardSounds> {
     assets = shuffled.take(4).toList();
   }
 
-  void _checkAllCardsMatched() {
-    // Check if all cards have their correct names
-    bool allMatched = true;
-    for (int i = 0; i < assets.length; i++) {
-      if (cardNames[i] != assets[i]["name"]) {
-        allMatched = false;
-        break;
-      }
-    }
+  Future<void> _checkAllCardsMatched() async {
+    // Check if all cards are filled
+    bool allFilled = cardNames.every((name) => name != null);
     
-    if (allMatched) {
-      // Play win sound
-      _playSound(_winSound);
-      // Show celebration
-      app.celebrationVisible.value = true;
+    if (allFilled) {
+      // Check if all cards have their correct names
+      bool allCorrect = true;
+      for (int i = 0; i < assets.length; i++) {
+        if (cardNames[i] != assets[i]["name"]) {
+          allCorrect = false;
+          break;
+        }
+      }
       
-      // Hide celebration and load new cards after 1 second
-      Future.delayed(const Duration(seconds: 1), () {
+      if (allCorrect) {
+        // Play win sound
+        await _playSound(_winSound);
+        // Show celebration
+        app.celebrationVisible.value = true;
+        
+        // Hide celebration and load new cards after 1 second
+        await Future.delayed(const Duration(seconds: 1));
         app.celebrationVisible.value = false;
         setState(() {
           _loadRandomCards();
         });
-      });
+      } else {
+        // Play game over sound
+        await _playSound(_gameOverSound);
+        
+        // Clear all cards after a short delay
+        await Future.delayed(const Duration(seconds: 1));
+        setState(() {
+          for (int i = 0; i < cardNames.length; i++) {
+            cardNames[i] = null;
+          }
+        });
+      }
     }
   }
 
@@ -175,48 +191,37 @@ class _ListCardSoundsState extends State<ListCardSounds> {
   }
 
   Widget _buildCardTarget(int index) {
-    final correctName = _getCorrectNameForCard(index);
-    
     return DragTarget<String>(
       onWillAccept: (data) {
-        // Only highlight if the name matches the card's original name
-        final shouldAccept = data == correctName;
+        // Always accept any name being dragged
         setState(() {
-          activeCardIndex = shouldAccept ? index : null;
+          activeCardIndex = index;
         });
-        return shouldAccept;
+        return true;
       },
-      onAccept: (name) {
-        // Only accept if the name matches the card's expected name
+      onAccept: (name) async {
+        // Play sound based on whether it's the correct name for this card
+        final correctName = _getCorrectNameForCard(index);
         if (name == correctName) {
-          // Play correct match sound
-          _playSound(_correctMatchSound);
-          
-          setState(() {
-            // Remove from previous position if it exists
-            final previousIndex = cardNames.indexOf(name);
-            if (previousIndex != -1) {
-              cardNames[previousIndex] = null;
-            }
-            // Add to new position
-            cardNames[index] = name;
-            activeCardIndex = null;
-            
-            // Check if all cards are matched
-            _checkAllCardsMatched();
-          });
+          await _playSound(_correctMatchSound);
         } else {
-          // Play wrong match sound
-          _playSound(_wrongMatchSound);
-          
-          // If incorrect name, return it to its original position
-          setState(() {
-            final originalIndex = assets.indexWhere((asset) => asset["name"] == name);
-            if (originalIndex != -1) {
-              cardNames[originalIndex] = name;
-            }
-          });
+          await _playSound(_wrongMatchSound);
         }
+        
+        setState(() {
+          // Remove from previous position if it exists
+          final previousIndex = cardNames.indexOf(name);
+          if (previousIndex != -1) {
+            cardNames[previousIndex] = null;
+          }
+          
+          // Add to new position - store the actual name that was dragged
+          cardNames[index] = name;
+          activeCardIndex = null;
+        });
+        
+        // Check if all cards are filled
+        await _checkAllCardsMatched();
       },
       builder: (context, candidateData, rejectedData) {
         return CardSound(

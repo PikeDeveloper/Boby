@@ -3,8 +3,8 @@ import 'dart:math';
 import 'package:flutter/material.dart';
 import 'package:boby/services/storage_service.dart';
 
-class MathScore extends StatelessWidget {
-  const MathScore({super.key});
+class Score extends StatelessWidget {
+  const Score({super.key});
 
   @override
   Widget build(BuildContext context) {
