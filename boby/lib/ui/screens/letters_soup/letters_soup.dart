@@ -99,6 +99,28 @@ class _LettersSoupState extends State<LettersSoup> {
     );
   }
 
+  BorderRadius _getBorderRadius(int row, int col, int size) {
+    // Top-left corner
+    if (row == 0 && col == 0) {
+      return const BorderRadius.only(topLeft: Radius.circular(12));
+    }
+    // Top-right corner
+    else if (row == 0 && col == size - 1) {
+      return const BorderRadius.only(topRight: Radius.circular(12));
+    }
+    // Bottom-left corner
+    else if (row == size - 1 && col == 0) {
+      return const BorderRadius.only(bottomLeft: Radius.circular(12));
+    }
+    // Bottom-right corner
+    else if (row == size - 1 && col == size - 1) {
+      return const BorderRadius.only(bottomRight: Radius.circular(12));
+    }
+    
+    // For all other cells, no rounded corners
+    return BorderRadius.zero;
+  }
+
   Widget _buildGrid() {
     final available =
         MediaQuery.of(context).size.width - 20; // 10px margin each side
@@ -166,6 +188,7 @@ class _LettersSoupState extends State<LettersSoup> {
                       decoration: BoxDecoration(
                         color: Colors.grey.shade200,
                         border: Border.all(color: Colors.black12),
+                        borderRadius: _getBorderRadius(r, c, size),
                       ),
                       alignment: Alignment.center,
                       child: Text(
