@@ -20,10 +20,10 @@ class _LettersSoupState extends State<LettersSoup> {
   // List of colors for different words (darker shades for better text contrast)
   final List<Color> wordColors = [
     Colors.red.shade400,
-    Colors.blue.shade400,
+       Colors.purple.shade400,
     Colors.green.shade400,
     Colors.orange.shade400,
-    Colors.purple.shade400,
+     Colors.blue.shade400,
     Colors.teal.shade400,
     Colors.pink.shade400,
     Colors.indigo.shade400,
@@ -103,11 +103,11 @@ class _LettersSoupState extends State<LettersSoup> {
           .map((w) => Container(
                 padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 6),
                 decoration: BoxDecoration(
-                  color: wordColorMap[w]?.withValues(alpha: 0.9) ?? Colors.grey.shade300,
+                  color:  Colors.grey.shade300,
                   borderRadius: BorderRadius.circular(10),
                   border: Border.all(
                     color: wordColorMap[w]?.withValues(alpha: 1) ?? Colors.grey.shade300,
-                    width: 1,
+                    width: 2,
                   ),
                 ),
                 child: Text(

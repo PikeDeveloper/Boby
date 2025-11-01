@@ -113,17 +113,18 @@ class Score extends StatelessWidget {
       context: context,
       builder: (context) => AlertDialog(
         title: const Text(
-          'Restablecer Puntuación',
+          //'Restablecer Puntuación',
+           "Restore Score",
           style: TextStyle(fontWeight: FontWeight.bold),
         ),
-        content: const Text('¿Estás seguro de que quieres restablecer la puntuación?'),
+        content: const Text('Are you sure you want to reset the score?'),
         actions: [
           TextButton(
             onPressed: () => Navigator.of(context).pop(),
              style: TextButton.styleFrom(
               foregroundColor: Colors.blue,
             ),
-            child: const Text('Cancelar'),
+            child: const Text('Cancel'),
           ),
           TextButton(
             onPressed: () {
@@ -134,7 +135,7 @@ class Score extends StatelessWidget {
             style: TextButton.styleFrom(
               foregroundColor: Colors.red,
             ),
-            child: const Text('Restablecer'),
+            child: const Text('Reset'),
           ),
         ],
       ),

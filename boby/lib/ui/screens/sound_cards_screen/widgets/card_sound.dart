@@ -3,6 +3,7 @@ import 'dart:math';
 
 import 'package:dotted_border/dotted_border.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter/scheduler.dart';
 import 'package:just_audio/just_audio.dart';
 
 class CardSound extends StatefulWidget {
@@ -125,9 +126,16 @@ class _CardSoundState extends State<CardSound>
     super.dispose();
   }
 
+  // Check if the device is an iPad
+  bool get isTablet {
+    final data = MediaQueryData.fromView(WidgetsBinding.instance.window);
+    return data.size.shortestSide >= 600; // 600 is a common breakpoint for tablets
+  }
+
   @override
   Widget build(BuildContext context) {
-    // Use the pre-assigned border color
+    final cardWidth = isTablet ? 300.0 : 150.0;
+    final cardHeight = cardWidth * 1.2; // Maintain aspect ratio
 
     // Animations disabled: static card
 
@@ -178,8 +186,8 @@ class _CardSoundState extends State<CardSound>
               child: child,
             ),
             child: SizedBox(
-              width: 150,
-              height: 180,
+              width: cardWidth,
+              height: cardHeight,
               child: Card(
                 elevation: 4,
                color: Colors.white,
