@@ -15,6 +15,21 @@ class LettersSoup extends StatefulWidget {
 
 class _LettersSoupState extends State<LettersSoup> {
   static const int size = 6;
+  
+  // List of colors for different words (darker shades for better text contrast)
+  final List<Color> wordColors = [
+    Colors.red.shade400,
+    Colors.blue.shade400,
+    Colors.green.shade400,
+    Colors.orange.shade400,
+    Colors.purple.shade400,
+    Colors.teal.shade400,
+    Colors.pink.shade400,
+    Colors.indigo.shade400,
+  ];
+  
+  // Map to store colors for each word
+  final Map<String, Color> wordColorMap = {};
   late List<String> words;
   late String topicTitle;
   late List<List<String>> grid;
@@ -80,20 +95,28 @@ class _LettersSoupState extends State<LettersSoup> {
 
   Widget _buildWordList() {
     return Wrap(
+      alignment: WrapAlignment.center,
       spacing: 8,
       runSpacing: 4,
       children: words
-          .map((w) => Chip(
-                label: Text(
+          .map((w) => Container(
+                padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 6),
+                decoration: BoxDecoration(
+                  color: wordColorMap[w]?.withOpacity(0.7) ?? Colors.grey.shade300,
+                  borderRadius: BorderRadius.circular(16),
+                ),
+                child: Text(
                   w,
                   style: TextStyle(
+                    color: Colors.white,
+                    fontWeight: FontWeight.bold,
                     decoration: foundWords.contains(w)
                         ? TextDecoration.lineThrough
-                        : TextDecoration.none,
+                        : null,
+                    decorationColor: Colors.white,
+                    decorationThickness: 2,
                   ),
                 ),
-                backgroundColor:
-                    foundWords.contains(w) ? Colors.green.shade200 : null,
               ))
           .toList(),
     );
@@ -184,20 +207,34 @@ class _LettersSoupState extends State<LettersSoup> {
                   final p = Point(r, c);
                   return InkWell(
                     onTap: () => _onCellTap(p),
-                    child: Container(
-                      decoration: BoxDecoration(
-                        color: Colors.grey.shade200,
-                        border: Border.all(color: Colors.black12),
-                        borderRadius: _getBorderRadius(r, c, size),
-                      ),
-                      alignment: Alignment.center,
-                      child: Text(
-                        grid[r][c],
-                        style: const TextStyle(
-                          fontWeight: FontWeight.bold,
-                          fontSize: 18,
+                    child: Stack(
+                      children: [
+                        Container(
+                          decoration: BoxDecoration(
+                            color: Colors.grey.shade200,
+                            border: Border.all(
+                              color: Colors.black12,
+                              width: 1,
+                            ),
+                            borderRadius: _getBorderRadius(r, c, size),
+                          ),
+                          alignment: Alignment.center,
+                          child: Text(
+                            grid[r][c],
+                            style: const TextStyle(
+                              fontWeight: FontWeight.bold,
+                              fontSize: 18,
+                            ),
+                          ),
                         ),
-                      ),
+                        if (isPartOfFoundWord(p))
+                          Container(
+                            decoration: BoxDecoration(
+                              color: getHighlightColor(p)?.withOpacity(0.3),
+                              borderRadius: _getBorderRadius(r, c, size),
+                            ),
+                          ),
+                      ],
                     ),
                   );
                 },
@@ -208,6 +245,9 @@ class _LettersSoupState extends State<LettersSoup> {
                   cellSize: cellSize,
                   currentPath: selectionPath,
                   foundPaths: foundPaths,
+                  wordColorMap: wordColorMap,
+                  grid: grid,
+                  size: size,
                 ),
               ),
             ],
@@ -307,32 +347,80 @@ class _LettersSoupState extends State<LettersSoup> {
 
   int _clamp(int v, int min, int max) => v < min ? min : (v > max ? max : v);
 
+  // Check if a cell is part of a found word
+  bool isPartOfFoundWord(Point p) {
+    for (final path in foundPaths) {
+      if (path.any((point) => point.r == p.r && point.c == p.c)) {
+        return true;
+      }
+    }
+    return false;
+  }
+  
+  // Get the highlight color of the word at a specific cell
+  Color? getHighlightColor(Point p) {
+    for (var i = 0; i < foundPaths.length; i++) {
+      if (foundPaths[i].any((point) => point.r == p.r && point.c == p.c)) {
+        final word = _lettersFrom(foundPaths[i]);
+        return wordColorMap[word]?.withOpacity(0.3);
+      }
+    }
+    return null;
+  }
+
   void _selectRandomCategory() {
     final list = Words.words;
     if (list.isEmpty) {
-      topicTitle = 'Words';
-      words = const [];
+      setState(() {
+        topicTitle = 'Words';
+        words = const [];
+      });
       return;
     }
+    
     final idx = _rng.nextInt(list.length);
     final item = list[idx];
-    topicTitle = (item['title'] ?? 'Words').toString();
+    final newTitle = (item['title'] ?? 'Words').toString();
     final raw = (item['words'] as List).map((e) => e.toString()).toList();
+    
     // Normalize: keep only A-Z letters and uppercase
     final normalized = raw
         .map((e) => e.toUpperCase().replaceAll(RegExp(r'[^A-Z]'), ''))
         .where((w) => w.isNotEmpty)
         .toList();
+        
     // Prefer words that fit the grid (<= size). If none fit, fall back to all.
     final eligible = normalized.where((w) => w.length <= size).toList();
     final pool = eligible.isNotEmpty ? eligible : List<String>.from(normalized);
     final selected = <String>[];
+    
     while (selected.length < 4 && pool.isNotEmpty) {
       final i = _rng.nextInt(pool.length);
       selected.add(pool.removeAt(i));
     }
-    words = selected;
-    _playedWin = false;
+    
+    setState(() {
+      words = selected;
+      topicTitle = newTitle;
+      
+      // Clear previous state
+      foundWords.clear();
+      foundCells.clear();
+      foundPaths.clear();
+      start = null;
+      end = null;
+      selectionPath = [];
+      _playedWin = false;
+      
+      // Assign colors to words
+      wordColorMap.clear();
+      for (var i = 0; i < words.length; i++) {
+        wordColorMap[words[i]] = wordColors[i % wordColors.length];
+      }
+      
+      // Regenerate grid with new words
+      grid = _generateGrid(size, words);
+    });
   }
 
   void _maybePlayWin() {
@@ -496,17 +584,30 @@ class _SelectionPainter extends CustomPainter {
   final double cellSize;
   final List<Point> currentPath;
   final List<List<Point>> foundPaths;
+  final Map<String, Color> wordColorMap;
+  final List<List<String>> grid;
+  final int size;
 
   _SelectionPainter({
-    required this.cellSize,
     required this.currentPath,
     required this.foundPaths,
+    required this.cellSize,
+    required this.wordColorMap,
+    required this.grid,
+    required this.size,
   });
+
+  String _lettersFromPath(List<Point> path) {
+    return path.map((p) => grid[p.r][p.c]).join();
+  }
 
   @override
   void paint(Canvas canvas, Size size) {
+    // Draw found words with their respective colors
     for (final path in foundPaths) {
-      _drawCapsule(canvas, path, Colors.green);
+      final word = _lettersFromPath(path);
+      final color = wordColorMap[word] ?? Colors.green;
+      _drawCapsule(canvas, path, color);
     }
     if (currentPath.isNotEmpty) {
       _drawCapsule(canvas, currentPath, Colors.blue);
