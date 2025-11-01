@@ -20,8 +20,15 @@ class AppController extends GetxController {
   var enableColors = true.obs; // color matching round (shape+color)
   var enableObjects = true.obs; // figures from Constants.assets
 
-  //------------Audio Player para sonidos globales------------------------------
+  //------------Audio Players------------------------------
   final AudioPlayer _menuAudioPlayer = AudioPlayer();
+  final AudioPlayer _gameAudioPlayer = AudioPlayer();
+  
+  // Sound paths
+  final String winSound = "assets/sounds/winner-game.wav";
+  final String bubblePopSound = "assets/sounds/bubble-pop.wav";
+  final String gameBonusSound = "assets/sounds/game-bonus.wav";
+  final String gameOverSound = "assets/sounds/game-over-trombone.wav";
 
   @override
   void onInit() {
@@ -36,6 +43,7 @@ class AppController extends GetxController {
   @override
   void onClose() {
     _menuAudioPlayer.dispose();
+    _gameAudioPlayer.dispose();
     super.onClose();
   }
 
@@ -63,5 +71,48 @@ class AppController extends GetxController {
     } finally {
       celebrationVisible.value = false;
     }
+  }
+  
+  // Play game sound effects
+  Future<void> playGameSound(String soundPath) async {
+    try {
+      if (Platform.isLinux) {
+        debugPrint('Audio disabled on Linux');
+        return;
+      }
+      
+      await _gameAudioPlayer.stop();
+      await _gameAudioPlayer.setAsset(soundPath);
+      await _gameAudioPlayer.setVolume(1.0);
+      await _gameAudioPlayer.play();
+      
+    } catch (e) {
+      debugPrint('Error playing game sound: $e');
+    }
+  }
+  
+  // Play card tap sound
+  Future<void> playCardTap(String soundPath) async {
+    await playGameSound(soundPath);
+  }
+  
+  // Play win sound
+  Future<void> playWinSound() async {
+    await playGameSound(winSound);
+  }
+  
+  // Play bubble pop sound
+  Future<void> playBubblePop() async {
+    await playGameSound(bubblePopSound);
+  }
+  
+  // Play game bonus sound
+  Future<void> playGameBonus() async {
+    await playGameSound(gameBonusSound);
+  }
+  
+  // Play game over sound
+  Future<void> playGameOver() async {
+    await playGameSound(gameOverSound);
   }
 }

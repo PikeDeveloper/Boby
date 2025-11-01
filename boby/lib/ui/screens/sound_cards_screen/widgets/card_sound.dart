@@ -1,11 +1,10 @@
 import 'dart:async';
-import 'dart:io';
 import 'dart:math';
 
-import 'package:just_audio/just_audio.dart';
 import 'package:boby/controllers/app_controller.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
+import 'package:just_audio/just_audio.dart';
 
 
 class CardSound extends StatefulWidget {
@@ -36,11 +35,30 @@ class CardSound extends StatefulWidget {
 
 class _CardSoundState extends State<CardSound>
     with SingleTickerProviderStateMixin {
-  AudioPlayer? _player; // lazy init
-  StreamSubscription<PlayerState>? _stateSub;
+
   bool _isPlaying = false;
   late final AnimationController _jumpCtrl;
   late final Animation<double> _jumpY;
+  final AudioPlayer _audioPlayer = AudioPlayer();
+  StreamSubscription<PlayerState>? _playerStateSubscription;
+  late final Color _borderColor;
+  
+  static final List<Color> _borderColors = [
+    const Color(0xFFF1C40F), // Amarillo
+    const Color(0xffBE5EED), // Morado
+    const Color(0xFFFF4C88), // Rosa
+    const Color(0xFFEF4444), // Rojo
+    const Color(0xFF19E680), // Verde
+    const Color(0xFF25AFF4), // Azul
+    const Color(0xFFFFA500), // Naranja
+    const Color(0xFF9B59B6), // Púrpura
+    const Color(0xFF1ABC9C), // Verde azulado
+    const Color(0xFFE74C3C), // Rojo oscuro
+    const Color(0xFF3498DB), // Azul claro
+    const Color(0xFF2ECC71), // Verde esmeralda
+  ];
+  
+  static final Map<String, Color> _assignedColors = {};
 
   @override
   void initState() {
@@ -57,12 +75,30 @@ class _CardSoundState extends State<CardSound>
               .chain(CurveTween(curve: Curves.easeIn)),
           weight: 50),
     ]).animate(_jumpCtrl);
+    
+    // Assign a random but consistent color to each unique card name
+    if (!_assignedColors.containsKey(widget.name)) {
+      // If we've used all colors, start reusing them
+      if (_assignedColors.length >= _borderColors.length) {
+        _assignedColors.clear();
+      }
+      
+      // Find a color that hasn't been used yet
+      Color availableColor;
+      do {
+        availableColor = _borderColors[Random().nextInt(_borderColors.length)];
+      } while (_assignedColors.containsValue(availableColor) && 
+               _assignedColors.length < _borderColors.length);
+      
+      _assignedColors[widget.name] = availableColor;
+    }
+    _borderColor = _assignedColors[widget.name]!;
   }
 
   @override
   void dispose() {
-    _stateSub?.cancel();
-    _player?.dispose();
+    _playerStateSubscription?.cancel();
+    _audioPlayer.dispose();
     _jumpCtrl.dispose();
     super.dispose();
   }
@@ -71,37 +107,19 @@ class _CardSoundState extends State<CardSound>
   Widget build(BuildContext context) {
     final appController = Get.find<AppController>();
     
-    List<Color> borderColors = [
-      const Color(0xFFF1C40F),
-      const Color(0xffBE5EED),
-      const Color(0xFFFF4C88),
-      const Color(0xFFEF4444),
-      const Color(0xFF19E680),
-      const Color(0xFF25AFF4),
-      const Color(0xFFEF4444),
-      const Color(0xFF19E680),
-      const Color(0xFF25AFF4),
-      const Color(0xFFF1C40F),
-      const Color(0xffBE5EED),
-      const Color(0xFFFF4C88),
-    ];
-
-    int colorSelected = Random().nextInt(borderColors.length);
+    // Use the pre-assigned border color
 
     // Animations disabled: static card
 
     return GestureDetector(
       onTap: () async {
         _jumpCtrl.forward(from: 0);
+        
         if (appController.cardSelected.value == widget.name) {
           // If already selected, stop the animation and sound
-          try {
-            await _player?.stop();
-          } catch (_) {}
-          _stateSub?.cancel();
-          _stateSub = null;
-          await _player?.dispose();
-          _player = null;
+          await _audioPlayer.stop();
+          _playerStateSubscription?.cancel();
+          
           if (mounted) {
             setState(() {
               _isPlaying = false;
@@ -109,76 +127,42 @@ class _CardSoundState extends State<CardSound>
           }
           appController.cardSelected.value = ''; // Clear selection
           return; // Exit early to prevent restarting
-        } else {
+        }
+        
+        try {
           // If not selected, select and start animation
           appController.cardSelected.value = widget.name;
-
-          try {
-            // Initialize audio player if not already done
-            _player ??= AudioPlayer();
-            
-            // Stop any currently playing sound
-            await _player?.stop();
-            
-            // Set the audio source and play
-            await _player?.setAsset(widget.sound);
-            await _player?.setVolume(1.0);
-            await _player?.play();
-            
-            if (mounted) {
-              setState(() {
-                _isPlaying = true;
-              });
-            }
-            
-            // Add error listener
-            _player?.playerStateStream.listen((state) {
-              if (state.processingState == ProcessingState.completed) {
-                if (mounted) {
-                  setState(() {
-                    _isPlaying = false;
-                  });
-                }
-              }
-            }, onError: (e) {
-              debugPrint('Error playing sound: $e');
+          
+          // Play sound using local AudioPlayer
+          await _audioPlayer.setAsset(widget.sound);
+          await _audioPlayer.play();
+          
+          if (mounted) {
+            setState(() {
+              _isPlaying = true;
+            });
+          }
+          
+          // Listen for audio completion
+          _playerStateSubscription?.cancel();
+          _playerStateSubscription = _audioPlayer.playerStateStream.listen((state) {
+            if (state.processingState == ProcessingState.completed) {
               if (mounted) {
                 setState(() {
                   _isPlaying = false;
                 });
               }
-            });
-
-            // Clean up when audio finishes playing
-            _stateSub?.cancel();
-            _stateSub = _player?.playerStateStream.listen((state) async {
-              if (state.processingState == ProcessingState.completed) {
-                _stateSub?.cancel();
-                _stateSub = null;
-                try {
-                  await _player?.stop();
-                  await _player?.dispose();
-                  _player = null;
-                } catch (e) {
-                  debugPrint('Error cleaning up audio: $e');
-                } finally {
-                  if (mounted) {
-                    setState(() {
-                      _isPlaying = false;
-                    });
-                  }
-                }
-              }
-            });
-          } catch (e) {
-            debugPrint('Error playing sound: $e');
-
-            if (mounted) {
-              setState(() {
-                _isPlaying = false;
-              });
+              appController.cardSelected.value = ''; // Clear selection when sound finishes
             }
+          });
+        } catch (e) {
+          debugPrint('Error playing sound: $e');
+          if (mounted) {
+            setState(() {
+              _isPlaying = false;
+            });
           }
+          appController.cardSelected.value = ''; // Clear selection on error
         }
       },
       child: Column(
@@ -202,7 +186,7 @@ class _CardSoundState extends State<CardSound>
                 shape: RoundedRectangleBorder(
                   borderRadius: BorderRadius.circular(20),
                   side: BorderSide(
-                    color: borderColors[colorSelected],
+                    color: _borderColor,
                     width: 3,
                   ),
                 ),
