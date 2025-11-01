@@ -359,7 +359,7 @@ class _MemoryScreenState extends State<MemoryScreen>
                             child: const Icon(Icons.close, size: 50),
                           )
                         : CardSound(
-                            sound: "assets/sounds/${card.name.toLowerCase()}.mp3",
+                            sound: "assets/sounds/${card.name.toLowerCase()}.wav",
                             name: card.name,
                             image: card.image,
                             colorKey: card.colorKey,
