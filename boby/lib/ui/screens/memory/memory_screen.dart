@@ -5,6 +5,7 @@ import 'package:boby/ui/shared/winner_screen.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:boby/services/storage_service.dart';
+import 'package:boby/ui/screens/sound_cards_screen/widgets/card_sound.dart';
 
 class MemoryScreen extends StatefulWidget {
   const MemoryScreen({super.key});
@@ -52,7 +53,15 @@ class _MemoryScreenState extends State<MemoryScreen>
     super.dispose();
   }
 
+  int _gameVersion = 0; // Add this line to track game versions
+
   void _initializeGame({int? rows, int? cols}) {
+    // Increment game version to force new colors
+    _gameVersion++;
+    
+    // Reset card border colors for new game
+    CardSound.resetColors();
+    
     // Leer configuración actual si no se pasa
     final gridStr = StorageService.instance.getMemoryGrid();
     if (rows == null || cols == null) {
@@ -89,6 +98,7 @@ class _MemoryScreenState extends State<MemoryScreen>
           name: gameAssets[i]["name"]!,
           isFlipped: false,
           isMatched: false,
+          colorKey: _gameVersion, // Use game version as color key
         ),
       );
       cards.add(
@@ -98,6 +108,7 @@ class _MemoryScreenState extends State<MemoryScreen>
           name: gameAssets[i]["name"]!,
           isFlipped: false,
           isMatched: false,
+          colorKey: _gameVersion, // Use same game version for matching pairs
         ),
       );
     }
@@ -114,6 +125,7 @@ class _MemoryScreenState extends State<MemoryScreen>
           name: "Empty",
           isFlipped: false,
           isMatched: true, // no se puede voltear
+          colorKey: _gameVersion,
         ),
       );
     }
@@ -346,7 +358,13 @@ class _MemoryScreenState extends State<MemoryScreen>
                             color: Colors.grey[300],
                             child: const Icon(Icons.close, size: 50),
                           )
-                        : Image.asset(card.image, fit: BoxFit.cover))
+                        : CardSound(
+                            sound: "assets/sounds/${card.name.toLowerCase()}.mp3",
+                            name: card.name,
+                            image: card.image,
+                            colorKey: card.colorKey,
+                            key: ValueKey('${card.id}_${card.colorKey}'),
+                          ))
                     : Container(
                         decoration: BoxDecoration(
                           //  String backGroundImage = "assets/card.png";
@@ -368,6 +386,7 @@ class MemoryCard {
   final int id;
   final String image;
   final String name;
+  final int colorKey; // Add this line
   bool isFlipped;
   bool isMatched;
 
@@ -377,5 +396,6 @@ class MemoryCard {
     required this.name,
     required this.isFlipped,
     required this.isMatched,
+    required this.colorKey, // Add this line
   });
 }

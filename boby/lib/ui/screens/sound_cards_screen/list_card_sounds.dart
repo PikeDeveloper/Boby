@@ -1,4 +1,5 @@
 import 'package:boby/ui/screens/word_guess/widgets/celebration_image.dart';
+import 'package:boby/ui/shared/score.dart';
 import 'package:flutter/material.dart';
 import '../../../utils/constants.dart';
 import 'widgets/card_sound.dart';
@@ -139,6 +140,10 @@ class _ListCardSoundsState extends State<ListCardSounds> {
         SafeArea(
           child: Column(
             children: [
+              Score.soundCards(   
+                correct: correctCount,
+                wrong: totalCount - correctCount,
+              ),
               // Top half of screen - Cards
               SizedBox(
                 height: (screenSize.height - safePadding.top - safePadding.bottom) * 0.5,
@@ -268,6 +273,7 @@ class _ListCardSoundsState extends State<ListCardSounds> {
       },
       builder: (context, candidateData, rejectedData) {
         return CardSound(
+          colorKey: 0,  
           image: assets[index]["image"]!,
           name: cardNames[index] ?? '',
           sound: assets[index]["sound"]!,

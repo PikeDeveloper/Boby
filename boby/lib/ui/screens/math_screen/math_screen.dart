@@ -183,7 +183,11 @@ class _MathScreenState extends State<MathScreen> {
                   ),
                 ],
               ),
-              Score(),
+              Score(
+                correct: StorageService.instance.getMathCorrect(),
+                wrong: StorageService.instance.getMathWrong(),
+                onTap: (context) => StorageService.instance.setMathCorrect(0),
+              ),
             ],
           ),
         ),

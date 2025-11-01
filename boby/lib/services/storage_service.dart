@@ -47,6 +47,40 @@ class StorageService {
   Future<void> setMathWrong(int value) => _box.put(_kMathWrong, value);
 
   int getMathTotalAttempts() => getMathCorrect() + getMathWrong();
+  
+  // Memory game scores
+  int getMemoryCorrect() => (_box.get('memory_correct') as int?) ?? 0;
+  Future<void> incMemoryCorrect([int by = 1]) =>
+      _box.put('memory_correct', getMemoryCorrect() + by);
+  Future<void> setMemoryCorrect(int value) => _box.put('memory_correct', value);
+
+  int getMemoryWrong() => (_box.get('memory_wrong') as int?) ?? 0;
+  Future<void> incMemoryWrong([int by = 1]) =>
+      _box.put('memory_wrong', getMemoryWrong() + by);
+  Future<void> setMemoryWrong(int value) => _box.put('memory_wrong', value);
+
+  // Sound cards game scores
+  int getSoundCardsCorrect() => (_box.get('sound_cards_correct') as int?) ?? 0;
+  Future<void> incSoundCardsCorrect([int by = 1]) =>
+      _box.put('sound_cards_correct', getSoundCardsCorrect() + by);
+  Future<void> setSoundCardsCorrect(int value) => _box.put('sound_cards_correct', value);
+
+  int getSoundCardsWrong() => (_box.get('sound_cards_wrong') as int?) ?? 0;
+  Future<void> incSoundCardsWrong([int by = 1]) =>
+      _box.put('sound_cards_wrong', getSoundCardsWrong() + by);
+  Future<void> setSoundCardsWrong(int value) => _box.put('sound_cards_wrong', value);
+
+  // Word guess game scores
+  int getWordGuessCorrect() => (_box.get('word_guess_correct') as int?) ?? 0;
+  Future<void> incWordGuessCorrect([int by = 1]) =>
+      _box.put('word_guess_correct', getWordGuessCorrect() + by);
+  Future<void> setWordGuessCorrect(int value) => _box.put('word_guess_correct', value);
+
+  int getWordGuessWrong() => (_box.get('word_guess_wrong') as int?) ?? 0;
+  Future<void> incWordGuessWrong([int by = 1]) =>
+      _box.put('word_guess_wrong', getWordGuessWrong() + by);
+  Future<void> setWordGuessWrong(int value) => _box.put('word_guess_wrong', value);
+
   double getMathAverage() {
     final total = getMathTotalAttempts();
     if (total == 0) return 0;

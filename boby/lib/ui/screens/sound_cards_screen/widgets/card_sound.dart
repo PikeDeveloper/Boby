@@ -1,26 +1,31 @@
 import 'dart:async';
 import 'dart:math';
 
-import 'package:boby/controllers/app_controller.dart';
 import 'package:flutter/material.dart';
-import 'package:get/get.dart';
 import 'package:just_audio/just_audio.dart';
 
-
 class CardSound extends StatefulWidget {
+  final int colorKey; // Add colorKey parameter
+
   const CardSound({
-    super.key,
     required this.sound,
     required this.name,
     required this.image,
     this.isActive = false,
+    required this.colorKey, // This will change with each game
+    super.key,
   });
+
+  // Call this method to reset colors for a new game
+  static void resetColors() {
+    _CardSoundState.resetColors();
+  }
 
   final String sound;
   final String name;
   final String image;
   final bool isActive;
-  
+
   // Get the correct name for this card from the image path
   String get correctName {
     // Extract the name from the image path (assuming format like 'assets/images/cat.png')
@@ -35,14 +40,13 @@ class CardSound extends StatefulWidget {
 
 class _CardSoundState extends State<CardSound>
     with SingleTickerProviderStateMixin {
-
   bool _isPlaying = false;
   late final AnimationController _jumpCtrl;
   late final Animation<double> _jumpY;
   final AudioPlayer _audioPlayer = AudioPlayer();
   StreamSubscription<PlayerState>? _playerStateSubscription;
   late final Color _borderColor;
-  
+
   static final List<Color> _borderColors = [
     const Color(0xFFF1C40F), // Amarillo
     const Color(0xffBE5EED), // Morado
@@ -57,8 +61,14 @@ class _CardSoundState extends State<CardSound>
     const Color(0xFF3498DB), // Azul claro
     const Color(0xFF2ECC71), // Verde esmeralda
   ];
-  
-  static final Map<String, Color> _assignedColors = {};
+
+  // Use a map to store colors per (name, colorKey) pair
+  static final Map<String, Map<int, Color>> _assignedColors = {};
+
+  // Call this method to reset colors for a new game
+  static void resetColors() {
+    // No need to clear here, we'll use the colorKey to get new colors
+  }
 
   @override
   void initState() {
@@ -75,24 +85,35 @@ class _CardSoundState extends State<CardSound>
               .chain(CurveTween(curve: Curves.easeIn)),
           weight: 50),
     ]).animate(_jumpCtrl);
-    
-    // Assign a random but consistent color to each unique card name
+
+    // Get or create color for this card based on name and colorKey
     if (!_assignedColors.containsKey(widget.name)) {
-      // If we've used all colors, start reusing them
-      if (_assignedColors.length >= _borderColors.length) {
-        _assignedColors.clear();
-      }
-      
-      // Find a color that hasn't been used yet
-      Color availableColor;
-      do {
-        availableColor = _borderColors[Random().nextInt(_borderColors.length)];
-      } while (_assignedColors.containsValue(availableColor) && 
-               _assignedColors.length < _borderColors.length);
-      
-      _assignedColors[widget.name] = availableColor;
+      _assignedColors[widget.name] = {};
     }
-    _borderColor = _assignedColors[widget.name]!;
+
+    // If we don't have a color for this colorKey yet, assign one
+    if (!_assignedColors[widget.name]!.containsKey(widget.colorKey)) {
+      // Get all currently assigned colors for this game
+      final usedColors = _assignedColors.values
+          .map((map) => map[widget.colorKey])
+          .whereType<Color>()
+          .toSet();
+
+      // Find an available color
+      Color availableColor;
+      final availableColors = _borderColors.where((color) => !usedColors.contains(color)).toList();
+
+      if (availableColors.isNotEmpty) {
+        availableColor = availableColors[Random().nextInt(availableColors.length)];
+      } else {
+        // If all colors are used, start reusing them
+        availableColor = _borderColors[Random().nextInt(_borderColors.length)];
+      }
+
+      _assignedColors[widget.name]![widget.colorKey] = availableColor;
+    }
+
+    _borderColor = _assignedColors[widget.name]![widget.colorKey]!;
   }
 
   @override
@@ -105,8 +126,6 @@ class _CardSoundState extends State<CardSound>
 
   @override
   Widget build(BuildContext context) {
-    final appController = Get.find<AppController>();
-    
     // Use the pre-assigned border color
 
     // Animations disabled: static card
@@ -115,25 +134,12 @@ class _CardSoundState extends State<CardSound>
       onTap: () async {
         _jumpCtrl.forward(from: 0);
         
-        if (appController.cardSelected.value == widget.name) {
-          // If already selected, stop the animation and sound
+        try {
+          // Stop any currently playing sound
           await _audioPlayer.stop();
           _playerStateSubscription?.cancel();
           
-          if (mounted) {
-            setState(() {
-              _isPlaying = false;
-            });
-          }
-          appController.cardSelected.value = ''; // Clear selection
-          return; // Exit early to prevent restarting
-        }
-        
-        try {
-          // If not selected, select and start animation
-          appController.cardSelected.value = widget.name;
-          
-          // Play sound using local AudioPlayer
+          // Play the sound
           await _audioPlayer.setAsset(widget.sound);
           await _audioPlayer.play();
           
@@ -144,7 +150,6 @@ class _CardSoundState extends State<CardSound>
           }
           
           // Listen for audio completion
-          _playerStateSubscription?.cancel();
           _playerStateSubscription = _audioPlayer.playerStateStream.listen((state) {
             if (state.processingState == ProcessingState.completed) {
               if (mounted) {
@@ -152,7 +157,6 @@ class _CardSoundState extends State<CardSound>
                   _isPlaying = false;
                 });
               }
-              appController.cardSelected.value = ''; // Clear selection when sound finishes
             }
           });
         } catch (e) {
@@ -162,7 +166,6 @@ class _CardSoundState extends State<CardSound>
               _isPlaying = false;
             });
           }
-          appController.cardSelected.value = ''; // Clear selection on error
         }
       },
       child: Column(
@@ -178,10 +181,8 @@ class _CardSoundState extends State<CardSound>
               height: 150,
               child: Card(
                 elevation: 4,
-                color: appController.cardSelected.value == widget.name
-                    ? _isPlaying
-                        ? Colors.green.withOpacity(0.8)
-                        : Colors.blue.withOpacity(0.8)
+                color: _isPlaying
+                    ? Colors.green.withOpacity(0.8)
                     : const Color.fromARGB(255, 236, 8, 8),
                 shape: RoundedRectangleBorder(
                   borderRadius: BorderRadius.circular(20),
