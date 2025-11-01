@@ -5,7 +5,7 @@ import 'package:boby/ui/shared/winner_screen.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:boby/services/storage_service.dart';
-import 'package:boby/ui/screens/sound_cards_screen/widgets/card_sound.dart';
+import 'package:boby/ui/screens/memory/widgets/memory_card.dart';
 
 class MemoryScreen extends StatefulWidget {
   const MemoryScreen({super.key});
@@ -16,7 +16,7 @@ class MemoryScreen extends StatefulWidget {
 
 class _MemoryScreenState extends State<MemoryScreen>
     with TickerProviderStateMixin {
-  late List<MemoryCard> cards;
+  late List<MemoryCardData> cards;
   List<int> flippedCards = [];
   List<int> matchedCards = [];
   bool isProcessing = false;
@@ -28,7 +28,6 @@ class _MemoryScreenState extends State<MemoryScreen>
   final String soundPathWinner = "assets/sounds/winner-game.wav";
 
   late AnimationController _flipController;
-  late Animation<double> _flipAnimation;
   int _targetPairs = 0;
   int _rows = 3;
   int _cols = 3;
@@ -39,9 +38,6 @@ class _MemoryScreenState extends State<MemoryScreen>
     _flipController = AnimationController(
       duration: const Duration(milliseconds: 600),
       vsync: this,
-    );
-    _flipAnimation = Tween<double>(begin: 0.0, end: 1.0).animate(
-      CurvedAnimation(parent: _flipController, curve: Curves.easeInOut),
     );
 
     _initializeGame();
@@ -59,8 +55,7 @@ class _MemoryScreenState extends State<MemoryScreen>
     // Increment game version to force new colors
     _gameVersion++;
     
-    // Reset card border colors for new game
-    CardSound.resetColors();
+    // Reset game state
     
     // Leer configuración actual si no se pasa
     final gridStr = StorageService.instance.getMemoryGrid();
@@ -91,24 +86,27 @@ class _MemoryScreenState extends State<MemoryScreen>
     // Crear cartas (pares)
     cards = [];
     for (int i = 0; i < _targetPairs; i++) {
+      final sound = "assets/sounds/${gameAssets[i]["name"]!.toLowerCase()}.wav";
       cards.add(
-        MemoryCard(
+        MemoryCardData(
           id: i * 2,
           image: gameAssets[i]["image"]!,
           name: gameAssets[i]["name"]!,
           isFlipped: false,
           isMatched: false,
-          colorKey: _gameVersion, // Use game version as color key
+          colorKey: i,
+          sound: sound,
         ),
       );
       cards.add(
-        MemoryCard(
+        MemoryCardData(
           id: i * 2 + 1,
           image: gameAssets[i]["image"]!,
           name: gameAssets[i]["name"]!,
           isFlipped: false,
           isMatched: false,
-          colorKey: _gameVersion, // Use same game version for matching pairs
+          colorKey: i,
+          sound: sound,
         ),
       );
     }
@@ -119,13 +117,14 @@ class _MemoryScreenState extends State<MemoryScreen>
     // Si el número de casillas es impar, agregar una carta vacía para completar
     if (totalSlots.isOdd) {
       cards.add(
-        MemoryCard(
-          id: totalSlots - 1,
+        MemoryCardData(
+          id: cards.length,
           image: "",
           name: "Empty",
           isFlipped: false,
-          isMatched: true, // no se puede voltear
-          colorKey: _gameVersion,
+          isMatched: false,
+          colorKey: 0,
+          sound: "",
         ),
       );
     }
@@ -326,76 +325,73 @@ class _MemoryScreenState extends State<MemoryScreen>
 
   Widget _buildCard(int index) {
     final card = cards[index];
+    final isFlipped = flippedCards.contains(index) || matchedCards.contains(index);
+    final isMatched = matchedCards.contains(index);
 
-    return GestureDetector(
+    if (card.name == "Empty") {
+      return Container(
+        margin: const EdgeInsets.all(4),
+        decoration: BoxDecoration(
+          borderRadius: BorderRadius.circular(12),
+          color: Colors.grey[300],
+        ),
+        child: const Icon(Icons.close, size: 50),
+      );
+    }
+
+    // Update the card state
+    final updatedCard = card.copyWith(
+      isFlipped: isFlipped,
+      isMatched: isMatched,
+    );
+    cards[index] = updatedCard;
+
+    return MemoryCard(
+      key: ValueKey('card_${card.id}_${isFlipped ? 'flipped' : 'hidden'}_${_gameVersion}'),
+      id: card.id,
+      image: card.image,
+      name: card.name,
+      isFlipped: isFlipped,
+      isMatched: isMatched,
       onTap: () => _flipCard(index),
-      child: AnimatedBuilder(
-        animation: _flipAnimation,
-        builder: (context, child) {
-          final isFlipped = card.isFlipped || card.isMatched;
-
-          return Transform(
-            alignment: Alignment.center,
-            transform: Matrix4.identity()
-              ..setEntry(3, 2, 0.001)
-              ..rotateY(isFlipped ? 0 : 3.14159),
-            child: Container(
-              decoration: BoxDecoration(
-                borderRadius: BorderRadius.circular(12),
-                boxShadow: [
-                  BoxShadow(
-                    color: Colors.black.withOpacity(0.2),
-                    blurRadius: 4,
-                    offset: const Offset(0, 2),
-                  ),
-                ],
-              ),
-              child: ClipRRect(
-                borderRadius: BorderRadius.circular(12),
-                child: isFlipped
-                    ? (card.name == "Empty"
-                        ? Container(
-                            color: Colors.grey[300],
-                            child: const Icon(Icons.close, size: 50),
-                          )
-                        : CardSound(
-                            sound: "assets/sounds/${card.name.toLowerCase()}.wav",
-                            name: card.name,
-                            image: card.image,
-                            colorKey: card.colorKey,
-                            key: ValueKey('${card.id}_${card.colorKey}'),
-                          ))
-                    : Container(
-                        decoration: BoxDecoration(
-                          //  String backGroundImage = "assets/card.png";
-                          image: DecorationImage(
-                            image: AssetImage(backGroundImage),
-                          ),
-                        ),
-                      ),
-              ),
-            ),
-          );
-        },
-      ),
+      colorKey: card.colorKey,
+      gameVersion: _gameVersion,
+      sound: card.sound,
     );
   }
 }
 
-class MemoryCard {
+class MemoryCardData {
   final int id;
   final String image;
   final String name;
-  final int colorKey; // Add this line
+  final int colorKey;
   bool isFlipped;
   bool isMatched;
+  final String sound;
 
-  MemoryCard({
+  MemoryCardData({
     required this.id,
     required this.image,
     required this.name,
     required this.isFlipped,
     required this.isMatched,
-    required this.colorKey, // Add this line
+    required this.colorKey,
+    this.sound = "",
   });
+  
+  MemoryCardData copyWith({
+    bool? isFlipped,
+    bool? isMatched,
+  }) {
+    return MemoryCardData(
+      id: id,
+      image: image,
+      name: name,
+      isFlipped: isFlipped ?? this.isFlipped,
+      isMatched: isMatched ?? this.isMatched,
+      colorKey: colorKey,
+      sound: sound,
+    );
+  }
 }
