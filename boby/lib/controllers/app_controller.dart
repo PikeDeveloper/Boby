@@ -14,6 +14,10 @@ class AppController extends GetxController {
   var menuOpen = false.obs;
   var celebrationVisible = false.obs; // controls celebration overlay visibility
 
+
+  //---------noShow------------------------------
+  var noShow = "no".obs;
+
   //------------MatchIt settings flags------------------------------
   // Control which types of rounds are enabled in MatchItScreen
   var enableNumbers = true.obs;

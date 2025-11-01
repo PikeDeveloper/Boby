@@ -1,244 +1,168 @@
-import 'dart:math';
-
-import 'package:flutter/material.dart';
+import 'package:boby/controllers/app_controller.dart';
 import 'package:boby/services/storage_service.dart';
-
-typedef ScoreTapCallback = void Function(BuildContext context);
+import 'package:boby/utils/colors.dart';
+import 'package:flutter/material.dart';
+import 'package:get/get.dart';
 
 class Score extends StatelessWidget {
-  final int correct;
-  final int wrong;
-  final String correctLabel;
-  final String wrongLabel;
-  final bool showPercentage;
-  final ScoreTapCallback onTap;
+  final String game;
+
 
   const Score({
-    super.key,
-    required this.correct,
-    required this.wrong,
-    this.correctLabel = 'Aciertos',
-    this.wrongLabel = 'Fallos',
-    this.showPercentage = true,
-    required this.onTap,
+    super.key, 
+    required this.game,
+
   });
 
-  // Constructor for math-specific score
-  Score.math({
-    super.key,
-    required this.correct,
-    required this.wrong,
-    ScoreTapCallback? onTap,
-  })  : correctLabel = 'Aciertos',
-        wrongLabel = 'Fallos',
-        showPercentage = true,
-        onTap = onTap ?? _showMathRestoreDialog;
 
-  // Constructor for memory game score
-  Score.memory({
-    super.key,
-    required this.correct,
-    required this.wrong,
-    ScoreTapCallback? onTap,
-  })  : correctLabel = 'Aciertos',
-        wrongLabel = 'Fallos',
-        showPercentage = false,
-        onTap = onTap ?? _showMemoryRestoreDialog;
 
-  // Constructor for sound cards game score
-  Score.soundCards({
-    super.key,
-    required this.correct,
-    required this.wrong,
-    ScoreTapCallback? onTap,
-  })  : correctLabel = 'Correctas',
-        wrongLabel = 'Incorrectas',
-        showPercentage = true,
-        onTap = onTap ?? _showSoundCardsRestoreDialog;
+  String _getCorrectValue() {
+    switch (game) {
+      case "Math":
+        return StorageService.instance.getMathCorrect().toString();
+      case "Memory":
+        return StorageService.instance.getMemoryCorrect().toString();
+      case "SoundCards":
+        return StorageService.instance.getSoundCardsCorrect().toString();
+      case "WordGuess":
+        return StorageService.instance.getWordGuessCorrect().toString();
+      default:
+        return "0";
+    }
+  }
 
-  // Constructor for word guess game score
-  Score.wordGuess({
-    super.key,
-    required this.correct,
-    required this.wrong,
-    ScoreTapCallback? onTap,
-  })  : correctLabel = 'Aciertos',
-        wrongLabel = 'Fallos',
-        showPercentage = true,
-        onTap = onTap ?? _showWordGuessRestoreDialog;
-        
-  // Constructor for colors game score
-  Score.colors({
-    super.key,
-    required this.correct,
-    required this.wrong,
-    ScoreTapCallback? onTap,
-  })  : correctLabel = 'Correctos',
-        wrongLabel = 'Incorrectos',
-        showPercentage = true,
-        onTap = onTap ?? _showColorsRestoreDialog;
-        
-  // Constructor for numbers game score
-  Score.numbers({
-    super.key,
-    required this.correct,
-    required this.wrong,
-    ScoreTapCallback? onTap,
-  })  : correctLabel = 'Correctos',
-        wrongLabel = 'Incorrectos',
-        showPercentage = true,
-        onTap = onTap ?? _showNumbersRestoreDialog;
+  String _getWrongValue() {
+    switch (game) {
+      case "Math":
+        return StorageService.instance.getMathWrong().toString();
+      case "Memory":
+        return StorageService.instance.getMemoryWrong().toString();
+      case "SoundCards":
+        return StorageService.instance.getSoundCardsWrong().toString();
+      case "WordGuess":
+        return StorageService.instance.getWordGuessWrong().toString();
+ 
+      default:
+        return "0";
+    }
+  }
 
   @override
   Widget build(BuildContext context) {
     final screenSize = MediaQuery.of(context).size;
-    final screenWidth = screenSize.width;
-    final screenHeight = screenSize.height;
-    final minSize = min(screenWidth, screenHeight);
-    final letterSize = minSize / 8;
- 
+    final appController = Get.find<AppController>();
+    final String noShow = appController.noShow.value;
     return GestureDetector(
-      onTap: () => onTap(context),
+      onTap: () => _showRestoreDialog(context),
       child: Container(
+        width: screenSize.width * 0.8,
         margin: const EdgeInsets.all(8),
         padding: const EdgeInsets.all(8),
         decoration: BoxDecoration(
           color: Colors.white,
-          borderRadius: BorderRadius.circular(16),
+          borderRadius: BorderRadius.circular(30),
+          boxShadow: [
+            BoxShadow(
+              color: Colors.black.withOpacity(0.1),
+              blurRadius: 4,
+              offset: const Offset(0, 2),
+            ),
+          ],
         ),
-        child: Builder(
-          builder: (context) {
-
-            TextStyle styleLabel = TextStyle(
-                fontSize: letterSize * 0.28, fontWeight: FontWeight.w600);
-            TextStyle styleValue = TextStyle(
-                fontSize: letterSize * 0.35, fontWeight: FontWeight.bold);
-
-            Widget col(String label, String value, Color color) => Row(
-                  mainAxisSize: MainAxisSize.min,
-                  children: [
-                    Text(label, style: styleLabel.copyWith(color: color)),
-                    const SizedBox(width: 4),
-                    Text(value, style: styleValue.copyWith(color: color)),
-                  ],
-                );
-
-            final children = <Widget>[
-              col(correctLabel, '$correct', Colors.green),
-              if (showPercentage) SizedBox(width: letterSize),
-             
-              SizedBox(width: letterSize),
-              col(wrongLabel, '$wrong', Colors.red),
-            ];
-
-            return Row(
-              mainAxisAlignment: MainAxisAlignment.center,
-              children: children,
-            );
-          },
-        )
+        child: Obx (
+          () => Row(
+            mainAxisSize: MainAxisSize.min,
+            mainAxisAlignment: MainAxisAlignment.center,
+            children: [
+              _buildScoreItem("Correct", _getCorrectValue(), MyColors.green),
+              const SizedBox(width: 16),
+              _buildScoreItem("Wrong", _getWrongValue(), MyColors.red),
+              Text(appController.noShow.value, style: TextStyle(fontSize:1, ),),
+            ],
+          ),
+        ),
       ),
     );
   }
 
-  static void _showMathRestoreDialog(BuildContext context) {
-    _showRestoreDialog(
-      context,
-      onRestore: () {
-        StorageService.instance.setMathCorrect(0);
-        StorageService.instance.setMathWrong(0);
-      },
+  Widget _buildScoreItem(String label, String value, Color color) {
+    return Row(
+      children: [
+        Text(
+          "$label: ",
+          style: TextStyle(
+            fontSize: 16,
+            fontWeight: FontWeight.w600,
+            color: color
+          ),
+        ),
+        Text(
+          value,
+          style: TextStyle(
+            fontSize: 22,
+            fontWeight: FontWeight.bold,
+            color: color,
+          ),
+        ),
+      ],
     );
   }
 
-  static void _showMemoryRestoreDialog(BuildContext context) {
-    _showRestoreDialog(
-      context,
-      onRestore: () {
-        StorageService.instance.setMemoryCorrect(0);
-        StorageService.instance.setMemoryWrong(0);
-      },
-    );
-  }
-
-  static void _showSoundCardsRestoreDialog(BuildContext context) {
-    _showRestoreDialog(
-      context,
-      onRestore: () {
-        StorageService.instance.setSoundCardsCorrect(0);
-        StorageService.instance.setSoundCardsWrong(0);
-      },
-    );
-  }
-
-  static void _showWordGuessRestoreDialog(BuildContext context) {
-    _showRestoreDialog(
-      context,
-      onRestore: () {
-        StorageService.instance.setWordGuessCorrect(0);
-        StorageService.instance.setWordGuessWrong(0);
-      },
-    );
-  }
-  
-  static void _showColorsRestoreDialog(BuildContext context) {
-    _showRestoreDialog(
-      context,
-      onRestore: () {
-        StorageService.instance.setColorsCorrect(0);
-      },
-    );
-  }
-  
-  static void _showNumbersRestoreDialog(BuildContext context) {
-    _showRestoreDialog(
-      context,
-      onRestore: () {
-        StorageService.instance.setNumbersCorrect(0);
-      },
-    );
-  }
-
-  static void _showRestoreDialog(
-    BuildContext context, {
-    required VoidCallback onRestore,
-  }) {
+  void _showRestoreDialog(BuildContext context) {
     showDialog(
       context: context,
       builder: (context) => AlertDialog(
         title: const Text(
-          'Restablecer Contador',
-          style: TextStyle(fontSize: 20, fontWeight: FontWeight.bold),
+          'Restablecer Puntuación',
+          style: TextStyle(fontWeight: FontWeight.bold),
         ),
-        content: const Text('¿Estás seguro de que quieres restablecer el contador?'),
+        content: const Text('¿Estás seguro de que quieres restablecer la puntuación?'),
         actions: [
           TextButton(
-            onPressed: () => Navigator.pop(context),
-            child: const Text(
-              'Cancelar',
-              style: TextStyle(
-                fontSize: 16,
-                fontWeight: FontWeight.bold,
-                color: Colors.blue,
-              ),
+            onPressed: () => Navigator.of(context).pop(),
+             style: TextButton.styleFrom(
+              foregroundColor: Colors.blue,
             ),
+            child: const Text('Cancelar'),
           ),
           TextButton(
             onPressed: () {
-              onRestore();
-              Navigator.pop(context);
+              _resetScores();
+              Navigator.of(context).pop();
+           
             },
-            child: const Text(
-              'Restablecer',
-              style: TextStyle(
-                fontSize: 16,
-                fontWeight: FontWeight.bold,
-                color: Colors.red,
-              ),
+            style: TextButton.styleFrom(
+              foregroundColor: Colors.red,
             ),
+            child: const Text('Restablecer'),
           ),
         ],
       ),
     );
+  }
+
+  void _resetScores() {
+    final appController = Get.find<AppController>();
+    
+    switch (game) {
+      case "Math":
+        StorageService.instance.setMathCorrect(0);
+        StorageService.instance.setMathWrong(0);
+        break;
+      case "Memory":
+        StorageService.instance.setMemoryCorrect(0);
+        StorageService.instance.setMemoryWrong(0);
+        break;
+      case "SoundCards":
+        StorageService.instance.setSoundCardsCorrect(0);
+        StorageService.instance.setSoundCardsWrong(0);
+        break;
+      case "WordGuess":
+        StorageService.instance.setWordGuessCorrect(0);
+        StorageService.instance.setWordGuessWrong(0);
+        break;
+
+    }
+    appController.noShow.value == "no"? appController.noShow.value = "yes": appController.noShow.value = "no";
   }
 }

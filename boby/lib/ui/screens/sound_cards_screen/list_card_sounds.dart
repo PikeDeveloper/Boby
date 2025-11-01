@@ -152,26 +152,11 @@ class _ListCardSoundsState extends State<ListCardSounds> {
             children: [
               Column(
                 children: [
-                  // Current game progress
-                  if (cardNames.any((name) => name != null))
-                    Padding(
-                      padding: const EdgeInsets.only(bottom: 8.0),
-                      child: Text(
-                        'Juego actual: $currentCorrect/$totalCount',
-                        style: const TextStyle(
-                          fontSize: 16,
-                          fontWeight: FontWeight.bold,
-                          color: Colors.blue,
-                        ),
-                      ),
-                    ),
+                
                   // Total scores
-                  Score.soundCards(   
-                    correct: totalCorrect,
-                    wrong: totalWrong,
-                    onTap: (context) {
-                      // This will be handled by the Score widget's built-in dialog
-                    },
+                  Score(
+                    game: "SoundCards", 
+                   
                   ),
                 ],
               ),

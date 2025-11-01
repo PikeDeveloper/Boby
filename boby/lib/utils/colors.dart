@@ -7,6 +7,6 @@ class MyColors {
   static Color purple = const Color(0xffBE5EED);
   static Color guayaba = const Color(0xFFFF4C88);
   static Color red = const Color(0xFFEF4444);
-  static Color green = const Color(0xFF19E680);
+  static Color green = const Color.fromARGB(255, 1, 227, 114);
   static Color blue = const Color(0xFF25AFF4);
 }
