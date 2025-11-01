@@ -6,6 +6,7 @@ import 'widgets/card_sound.dart';
 import 'package:get/get.dart';
 import 'package:boby/controllers/app_controller.dart';
 import 'package:just_audio/just_audio.dart';
+import 'package:boby/services/storage_service.dart';
 
   
 class ListCardSounds extends StatefulWidget {
@@ -65,19 +66,23 @@ class _ListCardSoundsState extends State<ListCardSounds> {
     bool allFilled = cardNames.every((name) => name != null);
     
     if (allFilled) {
+      final storage = StorageService.instance;
       // Check if all cards have their correct names
-      bool allCorrect = true;
+      int currentCorrect = 0;
       for (int i = 0; i < assets.length; i++) {
-        if (cardNames[i] != assets[i]["name"]) {
-          allCorrect = false;
-          break;
+        if (cardNames[i] == assets[i]["name"]) {
+          currentCorrect++;
         }
       }
       
-      if (allCorrect) {
-        // Play win sound
+      // Update scores in storage
+      final int currentWrong = assets.length - currentCorrect;
+      await storage.incSoundCardsCorrect(currentCorrect);
+      await storage.incSoundCardsWrong(currentWrong);
+      
+      if (currentCorrect == assets.length) {
+        // All correct - win
         await _playSound(_winSound);
-        // Show celebration
         app.celebrationVisible.value = true;
         
         // Hide celebration and load new cards after 1 second
@@ -87,7 +92,7 @@ class _ListCardSoundsState extends State<ListCardSounds> {
           _loadRandomCards();
         });
       } else {
-        // Play game over sound
+        // Some wrong - game over
         await _playSound(_gameOverSound);
         
         // Clear all cards after a short delay
@@ -129,8 +134,13 @@ class _ListCardSoundsState extends State<ListCardSounds> {
   Widget build(BuildContext context) {
     final screenSize = MediaQuery.of(context).size;
     final safePadding = MediaQuery.of(context).padding;
-    final correctCount = getCorrectCount();
+    final currentCorrect = getCorrectCount();
     final totalCount = assets.length;
+    
+    // Get persistent scores
+    final storage = StorageService.instance;
+    final totalCorrect = storage.getSoundCardsCorrect();
+    final totalWrong = storage.getSoundCardsWrong();
 
     return Stack(
       children: [
@@ -140,9 +150,30 @@ class _ListCardSoundsState extends State<ListCardSounds> {
         SafeArea(
           child: Column(
             children: [
-              Score.soundCards(   
-                correct: correctCount,
-                wrong: totalCount - correctCount,
+              Column(
+                children: [
+                  // Current game progress
+                  if (cardNames.any((name) => name != null))
+                    Padding(
+                      padding: const EdgeInsets.only(bottom: 8.0),
+                      child: Text(
+                        'Juego actual: $currentCorrect/$totalCount',
+                        style: const TextStyle(
+                          fontSize: 16,
+                          fontWeight: FontWeight.bold,
+                          color: Colors.blue,
+                        ),
+                      ),
+                    ),
+                  // Total scores
+                  Score.soundCards(   
+                    correct: totalCorrect,
+                    wrong: totalWrong,
+                    onTap: (context) {
+                      // This will be handled by the Score widget's built-in dialog
+                    },
+                  ),
+                ],
               ),
               // Top half of screen - Cards
               SizedBox(
@@ -189,9 +220,9 @@ class _ListCardSoundsState extends State<ListCardSounds> {
                         Padding(
                           padding: const EdgeInsets.only(bottom: 20.0),
                           child: Text(
-                            '$correctCount/$totalCount',
+                            '$currentCorrect/$totalCount',
                             style: TextStyle(
-                              fontSize: 72, // Duplicado el tamaño de 36 a 72
+                              fontSize: 72,
                               fontWeight: FontWeight.bold,
                               color: getScoreColor(),
                             ),
