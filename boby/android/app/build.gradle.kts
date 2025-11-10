@@ -19,6 +19,11 @@ android {
     namespace = "com.cabelloenrique.boby"
     compileSdk = flutter.compileSdkVersion
     ndkVersion = flutter.ndkVersion
+    
+    // Habilitar buildConfig para campos personalizados
+    buildFeatures {
+        buildConfig = true
+    }
 
     compileOptions {
         sourceCompatibility = JavaVersion.VERSION_11
@@ -30,14 +35,25 @@ android {
     }
 
     defaultConfig {
-        // TODO: Specify your own unique Application ID (https://developer.android.com/studio/build/application-id.html).
         applicationId = "com.cabelloenrique.boby"
-        // You can update the following values to match your application needs.
-        // For more information, see: https://flutter.dev/to/review-gradle-config.
-        minSdk = flutter.minSdkVersion
-        targetSdk = flutter.targetSdkVersion
+        minSdk = flutter.minSdkVersion  // Android 5.0 Lollipop para máxima compatibilidad
+        targetSdk = 33  // Usar una versión específica para mejor compatibilidad
         versionCode = flutter.versionCode
         versionName = flutter.versionName
+        
+        // Configuración para Amazon Appstore y Fire Tablets
+        ndk {
+            // Incluir solo las ABIs necesarias para Fire Tablets
+            abiFilters.clear()
+            abiFilters.addAll(listOf("armeabi-v7a", "arm64-v8a"))
+        }
+        
+        // Asegurar compatibilidad con pantallas grandes
+        resConfigs("en", "es")
+        resValue("string", "app_name", "Boby")
+        
+        // Configuración específica para Fire OS
+        buildConfigField("boolean", "IS_AMAZON", "true")
     }
 
     signingConfigs {
@@ -50,12 +66,36 @@ android {
                 keyPassword = keystoreProperties.getProperty("keyPassword")
             }
         }
+        
+        // Amazon release config (can use the same keystore or a different one)
+        create("amazonRelease") {
+            val storePath = keystoreProperties.getProperty("storeFile")
+            if (!storePath.isNullOrBlank()) {
+                storeFile = file(storePath)
+                storePassword = keystoreProperties.getProperty("storePassword")
+                keyAlias = keystoreProperties.getProperty("keyAlias")
+                keyPassword = keystoreProperties.getProperty("keyPassword")
+            }
+        }
     }
 
     buildTypes {
         release {
-            // Use release signing if keystore is configured; otherwise gradle will fail which is desired for store builds
             signingConfig = signingConfigs.getByName("release")
+            isMinifyEnabled = true
+            
+            // Configuración específica para Fire OS
+            ndk {
+                // Incluir solo las ABIs necesarias para Fire Tablets
+                abiFilters.clear()
+                abiFilters.addAll(listOf("armeabi-v7a", "arm64-v8a"))
+            }
+            
+            // Configuración de ProGuard
+            proguardFiles(
+                getDefaultProguardFile("proguard-android-optimize.txt"),
+                "proguard-rules.pro"
+            )
         }
     }
 }

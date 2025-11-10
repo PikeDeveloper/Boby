@@ -1,10 +1,19 @@
+import 'package:boby/utils/colors.dart';
 import 'package:flutter/material.dart';
 import 'package:boby/utils/functions.dart';
+import 'package:share_plus/share_plus.dart';
 
 class MoreApps extends StatelessWidget {
   const MoreApps({super.key});
 
   final List<Map<String, String>> apps = const [
+     {
+      "name": "Boby",
+      "image": "assets/icon/icon.jpg",
+      "url": "https://apps.apple.com/hn/app/boby/id6753878717",
+      "description":
+          "The best app to learn and practice new English words — learn about numbers, animals, colors, and much more!.You’ll also be able to practice math, and there are games like word searches that help you read and remember even more new words you’ve learned.",
+    },
     {
       "name": "Amauta",
       "image": "assets/amauta.jpg",
@@ -37,7 +46,11 @@ class MoreApps extends StatelessWidget {
               child: InkWell(
                 borderRadius: BorderRadius.circular(16),
                 onTap: () {
-                  Functions.openUrlExternal(app["url"]!);
+                  // Share the app URL
+                  Share.share(
+                    'Check out ${app['name']} on the App Store: ${app['url']}',
+                    subject: '${app['name']} - ${app['description']?.split('.').first}...',
+                  );
                 },
                 child: Padding(
                   padding: const EdgeInsets.all(12),
@@ -85,9 +98,9 @@ class MoreApps extends StatelessWidget {
                         ),
                       ),
                       const SizedBox(width: 8),
-                      const Icon(
-                        Icons.open_in_new,
-                        color: Colors.black45,
+                       Icon(
+                        Icons.share,
+                        color: Colors.green,  
                         size: 20,
                       ),
                     ],

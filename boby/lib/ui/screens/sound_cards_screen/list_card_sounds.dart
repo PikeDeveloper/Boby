@@ -1,3 +1,5 @@
+import 'dart:math';
+
 import 'package:boby/ui/screens/word_guess/widgets/celebration_image.dart';
 import 'package:boby/ui/shared/score.dart';
 import 'package:flutter/material.dart';
@@ -51,6 +53,8 @@ class _ListCardSoundsState extends State<ListCardSounds> {
     _loadRandomCards();
   }
   
+  List<Map<String, String>> shuffledNames = [];
+  
   void _loadRandomCards() {
     // Reset card names
     for (int i = 0; i < cardNames.length; i++) {
@@ -60,6 +64,9 @@ class _ListCardSoundsState extends State<ListCardSounds> {
     // Shuffle and take 4 random assets
     final shuffled = List<Map<String, String>>.from(Constants.assets)..shuffle();
     assets = shuffled.take(4).toList();
+    
+    // Create a copy of assets for shuffling just the names
+    shuffledNames = List<Map<String, String>>.from(assets)..shuffle();
   }
 
   Future<void> _checkAllCardsMatched() async {
@@ -137,6 +144,15 @@ class _ListCardSoundsState extends State<ListCardSounds> {
     final safePadding = MediaQuery.of(context).padding;
     final currentCorrect = getCorrectCount();
     final totalCount = assets.length;
+
+
+     
+
+    double minSide = min(screenSize.width, screenSize.height);
+
+    if (screenSize.width / screenSize.height > 1) {
+       minSide = min(screenSize.width, screenSize.height) * 0.6;
+    }
 
 
 
@@ -222,18 +238,18 @@ class _ListCardSoundsState extends State<ListCardSounds> {
                               Row(
                                 mainAxisAlignment: MainAxisAlignment.spaceEvenly,
                                 children: [
-                                  if (assets.isNotEmpty) _buildNameContainer(assets[0]["name"]!, 0),
-                                  if (assets.length > 1) _buildNameContainer(assets[1]["name"]!, 1),
+                                  if (shuffledNames.isNotEmpty) _buildNameContainer(shuffledNames[0]["name"]!, 0),
+                                  if (shuffledNames.length > 1) _buildNameContainer(shuffledNames[1]["name"]!, 1),
                                 ],
                               ),
-                              if (assets.length > 2) ...[
+                              if (shuffledNames.length > 2) ...[
                                 const SizedBox(height: 5),
                                 // Second row of names
                                 Row(
                                   mainAxisAlignment: MainAxisAlignment.spaceEvenly,
                                   children: [
-                                    if (assets.length > 2) _buildNameContainer(assets[2]["name"]!, 2),
-                                    if (assets.length > 3) _buildNameContainer(assets[3]["name"]!, 3),
+                                    if (shuffledNames.length > 2) _buildNameContainer(shuffledNames[2]["name"]!, 2),
+                                    if (shuffledNames.length > 3) _buildNameContainer(shuffledNames[3]["name"]!, 3),
                                   ],
                                 ),
                               ],

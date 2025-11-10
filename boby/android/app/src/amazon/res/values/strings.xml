@@ -1,0 +1,8 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <!-- Amazon Appstore requires a privacy policy URL -->
+    <string name="privacy_policy">https://your-privacy-policy-url.com</string>
+    
+    <!-- App title for Amazon -->
+    <string name="app_name">Boby</string>
+</resources>

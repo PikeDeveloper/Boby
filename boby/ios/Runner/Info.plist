@@ -26,8 +26,8 @@
 	<string>$(FLUTTER_BUILD_NUMBER)</string>
 	<key>LSRequiresIPhoneOS</key>
 	<true/>
-	<key>UIRequiresFullScreen</key>
-	<true/>
+	<key>MinimumOSVersion</key>
+	<string>15.0</string>
 	<key>NSMicrophoneUsageDescription</key>
 	<string>This app includes components that may request access to the microphone, but it does not record or use audio directly.</string>
 	<key>UIApplicationSupportsIndirectInputEvents</key>
@@ -36,6 +36,8 @@
 	<string>LaunchScreen</string>
 	<key>UIMainStoryboardFile</key>
 	<string>Main</string>
+	<key>UIRequiresFullScreen</key>
+	<true/>
 	<key>UIStatusBarHidden</key>
 	<false/>
 	<key>UISupportedInterfaceOrientations</key>
@@ -46,5 +48,13 @@
 	<array>
 		<string>UIInterfaceOrientationPortrait</string>
 	</array>
+	<key>LSSupportsOpeningDocumentsInPlace</key>
+	<true/>
+	<key>UIFileSharingEnabled</key>
+	<true/>
+	<key>NSPhotoLibraryAddUsageDescription</key>
+	<string>We need access to save images to your photo library</string>
+	<key>NSPhotoLibraryUsageDescription</key>
+	<string>We need access to your photos to share them</string>
 </dict>
 </plist>
