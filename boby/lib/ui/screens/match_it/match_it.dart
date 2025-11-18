@@ -1,11 +1,9 @@
-import 'package:boby/ui/screens/match_it/widgets/mach_it_word.dart.dart';
 import 'package:boby/controllers/app_controller.dart';
 import 'package:boby/ui/shared/word_of_images.dart';
 import 'package:get/get.dart';
 import 'package:flutter/material.dart';
 import 'dart:math';
 import 'package:boby/utils/constants.dart';
-import 'package:boby/ui/screens/match_it/widgets/gradient_button.dart';
 import 'package:boby/ui/screens/match_it/widgets/number_options_grid.dart';
 
 class MatchItScreen extends StatefulWidget {
@@ -175,6 +173,30 @@ class _MatchItScreenState extends State<MatchItScreen> {
     ('Black', Colors.black),
   ];
 
+  //number choices
+  final List<Map<String, dynamic>> _numbers = [
+    {"number": 1, "letter": "one"}, 
+    {"number": 2, "letter": "two"},
+    {"number": 3, "letter": "three"},
+    {"number": 4, "letter": "four"},
+    {"number": 5, "letter": "five"},
+    {"number": 6, "letter": "six"},   
+    {"number": 7, "letter": "seven"},
+    {"number": 8, "letter": "eight"},
+    {"number": 9, "letter": "nine"},
+    {"number": 10, "letter": "ten"},
+    {"number": 11, "letter": "eleven"},
+    {"number": 12, "letter": "twelve"},   
+    {"number": 13, "letter": "thirteen"},
+    {"number": 14, "letter": "fourteen"},
+    {"number": 15, "letter": "fifteen"},
+    {"number": 16, "letter": "sixteen"},
+    {"number": 17, "letter": "seventeen"},
+    {"number": 18, "letter": "eighteen"},
+    {"number": 19, "letter": "nineteen"},
+    {"number": 20, "letter": "twenty"},
+  ];
+
   final String soundPathIncorrectAnswer = "assets/sounds/bubble-pop.wav";
   final String soundPathCorrectAnswer = "assets/sounds/game-bonus.wav";
 
@@ -199,7 +221,7 @@ class _MatchItScreenState extends State<MatchItScreen> {
   List<Map<String, String>> _figureAssets = [];
   // Feedback state
   bool _isLocked = false; // prevents taps during feedback
-  bool _showCorrectOverlay = false; // show green check over the target
+  bool _showCorrectOverlay = false; // show green check over the target 
 
   @override
   void initState() {
@@ -299,6 +321,10 @@ class _MatchItScreenState extends State<MatchItScreen> {
     _wrongColorLabels.clear();
     _wrongNumberValues.clear();
     _wrongFigureLabels.clear();
+
+    //change de target number to the target number in letter
+  
+    
   }
 
   void _generateFigureRound() {
@@ -413,7 +439,7 @@ class _MatchItScreenState extends State<MatchItScreen> {
     if (_roundType == _RoundType.shape) {
       return _targetColor?.$1 ?? '';
     } else if (_roundType == _RoundType.number) {
-      return _targetNumber?.toString() ?? '';
+      return _numbers.firstWhere((n) => n['number'] == _targetNumber)['letter'];
     } else {
       return _targetFigure?['name'] ?? '';
     }
@@ -475,59 +501,8 @@ class _MatchItScreenState extends State<MatchItScreen> {
   }
 }
 
-class _ShapeTarget extends StatelessWidget {
-  final String imagePath;
-  final Color color;
-  const _ShapeTarget({required this.imagePath, required this.color});
 
-  @override
-  Widget build(BuildContext context) {
-    return AspectRatio(
-      aspectRatio: 1.3,
-      child: FittedBox(
-        fit: BoxFit.contain,
-        child: ColorFiltered(
-          colorFilter: ColorFilter.mode(color, BlendMode.srcIn),
-          child: Image.asset(imagePath),
-        ),
-      ),
-    );
-  }
-}
 
-class _NumberTarget extends StatelessWidget {
-  final int number;
-  const _NumberTarget({required this.number});
-
-  @override
-  Widget build(BuildContext context) {
-    final screensize = MediaQuery.of(context).size;
-    final width = screensize.width;
-    final height = screensize.height;
-    final minSize = min(width, height);
-
-    final letterSize = minSize * 0.5;
-    const numbersPath = 'assets/numbers/';
-    final digits = number.toString().split('');
-    return FittedBox(
-      fit: BoxFit.contain,
-      child: Row(
-        mainAxisSize: MainAxisSize.min,
-        children: [
-          for (final d in digits)
-            Padding(
-              padding: const EdgeInsets.symmetric(horizontal: 4),
-              child: Image.asset(
-                '$numbersPath$d.png',
-                height: letterSize,
-                fit: BoxFit.contain,
-              ),
-            ),
-        ],
-      ),
-    );
-  }
-}
 
 class _ColorOptionsGrid extends StatelessWidget {
   final List<(String, Color)> options;
