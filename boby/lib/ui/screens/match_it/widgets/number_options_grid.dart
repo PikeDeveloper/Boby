@@ -1,5 +1,6 @@
 import 'dart:math';
 
+import 'package:boby/ui/shared/number_of_images.dart';
 import 'package:flutter/material.dart';
 import 'package:boby/ui/screens/match_it/widgets/gradient_button.dart';
 
@@ -20,28 +21,37 @@ class NumberOptionsGrid extends StatelessWidget {
     final screenSize = MediaQuery.of(context).size;
     final minSize = min(screenSize.width, screenSize.height);
     bool isLandscape = screenSize.width > screenSize.height;
-    const List<String> wordsEn = [
-      'One',
-      'Two',
-      'Three',
-      'Four',
-      'Five',
-      'Six',
-      'Seven',
-      'Eight',
-      'Nine',
-      'Ten',
-      'Eleven',
-      'Twelve',
-      'Thirteen',
-      'Fourteen',
-      'Fifteen',
-      'Sixteen',
-      'Seventeen',
-      'Eighteen',
-      'Nineteen',
-      'Twenty',
-    ];
+    
+
+
+      //number choices
+  final List<Map<String, dynamic>> wordsEn = [
+    {"number": 1, "letter": "one"}, 
+    {"number": 2, "letter": "two"},
+    {"number": 3, "letter": "three"},
+    {"number": 4, "letter": "four"},
+    {"number": 5, "letter": "five"},
+    {"number": 6, "letter": "six"},   
+    {"number": 7, "letter": "seven"},
+    {"number": 8, "letter": "eight"},
+    {"number": 9, "letter": "nine"},
+    {"number": 10, "letter": "ten"},
+    {"number": 11, "letter": "eleven"},
+    {"number": 12, "letter": "twelve"},   
+    {"number": 13, "letter": "thirteen"},
+    {"number": 14, "letter": "fourteen"},
+    {"number": 15, "letter": "fifteen"},
+    {"number": 16, "letter": "sixteen"},
+    {"number": 17, "letter": "seventeen"},
+    {"number": 18, "letter": "eighteen"},
+    {"number": 19, "letter": "nineteen"},
+    {"number": 20, "letter": "twenty"},
+  ];
+
+
+
+
+
     return GridView.builder(
       shrinkWrap: true,
       physics: const NeverScrollableScrollPhysics(),
@@ -49,28 +59,18 @@ class NumberOptionsGrid extends StatelessWidget {
         crossAxisCount: isLandscape ? 4 : 2,
         mainAxisSpacing: 12,
         crossAxisSpacing: 12,
-        childAspectRatio: isLandscape ? 4 : 3.5,
+        childAspectRatio: 1,
       ),
       itemCount: options.length,
       itemBuilder: (context, index) {
         final n = options[index];
-        final label = n >= 1 && n <= 20 ? wordsEn[n - 1] : '$n';
+        
         final wrong = isWrong(n);
         return GradientButton(
           onTap: () => onTap(n),
           isError: wrong,
           isCorrect: isCorrect(n),
-          child: Text(
-            label,
-            textAlign: TextAlign.center,
-            style: const TextStyle(
-              color: Colors.white,
-              fontSize: 20,
-              fontWeight: FontWeight.w800,
-              height: 1.0,
-              letterSpacing: 0.5,
-            ),
-          ),
+          child: NumberOfImages(number: n.toString(), numberSize: 60),
         );
       },
     );

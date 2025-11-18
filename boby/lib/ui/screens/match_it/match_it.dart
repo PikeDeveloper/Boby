@@ -200,6 +200,8 @@ class _MatchItScreenState extends State<MatchItScreen> {
   final String soundPathIncorrectAnswer = "assets/sounds/bubble-pop.wav";
   final String soundPathCorrectAnswer = "assets/sounds/game-bonus.wav";
 
+  final String numberPath = "assets/numbers/";
+
   // Current round state
   _RoundType _roundType = _RoundType.shape;
   // Shape round
