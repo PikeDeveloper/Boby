@@ -1,4 +1,4 @@
-import 'package:boby/ui/screens/setting_screen/widgets/about_me.dart';
+
 import 'package:boby/ui/screens/setting_screen/widgets/background_settins.dart';
 import 'package:boby/ui/screens/setting_screen/widgets/match_it.sattings.dart';
 import 'package:boby/ui/screens/setting_screen/widgets/math_settings.dart';
@@ -20,36 +20,19 @@ class SettingScreen extends StatelessWidget {
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
           SizedBox(height: 50),
-          WordOfImages(letters: [
-            "B",
-            "A",
-            "C",
-            "K",
-            "G",
-            "R",
-            "O",
-            "U",
-            "N",
-            "D",
-            "S",
-          ], letterSize: 25),
+          WordOfImages(letters: "BACKGROUNDS", letterSize: 25),
           BackgroundSettings(),
           SizedBox(height: 100),
-          WordOfImages(letters: ["M", "A", "T", "H"], letterSize: 25),
+          WordOfImages(letters: "MATH", letterSize: 25),
           MathSettings(),
           SizedBox(height: 100),
-          WordOfImages(letters: ["M", "E", "M", "O", "R", "Y"], letterSize: 25),
+          WordOfImages(letters: "MEMORY", letterSize: 25), 
           MemrySettings(),
           SizedBox(height: 100),
-          WordOfImages(letters: ["M", "A", "T", "C", "H",  "I", "T"], letterSize: 25),
+          WordOfImages(letters: "MATCH", letterSize: 25),
           MatchItSettings(),
           SizedBox(height: 100),
-          WordOfImages(letters: [
-            "M",
-            "O",
-            "R",
-            "E",
-          ], letterSize: 25),
+          WordOfImages(letters: "MORE", letterSize: 25),
           MoreApps(),
           SizedBox(height: 100),
         ],

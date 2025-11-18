@@ -9,7 +9,7 @@ class AboutMe extends StatelessWidget {
     return Column(
       children: [
         const WordOfImages(
-            letters: ["A", "B", "O", "U", "T", "M", "E"], letterSize: 25),
+            letters: "ABOUT ME", letterSize: 25),
       ],
     );
   }

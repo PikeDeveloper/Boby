@@ -1,5 +1,6 @@
 import 'package:boby/ui/screens/match_it/widgets/mach_it_word.dart.dart';
 import 'package:boby/controllers/app_controller.dart';
+import 'package:boby/ui/shared/word_of_images.dart';
 import 'package:get/get.dart';
 import 'package:flutter/material.dart';
 import 'dart:math';
@@ -238,20 +239,32 @@ class _MatchItScreenState extends State<MatchItScreen> {
   }
 
   void _generateShapeRound() {
+    // Select a random shape and color
     _targetShapePath = _shapes[_rng.nextInt(_shapes.length)];
     _targetColor = _colors[_rng.nextInt(_colors.length)];
 
     // Build 4 color options including the correct one
     final Set<int> usedIdx = {_colors.indexOf(_targetColor!)};
     final List<(String, Color)> opts = [_targetColor!];
+    
+    // Add 3 more distinct colors
     while (opts.length < 4) {
       final idx = _rng.nextInt(_colors.length);
       if (usedIdx.add(idx)) {
         opts.add(_colors[idx]);
       }
     }
+    
+    // Shuffle the options
     opts.shuffle(_rng);
     _colorOptions = opts;
+    
+    // Clear other states
+    _targetNumber = null;
+    _targetFigure = null;
+    _wrongColorLabels.clear();
+    _wrongNumberValues.clear();
+    _wrongFigureLabels.clear();
     _targetNumber = null;
     _targetFigure = null;
     _wrongColorLabels.clear();
@@ -412,25 +425,11 @@ class _MatchItScreenState extends State<MatchItScreen> {
       padding: const EdgeInsets.all(16.0),
       child: Column(
         children: [
-          const MatchItWord(),
-          const SizedBox(height: 20),
-          // Display the target word at the top
-          Text(
-            _currentTargetWord.toUpperCase(),
-            style: const TextStyle(
-              fontSize: 40,
-              fontWeight: FontWeight.bold,
-              color: Colors.white,
-              letterSpacing: 1.5,
-              shadows: [
-                Shadow(
-                  blurRadius: 10.0,
-                  color: Colors.black54,
-                  offset: Offset(2.0, 2.0),
-                ),
-              ],
-            ),
-          ),
+
+          Spacer(),
+
+           WordOfImages(letters: _currentTargetWord.toUpperCase(), letterSize: 40),
+         Spacer(),
           const SizedBox(height: 12),
           // Main content area (now empty since we show the word at the top)
           const Spacer(),
@@ -439,6 +438,7 @@ class _MatchItScreenState extends State<MatchItScreen> {
           if (_roundType == _RoundType.shape) ...[
             _ColorOptionsGrid(
               options: _colorOptions,
+              shapes: _shapes,
               onTap: _onColorTap,
               isWrong: (label) => _wrongColorLabels.contains(label),
               isCorrect: (label) =>
@@ -531,76 +531,101 @@ class _NumberTarget extends StatelessWidget {
 
 class _ColorOptionsGrid extends StatelessWidget {
   final List<(String, Color)> options;
+  final List<String> shapes;
   final void Function((String, Color)) onTap;
   final bool Function(String) isWrong;
   final bool Function(String) isCorrect;
-  const _ColorOptionsGrid(
-      {required this.options,
-      required this.onTap,
-      required this.isWrong,
-      required this.isCorrect});
+  
+  const _ColorOptionsGrid({
+    required this.options,
+    required this.shapes,
+    required this.onTap,
+    required this.isWrong,
+    required this.isCorrect,
+  });
 
   @override
   Widget build(BuildContext context) {
-        final screenSize = MediaQuery.of(context).size;
-    final minSize = min(screenSize.width, screenSize.height);
-    bool isLandscape = screenSize.width > screenSize.height;
+    final screenSize = MediaQuery.of(context).size;
+    final isLandscape = screenSize.width > screenSize.height;
+    
+    // Use the first shape for all color options
+    final shapePath = shapes.isNotEmpty ? shapes[0] : 'assets/shapes/shape_1.png';
+    
     return GridView.builder(
       shrinkWrap: true,
       physics: const NeverScrollableScrollPhysics(),
       gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
         crossAxisCount: isLandscape ? 4 : 2,
-        mainAxisSpacing: 12,
-        crossAxisSpacing: 12,
-        childAspectRatio: isLandscape ? 4 : 3.5,
+        mainAxisSpacing: 16,
+        crossAxisSpacing: 16,
+        childAspectRatio: 1, // Square aspect ratio for shapes
       ),
       itemCount: options.length,
       itemBuilder: (context, index) {
+        if (index >= options.length) return const SizedBox.shrink();
+        
         final opt = options[index];
         final wrong = isWrong(opt.$1);
-        return _ColorOptionButton(
-          label: opt.$1,
-          color: opt.$2,
-          isError: wrong,
-          isCorrect: isCorrect(opt.$1),
+        final correct = isCorrect(opt.$1);
+        
+        return GestureDetector(
           onTap: () => onTap(opt),
+          child: Container(
+            decoration: BoxDecoration(
+              borderRadius: BorderRadius.circular(16),
+              border: Border.all(
+                color: wrong 
+                  ? Colors.red 
+                  : correct ? Colors.green : Colors.transparent,
+                width: 4,
+              ),
+              boxShadow: [
+                BoxShadow(
+                  color: Colors.black.withOpacity(0.1),
+                  blurRadius: 8,
+                  offset: const Offset(0, 4),
+                ),
+              ],
+            ),
+            child: ClipRRect(
+              borderRadius: BorderRadius.circular(12),
+              child: Stack(
+                fit: StackFit.expand,
+                children: [
+                  // Colored shape - same shape for all options
+                  ColorFiltered(
+                    colorFilter: ColorFilter.mode(opt.$2, BlendMode.srcIn),
+                    child: Image.asset(
+                      shapePath,
+                      fit: BoxFit.contain,
+                      width: double.infinity,
+                      height: double.infinity,
+                    ),
+                  ),
+                  
+                  // Overlay for wrong/correct state
+                  if (wrong || correct)
+                    Container(
+                      color: (wrong ? Colors.red : Colors.green).withOpacity(0.3),
+                      child: Center(
+                        child: Icon(
+                          wrong ? Icons.close : Icons.check,
+                          color: Colors.white,
+                          size: 48,
+                        ),
+                      ),
+                    ),
+                ],
+              ),
+            ),
+          ),
         );
       },
     );
   }
 }
+// Removed _ColorOptionButton as it's no longer needed
 
-class _ColorOptionButton extends StatelessWidget {
-  final String label;
-  final Color color;
-  final VoidCallback onTap;
-  final bool isError;
-  final bool isCorrect;
-  const _ColorOptionButton(
-      {required this.label,
-      required this.color,
-      required this.onTap,
-      this.isError = false,
-      this.isCorrect = false});
-
-  @override
-  Widget build(BuildContext context) {
-    return GradientButton(
-      onTap: onTap,
-      isError: isError,
-      isCorrect: isCorrect,
-      child: Text(
-        label,
-        style: const TextStyle(
-          color: Colors.white,
-          fontSize: 18,
-          fontWeight: FontWeight.w700,
-          height: 1.0,
-          letterSpacing: 0.5,
-        ),
-      ),
-    );
-  }
-}
 
 // _WordPng removed: options now render direct Text labels

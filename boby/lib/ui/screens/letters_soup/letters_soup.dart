@@ -268,7 +268,7 @@ class _LettersSoupState extends State<LettersSoup> {
       children: [
         ElevatedButton(
           onPressed: _reset,
-          child: WordOfImages(letters: ["N", "E", "W"], letterSize: 20),
+          child: WordOfImages(letters: "NEW", letterSize: 20),
         ),
         Text('${foundWords.length}/${words.length} found'),
       ],

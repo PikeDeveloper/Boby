@@ -4,7 +4,7 @@ class WordOfImages extends StatelessWidget {
   const WordOfImages(
       {super.key, required this.letters, required this.letterSize});
 
-  final List<String> letters;
+  final String letters;
   final double letterSize;
 
   @override
@@ -31,7 +31,7 @@ class WordOfImages extends StatelessWidget {
 
     final List<List<String>> words = [];
     List<String> current = [];
-    for (final ch in letters) {
+    for (final ch in letters.split("")) {
       if (ch == " ") {
         if (current.isNotEmpty) {
           words.add(current);
