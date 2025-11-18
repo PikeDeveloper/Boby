@@ -166,6 +166,11 @@ class Sentences {
   "sentence": "A chair is for",
   "answers": ["Sitting", "Driving", "Sleeping in water", "Flying"]
 }
+,
+{
+  "sentence": "Body part",
+  "answers": ["Head", "Ant", "Tiger", "Lemon"]
+}
 
 
    
