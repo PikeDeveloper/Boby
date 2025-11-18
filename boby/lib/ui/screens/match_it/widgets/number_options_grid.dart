@@ -1,8 +1,8 @@
 import 'dart:math';
-
 import 'package:boby/ui/shared/number_of_images.dart';
+import 'package:boby/utils/constants.dart';
 import 'package:flutter/material.dart';
-import 'package:boby/ui/screens/match_it/widgets/gradient_button.dart';
+
 
 class NumberOptionsGrid extends StatelessWidget {
   final List<int> options;
@@ -21,6 +21,7 @@ class NumberOptionsGrid extends StatelessWidget {
     final screenSize = MediaQuery.of(context).size;
     final minSize = min(screenSize.width, screenSize.height);
     bool isLandscape = screenSize.width > screenSize.height;
+    bool istablet = minSize > Constants.tabletSize;  
     
 
 
@@ -56,7 +57,7 @@ class NumberOptionsGrid extends StatelessWidget {
       shrinkWrap: true,
       physics: const NeverScrollableScrollPhysics(),
       gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
-        crossAxisCount: isLandscape ? 4 : 2,
+        crossAxisCount: isLandscape || istablet ? 4 : 2,
         mainAxisSpacing: 12,
         crossAxisSpacing: 12,
         childAspectRatio: 1,
@@ -66,11 +67,57 @@ class NumberOptionsGrid extends StatelessWidget {
         final n = options[index];
         
         final wrong = isWrong(n);
-        return GradientButton(
+        final correct = isCorrect(n);
+        return GestureDetector(
           onTap: () => onTap(n),
-          isError: wrong,
-          isCorrect: isCorrect(n),
-          child: NumberOfImages(number: n.toString(), numberSize: 60),
+          child: Container(
+              decoration: BoxDecoration(
+                borderRadius: BorderRadius.circular(16),
+                border: Border.all(
+                  color: wrong 
+                    ? Colors.red 
+                    : correct ? Colors.green : Colors.transparent, 
+                  width: 4,
+                ),
+               
+              ),
+              child: ClipRRect(
+                borderRadius: BorderRadius.circular(12),
+                child: Stack(
+                  fit: StackFit.expand,
+                  children: [
+                    // Colored shape - same shape for all options
+          
+
+                      Container(
+                        decoration: BoxDecoration(
+                          border: Border.all(
+                            color: const Color.fromARGB(90, 255, 255, 255),
+                            width: 1,
+                          ),
+                          borderRadius: BorderRadius.circular(12),
+                          color: const Color.fromARGB(94, 255, 255, 255),
+                        
+                        ),
+                        child: Center(child: NumberOfImages(number: n.toString(), numberSize: 60))),
+                   
+                     
+                    // Overlay for wrong/correct state
+                    if (wrong || correct)
+                      Container(
+                        color: (wrong ? Colors.red : Colors.green).withValues(alpha: 0.3),
+                        child: Center(
+                          child: Icon(
+                            wrong ? Icons.close : Icons.check,
+                            color: Colors.white,
+                            size: 48,
+                          ),
+                        ),
+                      ),
+                  ],
+                ),
+              ),
+            ),
         );
       },
     );

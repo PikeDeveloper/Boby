@@ -3,6 +3,8 @@ import 'dart:math';
 import 'package:flutter/material.dart';
 import 'package:boby/services/storage_service.dart';
 
+import '../../../../utils/constants.dart';
+
 class MemrySettings extends StatelessWidget {
   const MemrySettings({super.key});
 
@@ -14,6 +16,8 @@ class MemrySettings extends StatelessWidget {
     final screenHeight = MediaQuery.of(context).size.height;
     final minSize = min(screenWidth, screenHeight);
     final itemSize = minSize * 0.08;
+    bool istablet = screenWidth > Constants.tabletSize;  
+    bool isLandscape = screenWidth / screenHeight > 1;
 
     return ValueListenableBuilder(
       valueListenable: StorageService.instance
@@ -78,6 +82,7 @@ class MemrySettings extends StatelessWidget {
           crossAxisAlignment: CrossAxisAlignment.start,
           mainAxisAlignment: MainAxisAlignment.spaceEvenly,
           children: [
+          if  (!isLandscape && !istablet )
             option('3x2', 3, 2),
             option('3x3', 3, 3),
             option('4x4', 4, 4),

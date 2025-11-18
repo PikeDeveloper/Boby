@@ -6,6 +6,8 @@ import 'package:get/get.dart';
 import 'package:boby/controllers/app_controller.dart';
 import 'package:boby/services/storage_service.dart';
 
+import '../../../utils/constants.dart';
+
 class MathScreen extends StatefulWidget {
   const MathScreen({super.key});
 
@@ -124,6 +126,7 @@ class _MathScreenState extends State<MathScreen> {
     final screenSize = MediaQuery.of(context).size;
     final minSize = min(screenSize.width, screenSize.height);
     bool isLandscape = screenSize.width > screenSize.height;
+    bool istablet = screenSize.width > Constants.tabletSize;  
     return SafeArea(
       child: Center(
         child: Padding(
@@ -138,7 +141,7 @@ class _MathScreenState extends State<MathScreen> {
                   Stack(
                     alignment: Alignment.center,
                     children: [
-                      _buildSumRow(),
+                      _buildSumRow(isLandscape, istablet),
                       if (_correctSelected != null)
                         const Icon(
                           Icons.check,
@@ -147,11 +150,11 @@ class _MathScreenState extends State<MathScreen> {
                         ),
                     ],
                   ),
-                  const SizedBox(height: 100),
+                   SizedBox(height:  isLandscape || istablet ? 300 : 80),
                   LayoutBuilder(
                     builder: (context, constraints) {
                       final double buttonSize = (constraints.maxWidth - 48) /
-                          (isLandscape ? 4 : 2); // 2 columnas, 16px gaps
+                          (isLandscape || istablet ? 4 : 2); // 2 columnas, 16px gaps 
                       return Wrap(
                         alignment: WrapAlignment.center,
                         spacing: 16,
@@ -160,7 +163,7 @@ class _MathScreenState extends State<MathScreen> {
                             .map(
                               (opt) => SizedBox(
                                 width: buttonSize,
-                                height: 100,
+                                height:  isLandscape || istablet ? 200 : 80,
                                 child: ElevatedButton(
                                   style: ElevatedButton.styleFrom(
                                     backgroundColor: _correctSelected == opt
@@ -176,7 +179,7 @@ class _MathScreenState extends State<MathScreen> {
                                   onPressed: _correctSelected != null
                                       ? null
                                       : () => _onSelect(context, opt),
-                                  child: _buildDigitImages(opt, 36),
+                                  child: _buildDigitImages(opt,  isLandscape || istablet ? 70 : 48),
                                 ),
                               ),
                             )
@@ -196,8 +199,8 @@ class _MathScreenState extends State<MathScreen> {
     );
   }
 
-  Widget _buildSumRow() {
-    const double imgH = 64;
+  Widget _buildSumRow( bool isLandscape, bool istablet) {
+     double imgH =  isLandscape || istablet ? 100 : 48;
     return Row(
       mainAxisSize: MainAxisSize.min,
       crossAxisAlignment: CrossAxisAlignment.center,

@@ -303,10 +303,11 @@ class Constants {
       "name": "Tree",
       "sound": "assets/sound_names/tree.wav",
     },
+    /*
     {
       "image": "assets/images/watermelon.jpg",
       "name": "Watermelon",
       "sound": "assets/sound_names/watermelon.wav",
-    },
+    },*/
   ];
 }

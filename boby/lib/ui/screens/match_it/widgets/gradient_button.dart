@@ -1,4 +1,4 @@
-import 'package:flutter/material.dart';
+/*import 'package:flutter/material.dart';
 
 class GradientButton extends StatelessWidget {
   final Widget child;
@@ -15,32 +15,30 @@ class GradientButton extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final borderRadius = BorderRadius.circular(12);
-    return GestureDetector(
-      onTap: onTap,
-      child: Container(
-        decoration: BoxDecoration(
-          borderRadius: borderRadius,
-          gradient: LinearGradient(
-            colors: isError
-                ? const [
-                    Color.fromARGB(255, 245, 159, 159),
-                    Color.fromARGB(255, 254, 131, 131)
-                  ]
-                : isCorrect
-                    ? const [
-                        Color.fromARGB(255, 76, 175, 80),
-                        Color.fromARGB(255, 56, 142, 60)
-                      ]
-                    : const [
-                        Colors.transparent,
-                        Color.fromARGB(134, 53, 97, 240)
-                      ],
-            begin: Alignment.topLeft,
-            end: Alignment.bottomRight,
+    return Stack(
+      children: [
+        GestureDetector(
+          onTap: onTap,
+          child: Container(
+            decoration: BoxDecoration(
+              borderRadius: borderRadius,
+             
+            ),
+            child: Center(child: child),
           ),
         ),
-        child: Center(child: child),
-      ),
+        if (isError || isCorrect)
+          Container(
+            color: (isError ? Colors.red : Colors.green).withOpacity(0.3),
+            child: Center(
+              child: Icon(
+                isError ? Icons.close : Icons.check,
+                color: Colors.white,
+                size: 48,
+              ),
+            ),
+          ),
+      ],
     );
   }
-}
+}*/

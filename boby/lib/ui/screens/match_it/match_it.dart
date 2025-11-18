@@ -1,4 +1,5 @@
 import 'package:boby/controllers/app_controller.dart';
+import 'package:boby/services/storage_service.dart';
 import 'package:boby/ui/shared/score.dart';
 import 'package:boby/ui/shared/word_of_images.dart';
 import 'package:get/get.dart';
@@ -52,12 +53,13 @@ class _FigureOptionsGrid extends StatelessWidget {
   Widget build(BuildContext context) {
     final screenSize = MediaQuery.of(context).size;
     final isLandscape = screenSize.width > screenSize.height;
+    bool istablet = screenSize.width > Constants.tabletSize;
     
     return GridView.builder(
       shrinkWrap: true,
       physics: const NeverScrollableScrollPhysics(),
       gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
-        crossAxisCount: isLandscape ? 4 : 2,
+        crossAxisCount: isLandscape || istablet ? 4 : 2,
         mainAxisSpacing: 12,
         crossAxisSpacing: 12,
         childAspectRatio: 1, // Make it square for images
@@ -76,6 +78,7 @@ class _FigureOptionsGrid extends StatelessWidget {
           onTap: () => onTap(label),
           child: Container(
             decoration: BoxDecoration(
+              
               borderRadius: BorderRadius.circular(16),
               border: Border.all(
                 color: wrong 
@@ -162,13 +165,13 @@ class _MatchItScreenState extends State<MatchItScreen> {
 
   // Color choices with human-readable names
   final List<(String, Color)> _colors = const [
-    ('Red', Colors.red),
+    ('Red', Color.fromARGB(255, 255, 23, 6)),
     ('Green', Colors.green),
     ('Blue', Colors.blue),
     ('Yellow', Colors.yellow),
     ('Purple', Colors.purple),
     ('Orange', Colors.orange),
-    ('Pink', Colors.pink),
+    ('Pink', Color.fromARGB(255, 255, 120, 165)),
     ('Brown', Colors.brown),
     ('Gray', Colors.grey),
     ('Black', Colors.black),
@@ -376,6 +379,7 @@ class _MatchItScreenState extends State<MatchItScreen> {
     if (_isLocked) return;
     if (picked == _targetColor) {
       _app.playMenuSound(soundPathCorrectAnswer);
+      StorageService.instance.incMatchItCorrect();
       setState(() {
         _isLocked = true;
         _showCorrectOverlay = true;
@@ -387,6 +391,7 @@ class _MatchItScreenState extends State<MatchItScreen> {
       });
     } else {
       _app.playMenuSound(soundPathIncorrectAnswer);
+      StorageService.instance.incMatchItWrong();
       setState(() {
         _wrongColorLabels.add(picked.$1);
       });
@@ -397,6 +402,7 @@ class _MatchItScreenState extends State<MatchItScreen> {
     if (_isLocked) return;
     if (picked == _targetNumber) {
       _app.playMenuSound(soundPathCorrectAnswer);
+      StorageService.instance.incMatchItCorrect();
       setState(() {
         _isLocked = true;
         _showCorrectOverlay = true;
@@ -408,6 +414,7 @@ class _MatchItScreenState extends State<MatchItScreen> {
       });
     } else {
       _app.playMenuSound(soundPathIncorrectAnswer);
+      StorageService.instance.incMatchItWrong();
       setState(() {
         _wrongNumberValues.add(picked);
       });
@@ -418,6 +425,7 @@ class _MatchItScreenState extends State<MatchItScreen> {
     if (_isLocked) return;
     if (_targetFigure != null && picked == _targetFigure!["name"]) {
       _app.playMenuSound(soundPathCorrectAnswer);
+      StorageService.instance.incMatchItCorrect();
       setState(() {
         _isLocked = true;
         _showCorrectOverlay = true;
@@ -429,6 +437,7 @@ class _MatchItScreenState extends State<MatchItScreen> {
       });
     } else {
       _app.playMenuSound(soundPathIncorrectAnswer);
+      StorageService.instance.incMatchItWrong();
       setState(() {
         _wrongFigureLabels.add(picked);
       });
@@ -450,6 +459,10 @@ class _MatchItScreenState extends State<MatchItScreen> {
 
   @override
   Widget build(BuildContext context) {
+    final screenSize = MediaQuery.of(context).size;
+    final isLandscape = screenSize.width > screenSize.height;
+    bool istablet = screenSize.width > Constants.tabletSize;
+    
     return Padding(
       padding: const EdgeInsets.all(16.0),
       child: Column(
@@ -458,9 +471,9 @@ class _MatchItScreenState extends State<MatchItScreen> {
 
           Spacer(),
 
-           WordOfImages(letters: _currentTargetWord.toUpperCase(), letterSize: 40),
+           WordOfImages(letters: _currentTargetWord.toUpperCase(), letterSize: isLandscape || istablet ? 90 : 40),
          Spacer(),
-          const SizedBox(height: 12),
+     
           // Main content area (now empty since we show the word at the top)
           const Spacer(),
           
@@ -496,8 +509,10 @@ class _MatchItScreenState extends State<MatchItScreen> {
                   _targetFigure != null &&
                   label == _targetFigure!["name"] &&
                   _isLocked,
-            )
+            ),
+          
           ],
+           Spacer()
           // Options are now shown above in the main content area
         ],
       ),
@@ -527,6 +542,7 @@ class _ColorOptionsGrid extends StatelessWidget {
   Widget build(BuildContext context) {
     final screenSize = MediaQuery.of(context).size;
     final isLandscape = screenSize.width > screenSize.height;
+    bool istablet = screenSize.width > Constants.tabletSize; 
     
     // Use the first shape for all color options
     final shapePath = shapes.isNotEmpty ? shapes[0] : 'assets/shapes/shape_1.png';
@@ -535,7 +551,7 @@ class _ColorOptionsGrid extends StatelessWidget {
       shrinkWrap: true,
       physics: const NeverScrollableScrollPhysics(),
       gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
-        crossAxisCount: isLandscape ? 4 : 2,
+        crossAxisCount: isLandscape || istablet ? 4 : 2,
         mainAxisSpacing: 16,
         crossAxisSpacing: 16,
         childAspectRatio: 1, // Square aspect ratio for shapes
@@ -559,13 +575,7 @@ class _ColorOptionsGrid extends StatelessWidget {
                   : correct ? Colors.green : Colors.transparent,
                 width: 4,
               ),
-              boxShadow: [
-                BoxShadow(
-                  color: Colors.black.withOpacity(0.1),
-                  blurRadius: 8,
-                  offset: const Offset(0, 4),
-                ),
-              ],
+             
             ),
             child: ClipRRect(
               borderRadius: BorderRadius.circular(12),

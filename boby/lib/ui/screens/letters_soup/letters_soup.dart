@@ -2,6 +2,7 @@ import 'package:boby/controllers/app_controller.dart';
 import 'package:boby/ui/screens/letters_soup/widgets/words.dart';
 import 'package:boby/ui/shared/winner_screen.dart';
 import 'package:boby/ui/shared/word_of_images.dart';
+import 'package:boby/utils/constants.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'dart:math' as math;
@@ -55,10 +56,13 @@ class _LettersSoupState extends State<LettersSoup> {
   @override
   Widget build(BuildContext context) {
     final appController = Get.find<AppController>();
+    final screenSize = MediaQuery.of(context).size;
+    final isLandscape = screenSize.width > screenSize.height;
+    bool istablet = screenSize.width > Constants.tabletSize;  
     return Stack(
       children: [
         Padding(
-          padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 12),
+          padding:   const EdgeInsets.symmetric(horizontal: 10, vertical: 12),
           child: Column(
             crossAxisAlignment: CrossAxisAlignment.stretch,
             children: [
@@ -69,9 +73,9 @@ class _LettersSoupState extends State<LettersSoup> {
                     const TextStyle(fontSize: 20, fontWeight: FontWeight.bold),
               ),
               const SizedBox(height: 8),
-              _buildWordList(),
+              _buildWordList(isLandscape, istablet),
               const SizedBox(height: 12),
-              Expanded(child: _buildGrid()),
+              Expanded(child: _buildGrid(isLandscape, istablet)),
               const SizedBox(height: 8),
               _buildControls(),
             ],
@@ -94,7 +98,7 @@ class _LettersSoupState extends State<LettersSoup> {
     );
   }
 
-  Widget _buildWordList() {
+  Widget _buildWordList( bool isLandscape, bool istablet) {
     return Wrap(
       alignment: WrapAlignment.center,
       spacing: 8,
@@ -113,6 +117,7 @@ class _LettersSoupState extends State<LettersSoup> {
                 child: Text(
                   w,
                   style: TextStyle(
+                    fontSize: isLandscape || istablet ? 25 : 16,
                     color: colorLetter,
                     fontWeight: FontWeight.bold,
                     decoration: foundWords.contains(w)
@@ -149,7 +154,7 @@ class _LettersSoupState extends State<LettersSoup> {
     return BorderRadius.zero;
   }
 
-  Widget _buildGrid() {
+  Widget _buildGrid( bool isLandscape, bool istablet) {
     final available =
         MediaQuery.of(context).size.width - 20; // 10px margin each side
     final gridWidth = available > 600 ? 600.0 : available;
@@ -226,9 +231,9 @@ class _LettersSoupState extends State<LettersSoup> {
                           alignment: Alignment.center,
                           child: Text(
                             grid[r][c],
-                            style: const TextStyle(
+                            style: TextStyle(
                               fontWeight: FontWeight.bold,
-                              fontSize: 18,
+                              fontSize: isLandscape || istablet ? 30 : 20,
                             ),
                           ),
                         ),

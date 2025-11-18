@@ -199,6 +199,7 @@ class _WordGuessScreenState extends State<WordGuessScreen> {
     final screenSize = MediaQuery.of(context).size;
     final minSize = min(screenSize.width, screenSize.height);
     bool isLandscape = screenSize.width > screenSize.height;
+    bool istablet = screenSize.width > Constants.tabletSize; 
 
     // Split keys into two rows
     final firstRow = keys.take((keys.length / 2).ceil()).toList();
@@ -219,13 +220,13 @@ class _WordGuessScreenState extends State<WordGuessScreen> {
         celebrationOverlay,
         Column(
           crossAxisAlignment: CrossAxisAlignment.center,
-          mainAxisAlignment: MainAxisAlignment.center,
+          mainAxisAlignment: MainAxisAlignment.spaceEvenly,
           mainAxisSize: MainAxisSize.min,
           children: [
             WordGuessWord(),
-            const SizedBox(height: 30),
+            
             SizedBox(
-              width: isLandscape ? minSize * 0.4 : minSize * 0.7,
+              width: isLandscape ? minSize * 0.4 : min(minSize * 0.7, 300),
               height: isLandscape ? minSize * 0.4 : min(minSize * 0.7, 300),
               child: ClipRRect(
                 borderRadius: BorderRadius.circular(25),
@@ -254,45 +255,46 @@ class _WordGuessScreenState extends State<WordGuessScreen> {
             const SizedBox(height: 16),
 
             // Answer slots (lines to place letters)
-            Center(
-              child: Wrap(
-                spacing: 8,
-                runSpacing: 8,
-                children: List.generate(slots.length, (i) {
-                  final s = slots[i];
-                  return GestureDetector(
-                    onTap: () => _onSlotTap(i),
-                    child: Container(
-                      width: 36,
-                      height: 48,
-                      alignment: Alignment.center,
-                      decoration: BoxDecoration(
-                        borderRadius: BorderRadius.circular(8),
-                        border: Border.all(
-                            color:
-                                _showError ? Colors.red : Colors.grey.shade400,
-                            width: 2),
-                        color: s.char == null
-                            ? Colors.transparent
-                            : Theme.of(context)
-                                .colorScheme
-                                .primary
-                                .withOpacity(0.1),
-                      ),
-                      child: s.char == null
-                          ? const SizedBox.shrink()
-                          : Image.asset(
-                              "assets/letters_2/${s.char}.png",
-                              height: 36,
-                              fit: BoxFit.contain,
-                            ),
-                    ),
-                  );
-                }),
-              ),
-            ),
-
-            const SizedBox(height: 16),
+            Column(
+              children: [
+                Center(
+                  child: Wrap(
+                    spacing: 8,
+                    runSpacing: 8,
+                    children: List.generate(slots.length, (i) {
+                      final s = slots[i];
+                      return GestureDetector(
+                        onTap: () => _onSlotTap(i),
+                        child: Container(
+                          width: isLandscape || istablet ? 80 : 36,
+                          height: isLandscape || istablet ? 80 : 48,
+                          alignment: Alignment.center,
+                          decoration: BoxDecoration(
+                            borderRadius: BorderRadius.circular(8),
+                            border: Border.all(
+                                color:
+                                    _showError ? Colors.red : Colors.grey.shade400,
+                                width: 2),
+                            color: s.char == null
+                                ? Colors.transparent
+                                : Theme.of(context)
+                                    .colorScheme
+                                    .primary
+                                    .withOpacity(0.1),
+                          ),
+                          child: s.char == null
+                              ? const SizedBox.shrink()
+                              : Image.asset(
+                                  "assets/letters_2/${s.char}.png",
+                                  height: isLandscape || istablet ? 60 : 36,
+                                  fit: BoxFit.contain,
+                                ),
+                        ),
+                      );
+                    }),
+                  ),
+                ),
+                 const SizedBox(height: 16),
 
             ControlButtons(next: _next, back: _back, clue: _clue),
 
@@ -312,6 +314,10 @@ class _WordGuessScreenState extends State<WordGuessScreen> {
               baseIndex: (keys.length / 2).ceil(),
             ),
             const SizedBox(height: 16),
+              ],
+            ),
+
+           
           ],
         ),
       ],
@@ -329,14 +335,17 @@ class _KeysRow extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final screenSize = MediaQuery.of(context).size;
+    bool isLandscape = screenSize.width > screenSize.height;
+    bool istablet = screenSize.width > Constants.tabletSize; 
     return Center(
       child: Wrap(
         spacing: 8,
         children: List.generate(keysRow.length, (i) {
           final k = keysRow[i];
           return SizedBox(
-            width: 36,
-            height: 44,
+            width: isLandscape || istablet ? 80 : 36, 
+            height: isLandscape || istablet ? 80 : 44,
             child: ElevatedButton(
               onPressed: k.used ? null : () => onTap(i),
               style: ElevatedButton.styleFrom(
@@ -346,10 +355,10 @@ class _KeysRow extends StatelessWidget {
               ),
               child: Text(
                 k.char,
-                style: Theme.of(context)
-                    .textTheme
-                    .titleMedium
-                    ?.copyWith(fontWeight: FontWeight.bold),
+                style: TextStyle(
+                  fontSize: isLandscape || istablet ? 40 : 16,
+                  fontWeight: FontWeight.bold,
+                ),
               ),
             ),
           );

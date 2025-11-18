@@ -4,6 +4,8 @@ import 'package:boby/utils/colors.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 
+import '../../utils/constants.dart';
+
 class Score extends StatelessWidget {
   final String game;
 
@@ -51,6 +53,8 @@ class Score extends StatelessWidget {
   Widget build(BuildContext context) {
     final screenSize = MediaQuery.of(context).size;
     final appController = Get.find<AppController>();
+    final isLandscape = screenSize.width > screenSize.height;
+    bool istablet = screenSize.width > Constants.tabletSize;  
     final String noShow = appController.noShow.value;
     return GestureDetector(
       onTap: () => _showRestoreDialog(context),
@@ -74,10 +78,10 @@ class Score extends StatelessWidget {
             mainAxisSize: MainAxisSize.min,
             mainAxisAlignment: MainAxisAlignment.center,
             children: [
-              _buildScoreItem("Correct", _getCorrectValue(), MyColors.green),
+              _buildScoreItem("Correct", _getCorrectValue(), MyColors.green, isLandscape, istablet),
               const SizedBox(width: 16),
-              _buildScoreItem("Wrong", _getWrongValue(), MyColors.red),
-              Text(appController.noShow.value, style: TextStyle(fontSize:1, ),),
+              _buildScoreItem("Wrong", _getWrongValue(), MyColors.red, isLandscape, istablet),
+              Text( appController.noShow.value, style: TextStyle(fontSize:1, ),),
             ],
           ),
         ),
@@ -85,13 +89,13 @@ class Score extends StatelessWidget {
     );
   }
 
-  Widget _buildScoreItem(String label, String value, Color color) {
+  Widget _buildScoreItem(String label, String value, Color color , bool isLandscape, bool istablet) {
     return Row(
       children: [
         Text(
           "$label: ",
           style: TextStyle(
-            fontSize: 16,
+            fontSize: isLandscape || istablet ? 35 : 16,
             fontWeight: FontWeight.w600,
             color: color
           ),
@@ -99,7 +103,7 @@ class Score extends StatelessWidget {
         Text(
           value,
           style: TextStyle(
-            fontSize: 22,
+            fontSize: isLandscape || istablet ? 35 : 16,
             fontWeight: FontWeight.bold,
             color: color,
           ),

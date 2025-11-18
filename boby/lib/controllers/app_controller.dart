@@ -7,9 +7,9 @@ import 'package:boby/services/storage_service.dart';
 
 class AppController extends GetxController {
   //------------General------------------------------
-  var currenteImage = 'assets/images/dog.jpg'.obs;
+ 
   var backGroundImage = "".obs;
-  var currentPage = 0.obs;
+  var currentPage = 4.obs;
   var cardSelected = "".obs;
   var menuOpen = false.obs;
   var celebrationVisible = false.obs; // controls celebration overlay visibility

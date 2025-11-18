@@ -149,6 +149,7 @@ class _ListCardSoundsState extends State<ListCardSounds> {
      
 
     bool isLandscape = screenSize.width / screenSize.height > 1;
+    bool istablet = screenSize.width > Constants.tabletSize; 
 
 
 
@@ -180,7 +181,7 @@ class _ListCardSoundsState extends State<ListCardSounds> {
                       mainAxisAlignment: MainAxisAlignment.center,
                       children: [
 
-                        isLandscape ?
+                        isLandscape || istablet ?
                         Row(
                           mainAxisAlignment: MainAxisAlignment.spaceEvenly,
                           children: 
