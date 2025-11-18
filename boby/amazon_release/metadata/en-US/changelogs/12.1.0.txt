@@ -1,0 +1,10 @@
+What's New in Version 12.1.0
+
+- Added support for background playback
+- Improved audio quality and stability
+- Fixed issues with playlist management
+- Enhanced user interface and navigation
+- Performance optimizations for better battery life
+- Bug fixes and stability improvements
+
+Update now for the best Boby experience yet!

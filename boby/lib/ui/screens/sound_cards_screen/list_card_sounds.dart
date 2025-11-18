@@ -148,11 +148,7 @@ class _ListCardSoundsState extends State<ListCardSounds> {
 
      
 
-    double minSide = min(screenSize.width, screenSize.height);
-
-    if (screenSize.width / screenSize.height > 1) {
-       minSide = min(screenSize.width, screenSize.height) * 0.6;
-    }
+    bool isLandscape = screenSize.width / screenSize.height > 1;
 
 
 
@@ -176,32 +172,49 @@ class _ListCardSoundsState extends State<ListCardSounds> {
               ),
               // Top half of screen - Cards
               SizedBox(
-                height: (screenSize.height - safePadding.top - safePadding.bottom) * 0.6,
+                height: (screenSize.height - safePadding.top - safePadding.bottom) * (isLandscape ? 0.6 : 0.5),
                 child: Center(
                   child: SingleChildScrollView(
                     child: Column(
                       mainAxisSize: MainAxisSize.min,
                       mainAxisAlignment: MainAxisAlignment.center,
                       children: [
-                        // First row of cards
+
+                        isLandscape ?
                         Row(
                           mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+                          children: 
+                          [
+                             if (assets.isNotEmpty) _buildCardTarget(0),
+                                if (assets.length > 1) _buildCardTarget(1),
+                                
+                                if (assets.length > 2) _buildCardTarget(2),
+                                if (assets.length > 3) _buildCardTarget(3),
+                          ]
+                          ):
+                          
+                        // First row of cards
+                        Column(
                           children: [
-                            if (assets.isNotEmpty) _buildCardTarget(0),
-                            if (assets.length > 1) _buildCardTarget(1),
-                          ],
-                        ),
-                        if (assets.length > 2) ...[
-                          const SizedBox(height: 20),
-                          // Second row of cards
-                          Row(
+                            Row(
+                              mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+                              children: [
+                                if (assets.isNotEmpty) _buildCardTarget(0),
+                                if (assets.length > 1) _buildCardTarget(1),
+                              ],
+                            ),
+                             const SizedBox(height: 20),
+                         Row(
                             mainAxisAlignment: MainAxisAlignment.spaceEvenly,
                             children: [
                               if (assets.length > 2) _buildCardTarget(2),
                               if (assets.length > 3) _buildCardTarget(3),
                             ],
                           ),
-                        ],
+                          ],
+                        ),
+                       
+                        
                       ],
                     ),
                   ),

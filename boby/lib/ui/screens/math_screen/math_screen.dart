@@ -121,6 +121,9 @@ class _MathScreenState extends State<MathScreen> {
 
   @override
   Widget build(BuildContext context) {
+    final screenSize = MediaQuery.of(context).size;
+    final minSize = min(screenSize.width, screenSize.height);
+    bool isLandscape = screenSize.width > screenSize.height;
     return SafeArea(
       child: Center(
         child: Padding(
@@ -148,7 +151,7 @@ class _MathScreenState extends State<MathScreen> {
                   LayoutBuilder(
                     builder: (context, constraints) {
                       final double buttonSize = (constraints.maxWidth - 48) /
-                          2; // 2 columnas, 16px gaps
+                          (isLandscape ? 4 : 2); // 2 columnas, 16px gaps
                       return Wrap(
                         alignment: WrapAlignment.center,
                         spacing: 16,

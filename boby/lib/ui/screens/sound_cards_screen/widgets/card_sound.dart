@@ -134,8 +134,17 @@ class _CardSoundState extends State<CardSound>
 
   @override
   Widget build(BuildContext context) {
-    final cardWidth = isTablet ? 300.0 : 150.0;
-    final cardHeight = cardWidth * 1.2; // Maintain aspect ratio
+    final screenSize = MediaQuery.of(context).size;
+    bool isLandscape = screenSize.width > screenSize.height;
+    double minSize = min(screenSize.width, screenSize.height);
+    double cardWidth = isTablet ? 170.0 : 150.0;
+    double cardHeight = cardWidth * 1.2; // Maintain aspect ratio
+
+    if (((cardWidth * 4) +20) > minSize && isLandscape) {
+      cardWidth = minSize / 4;
+      cardHeight = cardWidth * 1.2; // Maintain aspect ratio
+      
+    }
 
     // Animations disabled: static card
 

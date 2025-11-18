@@ -31,6 +31,10 @@ class MainMenu extends StatelessWidget {
 
     double minSide = min(screenSize.width, screenSize.height);
 
+    if (screenSize.width / screenSize.height > 1) {
+      minSide = minSide * 0.6;
+    }
+
     List<Widget> widgets = [];
     for (var option in options) {
       widgets.add(

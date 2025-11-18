@@ -1,0 +1,24 @@
+Boby - Your Personal Audio Companion
+
+Welcome to Boby, your go-to app for audio content on the go. Enjoy a seamless listening experience with our intuitive interface and rich features.
+
+Features:
+- High-quality audio playback
+- Offline listening support
+- Create and manage playlists
+- Sleep timer functionality
+- Background playback
+- Dark/Light theme support
+- Customizable playback speed
+- Bookmark your favorite moments
+
+Perfect for:
+- Learning on the go
+- Enjoying podcasts and audiobooks
+- Listening to music and audio content
+- Language learning
+- Educational content
+
+With Boby, your audio content is always at your fingertips. Download now and start listening to what matters most to you!
+
+Note: Some features may require additional permissions for full functionality.

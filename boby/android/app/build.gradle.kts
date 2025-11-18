@@ -36,17 +36,13 @@ android {
 
     defaultConfig {
         applicationId = "com.cabelloenrique.boby"
-        minSdk = flutter.minSdkVersion  // Android 5.0 Lollipop para máxima compatibilidad
-        targetSdk = 33  // Usar una versión específica para mejor compatibilidad
-        versionCode = flutter.versionCode
+        minSdk = flutter.minSdkVersion  // Android 4.4 KitKat para máxima compatibilidad con Fire OS
+        targetSdk = 33  // Android 13
+        versionCode = flutter.versionCode.toInt()
         versionName = flutter.versionName
         
         // Configuración para Amazon Appstore y Fire Tablets
-        ndk {
-            // Incluir solo las ABIs necesarias para Fire Tablets
-            abiFilters.clear()
-            abiFilters.addAll(listOf("armeabi-v7a", "arm64-v8a"))
-        }
+        // Nota: No usamos abiFilters aquí para evitar conflictos con splits
         
         // Asegurar compatibilidad con pantallas grandes
         resConfigs("en", "es")
@@ -54,6 +50,24 @@ android {
         
         // Configuración específica para Fire OS
         buildConfigField("boolean", "IS_AMAZON", "true")
+        
+        // Asegurar compatibilidad con Fire TV y Fire Tablets
+        manifestPlaceholders["amzn_scheme"] = "amzn"
+        
+        // Especificar que es compatible con tablets
+        resValue("bool", "isTablet", "true")
+        
+        // Habilitar soporte para pantallas grandes
+        resValue("bool", "isLargeLayout", "true")
+        
+        // Configuración específica para tablets Fire
+        resValue("integer", "min_tablet_width_dp", "600")
+        
+        // Habilitar soporte para múltiples ventanas
+        resValue("bool", "supports_picture_in_picture", "false")
+        
+        // Configuración de compatibilidad con pantallas
+        resValue("bool", "isWideColorGamut", "false")
     }
 
     signingConfigs {
@@ -79,23 +93,37 @@ android {
         }
     }
 
+    // Configuración de splits para generar APKs específicos por ABI
+    splits {
+        abi {
+            enable true
+            reset()
+            include "armeabi-v7a", "arm64-v8a"
+            universalApk false
+        }
+    }
+    
     buildTypes {
         release {
-            signingConfig = signingConfigs.getByName("release")
-            isMinifyEnabled = true
+            signingConfig = signingConfigs.getByName("amazonRelease")
+            isMinifyEnabled = false  // Desactivar minify para evitar problemas con R8
+            isShrinkResources = false
+            isCrunchPngs = true
             
-            // Configuración específica para Fire OS
-            ndk {
-                // Incluir solo las ABIs necesarias para Fire Tablets
-                abiFilters.clear()
-                abiFilters.addAll(listOf("armeabi-v7a", "arm64-v8a"))
-            }
-            
-            // Configuración de ProGuard
+            // Configuración de ProGuard para Fire OS
             proguardFiles(
                 getDefaultProguardFile("proguard-android-optimize.txt"),
                 "proguard-rules.pro"
             )
+            
+            // Configuración de rendimiento
+            isDebuggable = false
+            isJniDebuggable = false
+            isRenderscriptDebuggable = false
+            renderscriptOptimLevel = 3
+            
+            // Configuración específica para Amazon Appstore
+            buildConfigField("boolean", "AMAZON_STORE", "true")
         }
     }
 }

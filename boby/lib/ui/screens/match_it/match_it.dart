@@ -46,14 +46,17 @@ class _FigureOptionsGrid extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+        final screenSize = MediaQuery.of(context).size;
+    final minSize = min(screenSize.width, screenSize.height);
+    bool isLandscape = screenSize.width > screenSize.height;
     return GridView.builder(
       shrinkWrap: true,
       physics: const NeverScrollableScrollPhysics(),
-      gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
-        crossAxisCount: 2,
+      gridDelegate:  SliverGridDelegateWithFixedCrossAxisCount(
+        crossAxisCount: isLandscape ? 4 : 2, 
         mainAxisSpacing: 12,
         crossAxisSpacing: 12,
-        childAspectRatio: 3.5,
+        childAspectRatio: isLandscape ? 4 : 3.5,
       ),
       itemCount: options.length,
       itemBuilder: (context, index) {
@@ -443,14 +446,17 @@ class _ColorOptionsGrid extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+        final screenSize = MediaQuery.of(context).size;
+    final minSize = min(screenSize.width, screenSize.height);
+    bool isLandscape = screenSize.width > screenSize.height;
     return GridView.builder(
       shrinkWrap: true,
       physics: const NeverScrollableScrollPhysics(),
-      gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
-        crossAxisCount: 2,
+      gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
+        crossAxisCount: isLandscape ? 4 : 2,
         mainAxisSpacing: 12,
         crossAxisSpacing: 12,
-        childAspectRatio: 3.5,
+        childAspectRatio: isLandscape ? 4 : 3.5,
       ),
       itemCount: options.length,
       itemBuilder: (context, index) {

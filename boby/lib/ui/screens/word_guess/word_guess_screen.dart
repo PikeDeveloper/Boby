@@ -198,6 +198,7 @@ class _WordGuessScreenState extends State<WordGuessScreen> {
   Widget build(BuildContext context) {
     final screenSize = MediaQuery.of(context).size;
     final minSize = min(screenSize.width, screenSize.height);
+    bool isLandscape = screenSize.width > screenSize.height;
 
     // Split keys into two rows
     final firstRow = keys.take((keys.length / 2).ceil()).toList();
@@ -224,8 +225,8 @@ class _WordGuessScreenState extends State<WordGuessScreen> {
             WordGuessWord(),
             const SizedBox(height: 30),
             SizedBox(
-              width: minSize * 0.7,
-              height: minSize * 0.70,
+              width: isLandscape ? minSize * 0.4 : minSize * 0.7,
+              height: isLandscape ? minSize * 0.4 : min(minSize * 0.7, 300),
               child: ClipRRect(
                 borderRadius: BorderRadius.circular(25),
                 child: PageView.builder(

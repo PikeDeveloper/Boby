@@ -1,3 +1,5 @@
+import 'dart:math';
+
 import 'package:flutter/material.dart';
 import 'package:boby/ui/screens/match_it/widgets/gradient_button.dart';
 
@@ -15,6 +17,9 @@ class NumberOptionsGrid extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final screenSize = MediaQuery.of(context).size;
+    final minSize = min(screenSize.width, screenSize.height);
+    bool isLandscape = screenSize.width > screenSize.height;
     const List<String> wordsEn = [
       'One',
       'Two',
@@ -40,11 +45,11 @@ class NumberOptionsGrid extends StatelessWidget {
     return GridView.builder(
       shrinkWrap: true,
       physics: const NeverScrollableScrollPhysics(),
-      gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
-        crossAxisCount: 2,
+      gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
+        crossAxisCount: isLandscape ? 4 : 2,
         mainAxisSpacing: 12,
         crossAxisSpacing: 12,
-        childAspectRatio: 3.5,
+        childAspectRatio: isLandscape ? 4 : 3.5,
       ),
       itemCount: options.length,
       itemBuilder: (context, index) {
