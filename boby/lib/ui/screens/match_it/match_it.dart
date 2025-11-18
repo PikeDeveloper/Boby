@@ -1,4 +1,5 @@
 import 'package:boby/controllers/app_controller.dart';
+import 'package:boby/ui/shared/score.dart';
 import 'package:boby/ui/shared/word_of_images.dart';
 import 'package:get/get.dart';
 import 'package:flutter/material.dart';
@@ -453,6 +454,7 @@ class _MatchItScreenState extends State<MatchItScreen> {
       padding: const EdgeInsets.all(16.0),
       child: Column(
         children: [
+       Score(game: "MatchIt"),  
 
           Spacer(),
 

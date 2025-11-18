@@ -73,6 +73,18 @@ class StorageService {
     soundCardsCorrect.value = value;
   }
 
+
+  // Match It game scores
+  int getMatchItCorrect() => (_box.get('match_it_correct') as int?) ?? 0;
+  Future<void> incMatchItCorrect([int by = 1]) =>
+      _box.put('match_it_correct', getMatchItCorrect() + by);
+  Future<void> setMatchItCorrect(int value) => _box.put('match_it_correct', value);
+
+  int getMatchItWrong() => (_box.get('match_it_wrong') as int?) ?? 0;
+  Future<void> incMatchItWrong([int by = 1]) =>
+      _box.put('match_it_wrong', getMatchItWrong() + by);
+  Future<void> setMatchItWrong(int value) => _box.put('match_it_wrong', value);
+
  
 
   int getSoundCardsWrong() => (_box.get('sound_cards_wrong') as int?) ?? 0;
