@@ -93,13 +93,13 @@ android {
         }
     }
 
-    // Configuración de splits para generar APKs específicos por ABI
+    // Simplified configuration for release build
     splits {
         abi {
-            enable true
+            isEnable = true
             reset()
-            include "armeabi-v7a", "arm64-v8a"
-            universalApk false
+            include("armeabi-v7a", "arm64-v8a")
+            isUniversalApk = true  // Generate a universal APK
         }
     }
     

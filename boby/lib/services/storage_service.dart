@@ -2,9 +2,16 @@ import 'package:flutter/foundation.dart';
 import 'package:get/get.dart';
 import 'package:hive_flutter/hive_flutter.dart';
 
-class StorageService {
+class StorageService extends GetxService {
+  static Future<StorageService> init() async {
+    final instance = StorageService._();
+    await instance._init();
+    return instance;
+  }
+  
   StorageService._();
-  static final StorageService instance = StorageService._();
+  
+  static StorageService get instance => Get.find<StorageService>();
 
   static const String _boxName = 'app';
   static const String _kBackground = 'background';
@@ -21,16 +28,16 @@ class StorageService {
 
   late Box _box;
 
-  static Future<void> init() async {
+  Future<void> _init() async {
     await Hive.initFlutter();
-    instance._box = await Hive.openBox(_boxName);
+    _box = await Hive.openBox(_boxName);
     // initialize defaults if null
-    instance._box.putAll({
-      if (instance._box.get(_kMathOpAdd) == null) _kMathOpAdd: true,
-      if (instance._box.get(_kMathOpSub) == null) _kMathOpSub: false,
-      if (instance._box.get(_kMathOpMul) == null) _kMathOpMul: false,
-      if (instance._box.get(_kMathOpDiv) == null) _kMathOpDiv: false,
-      if (instance._box.get(_kMemoryGrid) == null) _kMemoryGrid: '3x3',
+    _box.putAll({
+      if (_box.get(_kMathOpAdd) == null) _kMathOpAdd: true,
+      if (_box.get(_kMathOpSub) == null) _kMathOpSub: false,
+      if (_box.get(_kMathOpMul) == null) _kMathOpMul: false,
+      if (_box.get(_kMathOpDiv) == null) _kMathOpDiv: false,
+      if (_box.get(_kMemoryGrid) == null) _kMemoryGrid: '3x3',
     });
   }
 
@@ -105,6 +112,31 @@ class StorageService {
   Future<void> incWordGuessCorrect([int by = 1]) =>
       _box.put('word_guess_correct', getWordGuessCorrect() + by);
   Future<void> setWordGuessCorrect(int value) => _box.put('word_guess_correct', value);
+
+  // Complete Sentence game scores
+  int getCompleteSentenceCorrect() => (_box.get('complete_sentence_correct') as int?) ?? 0;
+  final completeSentenceCorrect = 0.obs;
+  Future<void> incCompleteSentenceCorrect([int by = 1]) async {
+    final newValue = getCompleteSentenceCorrect() + by;
+    await _box.put('complete_sentence_correct', newValue);
+    completeSentenceCorrect.value = newValue;
+  }
+  Future<void> setCompleteSentenceCorrect(int value) async {
+    await _box.put('complete_sentence_correct', value);
+    completeSentenceCorrect.value = value;
+  }
+
+  int getCompleteSentenceWrong() => (_box.get('complete_sentence_wrong') as int?) ?? 0;
+  final completeSentenceWrong = 0.obs;
+  Future<void> incCompleteSentenceWrong([int by = 1]) async {
+    final newValue = getCompleteSentenceWrong() + by;
+    await _box.put('complete_sentence_wrong', newValue);
+    completeSentenceWrong.value = newValue;
+  }
+  Future<void> setCompleteSentenceWrong(int value) async {
+    await _box.put('complete_sentence_wrong', value);
+    completeSentenceWrong.value = value;
+  }
 
   int getWordGuessWrong() => (_box.get('word_guess_wrong') as int?) ?? 0;
   Future<void> incWordGuessWrong([int by = 1]) =>

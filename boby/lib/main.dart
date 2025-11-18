@@ -12,7 +12,10 @@ Future<void> main() async {
   await SystemChrome.setPreferredOrientations([
     DeviceOrientation.portraitUp,
   ]);
-  await StorageService.init();
+  
+  // Initialize services
+  await Get.putAsync<StorageService>(() => StorageService.init());
+  
   runApp(const MainApp());
 }
 

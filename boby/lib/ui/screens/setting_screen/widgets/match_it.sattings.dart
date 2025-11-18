@@ -1,7 +1,6 @@
 import 'package:get/get.dart';
 import 'package:boby/controllers/app_controller.dart';
 import 'package:flutter/material.dart';
-import 'package:boby/ui/shared/word_of_images.dart';
 
 class MatchItSettings extends StatelessWidget {
   const MatchItSettings({super.key});

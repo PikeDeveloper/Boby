@@ -28,6 +28,8 @@ class Score extends StatelessWidget {
         return StorageService.instance.getSoundCardsCorrect().toString();
       case "MatchIt":
         return StorageService.instance.getMatchItCorrect().toString();
+      case "CompleteSentence":
+        return StorageService.instance.getCompleteSentenceCorrect().toString();
       default:
         return "0";
     }
@@ -42,8 +44,9 @@ class Score extends StatelessWidget {
       case "SoundCards":
         return StorageService.instance.getSoundCardsWrong().toString();
       case "MatchIt":
-        return StorageService.instance.getMatchItWrong().toString(); 
- 
+        return StorageService.instance.getMatchItWrong().toString();
+      case "CompleteSentence":
+        return StorageService.instance.getCompleteSentenceWrong().toString();
       default:
         return "0";
     }
@@ -55,7 +58,7 @@ class Score extends StatelessWidget {
     final appController = Get.find<AppController>();
     final isLandscape = screenSize.width > screenSize.height;
     bool istablet = screenSize.width > Constants.tabletSize;  
-    final String noShow = appController.noShow.value;
+
     return GestureDetector(
       onTap: () => _showRestoreDialog(context),
       child: Container(

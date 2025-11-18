@@ -1,5 +1,3 @@
-import 'dart:math';
-
 import 'package:boby/ui/screens/word_guess/widgets/celebration_image.dart';
 import 'package:boby/ui/shared/score.dart';
 import 'package:flutter/material.dart';
@@ -27,7 +25,6 @@ class _ListCardSoundsState extends State<ListCardSounds> {
 
     final String _winSound = "assets/sounds/winner-game.wav";
   final String _wrongMatchSound = "assets/sounds/bubble-pop.wav";
-  final String _correctMatchSound = "assets/sounds/game-bonus.wav";
   final String _gameOverSound = "assets/sounds/game-over-trombone.wav";
   final AudioPlayer _audioPlayer = AudioPlayer();
   

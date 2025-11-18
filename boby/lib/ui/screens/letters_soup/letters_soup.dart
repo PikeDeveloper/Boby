@@ -55,7 +55,6 @@ class _LettersSoupState extends State<LettersSoup> {
 
   @override
   Widget build(BuildContext context) {
-    final appController = Get.find<AppController>();
     final screenSize = MediaQuery.of(context).size;
     final isLandscape = screenSize.width > screenSize.height;
     bool istablet = screenSize.width > Constants.tabletSize;  
