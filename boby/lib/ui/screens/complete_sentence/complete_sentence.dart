@@ -15,22 +15,31 @@ class _CompleteSentenceState extends State<CompleteSentence> {
   final StorageService storage = Get.find<StorageService>();
   int currentQuestionIndex = 0;
   bool showCorrect = false;
+  Set<int> selectedAnswerIndices = {};
   int? selectedAnswerIndex;
   bool isCorrect = false;
+  int? correctAnswerIndex; // Track the index of the correct answer after shuffling
+  List<String> shuffledAnswers = []; // Store shuffled answers for current question
 
   void checkAnswer(int answerIndex) {
-    final isCorrectAnswer = answerIndex == 0; // First answer is correct
+    final isCorrectAnswer = answerIndex == correctAnswerIndex;
     
     setState(() {
+      if (!isCorrectAnswer) {
+        selectedAnswerIndices.add(answerIndex);
+      } else {
+        // Clear all selections when correct answer is chosen
+        selectedAnswerIndices.clear();
+      }
       selectedAnswerIndex = answerIndex;
       showCorrect = true;
       isCorrect = isCorrectAnswer;
       
-      // Update scores only if this is a new selection
+      // Update scores
       if (isCorrectAnswer) {
         storage.incCompleteSentenceCorrect();
-      } else if (selectedAnswerIndex != answerIndex) {
-        // Only increment wrong answers counter for new incorrect selections
+      } else {
+        // Increment wrong answers counter for incorrect selections
         storage.incCompleteSentenceWrong();
       }
     });
@@ -42,11 +51,23 @@ class _CompleteSentenceState extends State<CompleteSentence> {
           setState(() {
             showCorrect = false;
             selectedAnswerIndex = null;
+            selectedAnswerIndices.clear();
             currentQuestionIndex = (currentQuestionIndex + 1) % Sentences.sentences.length;
+            _shuffleAnswers(); // Shuffle answers for the new question
           });
         }
       });
     }
+  }
+
+  void _shuffleAnswers() {
+    final currentQuestion = Sentences.sentences[currentQuestionIndex];
+    final List<String> answers = List<String>.from(currentQuestion['answers'] as List);
+    
+    // Shuffle answers and track correct answer position
+    shuffledAnswers = List.from(answers);
+    shuffledAnswers.shuffle();
+    correctAnswerIndex = shuffledAnswers.indexOf(answers[0]); // Original correct answer
   }
 
   @override
@@ -55,13 +76,14 @@ class _CompleteSentenceState extends State<CompleteSentence> {
     // Initialize scores
     storage.setCompleteSentenceCorrect(storage.getCompleteSentenceCorrect());
     storage.setCompleteSentenceWrong(storage.getCompleteSentenceWrong());
+    // Shuffle answers for the first question
+    _shuffleAnswers();
   }
 
   @override
   Widget build(BuildContext context) {
     final currentQuestion = Sentences.sentences[currentQuestionIndex];
     final String sentence = currentQuestion['sentence'] as String;
-    final List<String> answers = List<String>.from(currentQuestion['answers'] as List);
 
     return Padding(
       padding: const EdgeInsets.all(16.0),
@@ -109,10 +131,10 @@ class _CompleteSentenceState extends State<CompleteSentence> {
           // Answer Options
           Expanded(
             child: ListView.builder(
-              itemCount: answers.length,
+              itemCount: shuffledAnswers.length,
               itemBuilder: (context, index) {
-                bool isSelected = selectedAnswerIndex == index;
-                bool isCorrectAnswer = index == 0; // First answer is correct
+                bool isSelected = selectedAnswerIndex == index || selectedAnswerIndices.contains(index);
+                bool isCorrectAnswer = index == correctAnswerIndex;
                 
                 Color buttonColor = const Color(0xFF71B2EB);
                 if (showCorrect && isSelected) {
@@ -154,7 +176,7 @@ class _CompleteSentenceState extends State<CompleteSentence> {
                         const SizedBox(width: 16),
                         Expanded(
                           child: Text(
-                            answers[index],
+                            shuffledAnswers[index],
                             style: const TextStyle(
                               fontSize: 18,
                               color: Colors.white,
