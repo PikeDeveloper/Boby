@@ -1,5 +1,6 @@
 
 import 'package:boby/ui/screens/setting_screen/widgets/background_settins.dart';
+import 'package:boby/ui/screens/setting_screen/widgets/badge_setting.dart';
 import 'package:boby/ui/screens/setting_screen/widgets/match_it.sattings.dart';
 import 'package:boby/ui/screens/setting_screen/widgets/math_settings.dart';
 import 'package:boby/ui/screens/setting_screen/widgets/memory_settings.dart';
@@ -22,9 +23,9 @@ class SettingScreen extends StatelessWidget {
           SizedBox(height: 50),
           WordOfImages(letters: "BACKGROUNDS", letterSize: 25),
           BackgroundSettings(),
-          SizedBox(height: 100),
-          WordOfImages(letters: "MATH", letterSize: 25),
-          MathSettings(),
+          //SizedBox(height: 100),
+          //WordOfImages(letters: "MATH", letterSize: 25),
+          //MathSettings(),
           SizedBox(height: 100),
           WordOfImages(letters: "MEMORY", letterSize: 25), 
           MemrySettings(),
@@ -32,9 +33,13 @@ class SettingScreen extends StatelessWidget {
           WordOfImages(letters: "MATCH", letterSize: 25),
           MatchItSettings(),
           SizedBox(height: 100),
+          WordOfImages(letters: "BADGE", letterSize: 25),
+          BadgeSettings(),
+          SizedBox(height: 100),
           WordOfImages(letters: "MORE", letterSize: 25),
           MoreApps(),
           SizedBox(height: 100),
+          
         ],
       ),
     );

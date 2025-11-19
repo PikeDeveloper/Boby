@@ -17,6 +17,23 @@ class Score extends StatelessWidget {
   });
 
 
+  getBadge(double correct, double wrong, bool isTablet, bool isLandscape) {
+    double average = (correct / (correct + wrong)) * 100;
+    String badge = "";
+    if (average >= 90) {
+      badge = "assets/dymond.png";
+    } else if (average >= 80) {
+      badge = "assets/gold.png";
+    } else if (average >= 50) {
+      badge = "assets/silver.png";
+    } else {
+      badge = "assets/bronze.png";
+    }
+    return Image.asset(badge, width: isTablet || isLandscape ? 40 : 30, height: isTablet || isLandscape ? 50 : 30);
+  
+  }
+
+
 
   String _getCorrectValue() {
     switch (game) {
@@ -60,14 +77,14 @@ class Score extends StatelessWidget {
     bool istablet = screenSize.width > Constants.tabletSize;  
 
     return GestureDetector(
-      onTap: () => _showRestoreDialog(context),
+      onTap: () => _showRestoreDialog(context, istablet, isLandscape),
       child: Container(
         width: screenSize.width * 0.8,
         margin: const EdgeInsets.all(8),
         padding: const EdgeInsets.all(8),
         decoration: BoxDecoration(
           color: Colors.white,
-          borderRadius: BorderRadius.circular(30),
+          borderRadius: BorderRadius.circular(15),
           boxShadow: [
             BoxShadow(
               color: Colors.black.withOpacity(0.1),
@@ -81,10 +98,16 @@ class Score extends StatelessWidget {
             mainAxisSize: MainAxisSize.min,
             mainAxisAlignment: MainAxisAlignment.center,
             children: [
+              getBadge(double.parse(_getCorrectValue()), double.parse(_getWrongValue()) , istablet, isLandscape),
+              const Spacer(),
               _buildScoreItem("Correct", _getCorrectValue(), MyColors.green, isLandscape, istablet),
               const SizedBox(width: 16),
               _buildScoreItem("Wrong", _getWrongValue(), MyColors.red, isLandscape, istablet),
               Text( appController.noShow.value, style: TextStyle(fontSize:1, ),),
+              const SizedBox(width: 16),
+              const Spacer(),
+              getBadge(double.parse(_getCorrectValue()), double.parse(_getWrongValue()), istablet, isLandscape),
+
             ],
           ),
         ),
@@ -115,7 +138,19 @@ class Score extends StatelessWidget {
     );
   }
 
-  void _showRestoreDialog(BuildContext context) {
+  void _showRestoreDialog(BuildContext context, bool istablet, bool isLandscape) {
+    double average = (double.parse(_getCorrectValue()) / (double.parse(_getCorrectValue()) + double.parse(_getWrongValue()))) * 100;
+String level = "";
+    if (average >= 90) {
+      level = "Diamond";
+    } else if (average >= 80) {
+      level = "Gold";
+    } else if (average >= 50) {
+      level = "Silver";
+    } else {
+      level = "Bronze";
+    }
+
     showDialog(
       context: context,
       builder: (context) => AlertDialog(
@@ -124,14 +159,30 @@ class Score extends StatelessWidget {
            "Restore Score",
           style: TextStyle(fontWeight: FontWeight.bold),
         ),
-        content: const Text('Are you sure you want to reset the score?'),
+        content: Column(
+          mainAxisSize: MainAxisSize.min,
+          children: [
+
+
+            Row(
+              children: [
+                const Text('Your level is ' , style: TextStyle(fontSize: 20),),
+                Text(level, style: TextStyle(fontSize: 20, fontWeight: FontWeight.bold),),
+                SizedBox(width: 5),
+                getBadge(double.parse(_getCorrectValue()), double.parse(_getWrongValue()) , istablet, isLandscape),
+              ],
+            ),
+            const SizedBox(height: 30),
+            const Text('Do you want to reset the score?' , style: TextStyle(fontSize: 20),),
+          ],
+        ),
         actions: [
           TextButton(
             onPressed: () => Navigator.of(context).pop(),
              style: TextButton.styleFrom(
               foregroundColor: Colors.blue,
             ),
-            child: const Text('Cancel'),
+            child: const Text('Cancel' , style: TextStyle(fontSize: 20),),
           ),
           TextButton(
             onPressed: () {
@@ -142,7 +193,7 @@ class Score extends StatelessWidget {
             style: TextButton.styleFrom(
               foregroundColor: Colors.red,
             ),
-            child: const Text('Reset'),
+            child: const Text('Reset' , style: TextStyle(fontSize: 20),),
           ),
         ],
       ),

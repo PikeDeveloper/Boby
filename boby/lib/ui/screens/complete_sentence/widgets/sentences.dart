@@ -155,7 +155,7 @@ class Sentences {
   "answers": ["Slow", "Invisible", "Square", "Tall"]
 },
 {
-  "sentence": "A rainbow has many",
+  "sentence": "Rainbow has many",
   "answers": ["Colors", "Doors", "Fingers", "Cars"]
 },
 {
@@ -251,6 +251,86 @@ class Sentences {
 {
   "sentence": "The moon is in the",
   "answers": ["Sky", "Car", "Ground", "Chair"]
+},
+{
+  "sentence": "A lamp gives",
+  "answers": ["Light", "Water", "Milk", "Juice"]
+},
+{
+  "sentence": "A phone is for",
+  "answers": ["Calling", "Sleeping", "Painting", "Driving"]
+},
+{
+  "sentence": "The crab can",
+  "answers": ["Swim", "Fly", "Read", "Cook"]
+},
+{
+  "sentence": "The bear can",
+  "answers": ["Run", "Drive", "Sing opera", "Write books"]
+},
+{
+  "sentence": "A bear is a",
+  "answers": ["Mammal", "Reptile", "Vehicle", "Fruit"]
+},
+{
+  "sentence": "A shrimp is a",
+  "answers": ["Crustacean", "Mammal", "Bird", "Tool"]
+},
+{
+  "sentence": "A dog is a",
+  "answers": ["Mammal", "Plant", "Cloth", "Car"]
+},
+{
+  "sentence": "An iguana is a",
+  "answers": ["Reptile", "Fish", "Toy", "Fruit"]
+},
+{
+  "sentence": "A doctor helps",
+  "answers": ["People", "Cars", "Chairs", "Phones"]
+},
+{
+  "sentence": "The dolphin can",
+  "answers": ["Swim", "Drive", "Cook", "Plant flowers"]
+},
+{
+  "sentence": "A fish is a",
+  "answers": ["Animal", "Fruit", "Toy", "Color"]
+},
+{
+  "sentence": "The kangaroo can",
+  "answers": ["Jump", "Swim", "Type", "Drive"]
+},
+{
+  "sentence": "A lion lives in the",
+  "answers": ["Savanna", "Kitchen", "Sky", "Ocean"]
+},
+{
+  "sentence": "A jacket is for",
+  "answers": ["Wearing", "Drinking", "Drawing", "Flying"]
+},
+{
+  "sentence": "The truck is a",
+  "answers": ["Vehicle", "Fruit", "Animal", "Plant"]
+},
+{
+  "sentence": "The grass is",
+  "answers": ["Green", "Purple", "Black", "Silver"]
+},
+{
+  "sentence": "The penguin can",
+  "answers": ["Swim", "Drive", "Cook", "Climb trees"]
+},
+{
+  "sentence": "A tiger is a",
+  "answers": ["Carnivore", "Vegetable", "Robot", "Toy"]
+},
+{
+  "sentence": "The cheese is",
+  "answers": ["Food", "Car", "Animal", "Planet"]
+},
+{
+  "sentence": "A camera is for",
+  "answers": ["Taking photos", "Running", "Washing clothes", "Eating"]
 }
 
 

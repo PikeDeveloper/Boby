@@ -20,7 +20,7 @@ class _CompleteSentenceState extends State<CompleteSentence> {
   final AppController appController = Get.find<AppController>();
   int currentQuestionIndex = 0;
   bool showCorrect = false;
-  List<int> usedQuestionIndices = [];
+  List<int> usedQuestionIndices = [0];
   Set<int> selectedAnswerIndices = {};
   int? selectedAnswerIndex;
   bool isCorrect = false;
@@ -149,7 +149,7 @@ class _CompleteSentenceState extends State<CompleteSentence> {
                   ],
                 ),
                 child: Text(
-                  "$sentence _____",
+                  "$sentence ____",
                   style: const TextStyle(
                     fontSize: 24,
                     fontWeight: FontWeight.bold,
