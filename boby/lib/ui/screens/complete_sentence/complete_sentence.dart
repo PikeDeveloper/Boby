@@ -1,5 +1,6 @@
 import 'dart:math';
 
+import 'package:boby/controllers/app_controller.dart';
 import 'package:boby/services/storage_service.dart';
 import 'package:boby/ui/shared/score.dart';
 import 'package:boby/utils/constants.dart';
@@ -16,8 +17,10 @@ class CompleteSentence extends StatefulWidget {
 
 class _CompleteSentenceState extends State<CompleteSentence> {
   final StorageService storage = Get.find<StorageService>();
+  final AppController appController = Get.find<AppController>();
   int currentQuestionIndex = 0;
   bool showCorrect = false;
+  List<int> usedQuestionIndices = [];
   Set<int> selectedAnswerIndices = {};
   int? selectedAnswerIndex;
   bool isCorrect = false;
@@ -26,6 +29,13 @@ class _CompleteSentenceState extends State<CompleteSentence> {
 
   void checkAnswer(int answerIndex) {
     final isCorrectAnswer = answerIndex == correctAnswerIndex;
+    
+    // Play appropriate sound
+    if (isCorrectAnswer) {
+      appController.playGameBonus();
+    } else {
+      appController.playBubblePop();
+    }
     
     setState(() {
       if (!isCorrectAnswer) {
@@ -41,9 +51,11 @@ class _CompleteSentenceState extends State<CompleteSentence> {
       // Update scores
       if (isCorrectAnswer) {
         storage.incCompleteSentenceCorrect();
+    
       } else {
         // Increment wrong answers counter for incorrect selections
         storage.incCompleteSentenceWrong();
+    
       }
     });
 
@@ -52,10 +64,21 @@ class _CompleteSentenceState extends State<CompleteSentence> {
       Future.delayed(const Duration(seconds: 1), () {
         if (mounted) {
           setState(() {
+            int numberOfSentences = Sentences.sentences.length;
+
+            if (usedQuestionIndices.length == numberOfSentences) {
+              usedQuestionIndices.clear();
+            }
             showCorrect = false;
             selectedAnswerIndex = null;
             selectedAnswerIndices.clear();
-            currentQuestionIndex = (currentQuestionIndex + 1) % Sentences.sentences.length;
+            //choose a random question y no se puede repetir si ya su indice esta en usedQuestionIndices
+              
+
+              while (usedQuestionIndices.contains(currentQuestionIndex)) {
+                currentQuestionIndex = Random().nextInt(numberOfSentences);
+              }
+            usedQuestionIndices.add(currentQuestionIndex);
             _shuffleAnswers(); // Shuffle answers for the new question
           });
         }
@@ -209,17 +232,9 @@ class _CompleteSentenceState extends State<CompleteSentence> {
                 },
               ),
             ),
-            const SizedBox(height: 20),
+          
+
             
-            // Progress Indicator
-            Text(
-              '${currentQuestionIndex + 1}/${Sentences.sentences.length}',
-              style: const TextStyle(
-                fontSize: 16,
-                color: Colors.grey,
-                fontWeight: FontWeight.bold,
-              ),
-            ),
           ],
         ),
       ),

@@ -171,6 +171,87 @@ class Sentences {
   "sentence": "Body part",
   "answers": ["Head", "Ant", "Tiger", "Lemon"]
 }
+,
+{
+  "sentence": "The frog is",
+  "answers": ["Green", "Pink", "Black", "Gray"]
+},
+{
+  "sentence": "A doctor works in a",
+  "answers": ["Hospital", "Forest", "Kitchen", "Garage"]
+},
+{
+  "sentence": "The baby is",
+  "answers": ["Small", "Huge", "Tall", "Heavy"]
+},
+{
+  "sentence": "A cookie is",
+  "answers": ["Sweet", "Angry", "Loud", "Square"]
+},
+{
+  "sentence": "The bee can",
+  "answers": ["Fly", "Swim", "Drive", "Cook"]
+},
+{
+  "sentence": "A lion is a",
+  "answers": ["Animal", "Plant", "Toy", "Fruit"]
+},
+{
+  "sentence": "Milk is",
+  "answers": ["White", "Red", "Purple", "Orange"]
+},
+{
+  "sentence": "A backpack is for",
+  "answers": ["Carrying books", "Sleeping", "Eating", "Driving"]
+},
+{
+  "sentence": "The snow is",
+  "answers": ["Cold", "Hot", "Dry", "Green"]
+},
+{
+  "sentence": "A clock tells the",
+  "answers": ["Time", "Weather", "Color", "Age"]
+},
+{
+  "sentence": "The apple is",
+  "answers": ["Red", "Blue", "Black", "Gray"]
+},
+{
+  "sentence": "A teacher works in a",
+  "answers": ["School", "Bank", "Zoo", "Kitchen"]
+},
+{
+  "sentence": "The monkey can",
+  "answers": ["Climb", "Sail", "Type", "Drive"]
+},
+{
+  "sentence": "A bed is for",
+  "answers": ["Sleeping", "Running", "Cooking", "Driving"]
+},
+{
+  "sentence": "The lemon is",
+  "answers": ["Yellow", "Purple", "Brown", "Pink"]
+},
+{
+  "sentence": "The fish lives in",
+  "answers": ["Water", "Sky", "House", "Desert"]
+},
+{
+  "sentence": "A guitar makes",
+  "answers": ["Music", "Food", "Clothes", "Cars"]
+},
+{
+  "sentence": "The spider has",
+  "answers": ["Eight legs", "Two wheels", "Four wings", "One horn"]
+},
+{
+  "sentence": "A towel is for",
+  "answers": ["Drying", "Eating", "Flying", "Counting"]
+},
+{
+  "sentence": "The moon is in the",
+  "answers": ["Sky", "Car", "Ground", "Chair"]
+}
 
 
    

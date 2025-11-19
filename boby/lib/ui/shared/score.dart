@@ -173,6 +173,10 @@ class Score extends StatelessWidget {
         StorageService.instance.setMatchItCorrect(0); 
         StorageService.instance.setMatchItWrong(0);
         break;
+      case "CompleteSentence":
+        StorageService.instance.setCompleteSentenceCorrect(0); 
+        StorageService.instance.setCompleteSentenceWrong(0);
+        break;
 
     }
     appController.noShow.value == "no"? appController.noShow.value = "yes": appController.noShow.value = "no";
