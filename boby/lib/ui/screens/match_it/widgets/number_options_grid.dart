@@ -25,30 +25,6 @@ class NumberOptionsGrid extends StatelessWidget {
     
 
 
-      //number choices
-  final List<Map<String, dynamic>> wordsEn = [
-    {"number": 1, "letter": "one"}, 
-    {"number": 2, "letter": "two"},
-    {"number": 3, "letter": "three"},
-    {"number": 4, "letter": "four"},
-    {"number": 5, "letter": "five"},
-    {"number": 6, "letter": "six"},   
-    {"number": 7, "letter": "seven"},
-    {"number": 8, "letter": "eight"},
-    {"number": 9, "letter": "nine"},
-    {"number": 10, "letter": "ten"},
-    {"number": 11, "letter": "eleven"},
-    {"number": 12, "letter": "twelve"},   
-    {"number": 13, "letter": "thirteen"},
-    {"number": 14, "letter": "fourteen"},
-    {"number": 15, "letter": "fifteen"},
-    {"number": 16, "letter": "sixteen"},
-    {"number": 17, "letter": "seventeen"},
-    {"number": 18, "letter": "eighteen"},
-    {"number": 19, "letter": "nineteen"},
-    {"number": 20, "letter": "twenty"},
-  ];
-
 
 
 

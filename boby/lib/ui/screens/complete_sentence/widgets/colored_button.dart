@@ -1,3 +1,4 @@
+import 'package:boby/utils/constants.dart';
 import 'package:flutter/material.dart';
 
 class OptionButton extends StatelessWidget {
@@ -25,9 +26,14 @@ class OptionButton extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final screenSize = MediaQuery.of(context).size;
+    final screenWidth = screenSize.width;
+    final screenHeight = screenSize.height;
+    final bool isTablet = screenWidth > Constants.tabletSize;
+    final bool iisLandscape = screenWidth > screenHeight;
 
-    double height =  60;
-    double width =  400;
+    double height =  isTablet || iisLandscape ? 60 : 40;
+    double width =  isTablet || iisLandscape ? 500 : 300;
     double radiusContainer = 15;
 
 double lerp1 = 0.4;
@@ -111,9 +117,9 @@ double lerp3 = 0.15;
                       child: Center(
                         child: Text(
                           letter,
-                          style: const TextStyle(
+                          style:  TextStyle(
                             color: Colors.white,
-                            fontSize: 20,
+                            fontSize:  isTablet || iisLandscape ? 20 : 16,
                             fontWeight: FontWeight.bold,
                           ),
                         ),
@@ -125,9 +131,9 @@ double lerp3 = 0.15;
                       child: Center(
                         child: Text(
                           text,
-                          style: const TextStyle(
+                          style: TextStyle(
                             color: Colors.white,
-                            fontSize: 22,
+                            fontSize:  isTablet || iisLandscape ? 25 : 20,
                             fontWeight: FontWeight.w700,
                           ),
                           textAlign: TextAlign.center,

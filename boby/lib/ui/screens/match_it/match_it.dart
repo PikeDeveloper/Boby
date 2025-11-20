@@ -54,6 +54,18 @@ class _FigureOptionsGrid extends StatelessWidget {
     final screenSize = MediaQuery.of(context).size;
     final isLandscape = screenSize.width > screenSize.height;
     bool istablet = screenSize.width > Constants.tabletSize;
+
+
+      // Color choices with human-readable names
+  final List< Color> colors = const [
+ 
+ 
+    ( Colors.blue),
+    ( Colors.yellow),
+    ( Colors.purple),
+    ( Colors.orange),
+   
+  ];
     
     return GridView.builder(
       shrinkWrap: true,
@@ -83,7 +95,7 @@ class _FigureOptionsGrid extends StatelessWidget {
               border: Border.all(
                 color: wrong 
                   ? Colors.red 
-                  : correct ? Colors.green : Colors.transparent,
+                  : correct ? Colors.green : colors[index] ,
                 width: 4,
               ),
               boxShadow: [

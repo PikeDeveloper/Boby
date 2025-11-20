@@ -129,7 +129,7 @@ class _CompleteSentenceState extends State<CompleteSentence> {
     return Padding(
       padding: const EdgeInsets.all(16.0),
       child: SizedBox(
-        width: min(screenWidth *0.9, 500),
+        width: min(screenWidth *0.9, 600),
         child: Column(
           mainAxisAlignment: MainAxisAlignment.center,
           children: [

@@ -1,3 +1,4 @@
+import 'package:boby/utils/constants.dart';
 import 'package:flutter/material.dart';
 
 class SentenceContainer extends StatelessWidget {
@@ -20,6 +21,12 @@ class SentenceContainer extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final screenSize = MediaQuery.of(context).size;
+    final screenWidth = screenSize.width;
+    final screenHeight = screenSize.height;
+    final bool isTablet = screenWidth > Constants.tabletSize;
+    final bool iisLandscape = screenWidth > screenHeight;
+    
     return Stack(
       alignment: Alignment.center,
       children: [
@@ -54,9 +61,9 @@ class SentenceContainer extends StatelessWidget {
           child: Center(
             child: Text(
               sentence,
-              style: const TextStyle(
+              style:  TextStyle(
                 color: Color.fromARGB(255, 16, 69, 245),
-                fontSize: 22,
+                fontSize:  isTablet || iisLandscape ? 30 : 20,
                 fontWeight: FontWeight.w700,
               ),
               textAlign: TextAlign.center,
