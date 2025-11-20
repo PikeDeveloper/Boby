@@ -3,6 +3,7 @@ import 'dart:math';
 import 'package:boby/controllers/app_controller.dart';
 import 'package:boby/services/storage_service.dart';
 import 'package:boby/ui/screens/complete_sentence/widgets/colored_button.dart';
+import 'package:boby/ui/screens/complete_sentence/widgets/sentense_container.dart';
 import 'package:boby/ui/shared/score.dart';
 import 'package:boby/utils/colors.dart';
 import 'package:boby/utils/constants.dart';
@@ -137,46 +138,10 @@ class _CompleteSentenceState extends State<CompleteSentence> {
                 ),
            
             // Question Card
-            Card(
-              elevation: 4,
-              shape: RoundedRectangleBorder(
-                borderRadius: BorderRadius.circular(15),
-              ),
-              child: Container(
-                width: double.infinity,
-                padding: const EdgeInsets.all(20),
-                decoration: BoxDecoration(
-                  color: Colors.white,
-                  borderRadius: BorderRadius.circular(15),
-                  boxShadow: [
-                    BoxShadow(
-                      color: Colors.grey.withOpacity(0.3),
-                      spreadRadius: 2,
-                      blurRadius: 5,
-                      offset: const Offset(0, 3),
-                    ),
-                  ],
-                ),
-                child: Text(
-                  "$sentence ____",
-                  style: const TextStyle(
-                    fontSize: 24,
-                    fontWeight: FontWeight.bold,
-                    color: Color(0xFF71B2EB),
-                  ),
-                  textAlign: TextAlign.center,
-                ),
-              ),
-            ),
-            const SizedBox(height: 30),
+          SentenceContainer(sentence: sentence),
+            const SizedBox(height: 10),
 
-            OptionButton(
-            letter: "A",
-            text: "The dog runs quickly",
-            color: const Color.fromARGB(255, 14, 76, 245), 
-            onTap: (){},
-            ),
-            
+          
             // Answer Options
             Expanded(
               child: ListView.builder(
@@ -187,63 +152,15 @@ class _CompleteSentenceState extends State<CompleteSentence> {
                   bool isSelected = selectedAnswerIndex == index || selectedAnswerIndices.contains(index);
                   bool isCorrectAnswer = index == correctAnswerIndex;
                   
-                  Color buttonColor = const Color(0xFF71B2EB);
-                  if (showCorrect && isSelected) {
-                    buttonColor = isCorrectAnswer ? Colors.green : Colors.red;
-                  }
-                      
-                  return Padding(
-                    padding: const EdgeInsets.symmetric(vertical: 8.0, horizontal: 20),
-                    child: ElevatedButton(
-                      onPressed: () => checkAnswer(index),
-                      style: ElevatedButton.styleFrom(
-                        backgroundColor: buttonColor.withOpacity(showCorrect && isSelected ? 0.8 : 1.0),
-                        padding: const EdgeInsets.symmetric(vertical: 16, horizontal: 20),
-                        shape: RoundedRectangleBorder(
-                          borderRadius: BorderRadius.circular(12),
-                        ),
-                        elevation: 3,
-                      ),
-                      child: Row(
-                        children: [
-                          Container(
-                            width: 30,
-                            height: 30,
-                            decoration: BoxDecoration(
-                              color: Colors.white.withOpacity(0.3),
-                              shape: BoxShape.circle,
-                            ),
-                            child: Center(
-                              child: Text(
-                                String.fromCharCode(65 + index), // A, B, C, D
-                                style: const TextStyle(
-                                  color: Colors.white,
-                                  fontWeight: FontWeight.bold,
-                                  fontSize: 20,
-                                ),
-                              ),
-                            ),
-                          ),
-                          const SizedBox(width: 16),
-                          Expanded(
-                            child: Text(
-                              shuffledAnswers[index],
-                              style: const TextStyle(
-                                fontSize: 20,
-                                color: Colors.white,
-                                fontWeight: FontWeight.bold,
-                              ),
-                            ),
-                          ),
-                          if (showCorrect && isSelected)
-                            Icon(
-                              isCorrectAnswer ? Icons.check_circle : Icons.cancel,
-                              color: Colors.white,
-                              size: 24,
-                            ),
-                        ],
-                      ),
-                    ),
+               
+                  return OptionButton(
+                    letter: String.fromCharCode(65 + index),
+                    text: shuffledAnswers[index],
+                    color:  isCorrectAnswer && isSelected ? Colors.green : colors[index],
+                    onTap: () => checkAnswer(index),
+                    isSelected: isSelected,
+                    isCorrect: isCorrectAnswer,
+                    showResult: showCorrect,
                   );
                 },
               ),

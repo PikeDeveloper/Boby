@@ -38,6 +38,8 @@ double lerp3 = 0.15;
 
 
 
+
+
     
   
 
@@ -57,7 +59,14 @@ double lerp3 = 0.15;
                 width: width,
                 decoration: BoxDecoration(
                   borderRadius: BorderRadius.circular(radiusContainer),
-                  color: color
+                  color: color,
+                  boxShadow: [
+                    BoxShadow(
+                      color: Colors.black26,
+                      offset: const Offset(0, 2),
+                      blurRadius: 4,
+                    ),
+                  ],
                 ),
               ),
               //middle container
@@ -118,13 +127,25 @@ double lerp3 = 0.15;
                           text,
                           style: const TextStyle(
                             color: Colors.white,
-                            fontSize: 16,
-                            fontWeight: FontWeight.w600,
+                            fontSize: 22,
+                            fontWeight: FontWeight.w700,
                           ),
                           textAlign: TextAlign.center,
                         ),
                       ),
                     ),
+                     (showResult && isSelected) ?
+                            Icon(
+                              isCorrect ? Icons.check_circle : Icons.cancel,
+                              color: Colors.white,
+                              size: 24,
+                            ):
+                            const SizedBox(
+                              width: 24,
+                            ),
+                            SizedBox(
+                              width: 10,
+                            ),
                     
                     
                   ],
