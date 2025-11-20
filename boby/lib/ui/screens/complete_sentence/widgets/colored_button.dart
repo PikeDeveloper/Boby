@@ -1,0 +1,141 @@
+import 'package:flutter/material.dart';
+
+class OptionButton extends StatelessWidget {
+  final String letter; // The letter indicator (e.g., 'A', 'B')
+  final String text;   // The main text to display
+  final Color color;   // The main color of the button
+  final VoidCallback onTap;
+  final bool isSelected;
+  final bool isCorrect;
+  final bool showResult;
+
+   OptionButton({
+    super.key,
+    required this.letter,
+    required this.text,
+    required this.color,
+    required this.onTap,
+    this.isSelected = false,
+    this.isCorrect = false,
+    this.showResult = false,
+  });
+
+
+
+
+  @override
+  Widget build(BuildContext context) {
+
+    double height =  60;
+    double width =  400;
+    double radiusContainer = 15;
+
+double lerp1 = 0.4;
+double lerp2 = 0.35;
+double lerp3 = 0.15;
+
+
+
+
+
+    
+  
+
+    return Padding(
+      padding: const EdgeInsets.symmetric(vertical: 8.0, horizontal: 16.0),
+      child: Material(
+        color: Colors.transparent,
+        child: GestureDetector(
+          onTap: onTap,
+          child: Stack(
+            alignment: Alignment.topCenter,
+            children: [
+              //botton container
+              Container(
+              
+                height: height,
+                width: width,
+                decoration: BoxDecoration(
+                  borderRadius: BorderRadius.circular(radiusContainer),
+                  color: color
+                ),
+              ),
+              //middle container
+              Container(
+             
+                height: height -4,
+                width: width,
+                decoration: BoxDecoration(
+                  borderRadius: BorderRadius.circular(radiusContainer - 2),
+                  color:  Color.lerp(color, Colors.white, lerp1)!,
+                ),
+              ),
+              Container(
+                margin: const EdgeInsets.only(top: 4),
+                height: height - 10,
+                width: width,
+                decoration: BoxDecoration(
+                  gradient: LinearGradient(
+                    begin: Alignment.topCenter,
+                    end: Alignment.bottomCenter,
+                    colors: [
+                  
+                    Color.lerp(color, Colors.white, lerp2)!, 
+                    Color.lerp(color, Colors.white, lerp3)!, 
+                    color],
+                  ),
+                  borderRadius: BorderRadius.circular(15),
+                 
+                 
+                ),
+                child: Row(
+                  children: [
+                    // Left circle with letter
+                    Container(
+                      width: 30,
+                      height: 30,
+                      margin: const EdgeInsets.only(left: 8),
+                      decoration: BoxDecoration(
+                        color: Colors.white.withOpacity(0.2),
+                        shape: BoxShape.circle,
+                      ),
+                      child: Center(
+                        child: Text(
+                          letter,
+                          style: const TextStyle(
+                            color: Colors.white,
+                            fontSize: 20,
+                            fontWeight: FontWeight.bold,
+                          ),
+                        ),
+                      ),
+                    ),
+                    
+                    // Text in the middle
+                    Expanded(
+                      child: Center(
+                        child: Text(
+                          text,
+                          style: const TextStyle(
+                            color: Colors.white,
+                            fontSize: 16,
+                            fontWeight: FontWeight.w600,
+                          ),
+                          textAlign: TextAlign.center,
+                        ),
+                      ),
+                    ),
+                    
+                    
+                  ],
+                ),
+              ),
+            ],
+          ),
+        ),
+      ),
+    );
+  }
+
+
+}

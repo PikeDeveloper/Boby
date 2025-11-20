@@ -2,7 +2,9 @@ import 'dart:math';
 
 import 'package:boby/controllers/app_controller.dart';
 import 'package:boby/services/storage_service.dart';
+import 'package:boby/ui/screens/complete_sentence/widgets/colored_button.dart';
 import 'package:boby/ui/shared/score.dart';
+import 'package:boby/utils/colors.dart';
 import 'package:boby/utils/constants.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
@@ -116,6 +118,13 @@ class _CompleteSentenceState extends State<CompleteSentence> {
     final bool isTablet = screenWidth > Constants.tabletSize;
     final bool iisLandscape = screenWidth > screenHeight;
 
+    List<Color> colors = [
+      MyColors.guayaba,
+      MyColors.blue,
+      MyColors.yellow,
+      MyColors.purple,
+    ];
+
     return Padding(
       padding: const EdgeInsets.all(16.0),
       child: SizedBox(
@@ -160,6 +169,13 @@ class _CompleteSentenceState extends State<CompleteSentence> {
               ),
             ),
             const SizedBox(height: 30),
+
+            OptionButton(
+            letter: "A",
+            text: "The dog runs quickly",
+            color: const Color.fromARGB(255, 14, 76, 245), 
+            onTap: (){},
+            ),
             
             // Answer Options
             Expanded(
