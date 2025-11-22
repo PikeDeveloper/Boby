@@ -27,19 +27,21 @@ class _CompleteSentenceState extends State<CompleteSentence> {
   Set<int> selectedAnswerIndices = {};
   int? selectedAnswerIndex;
   bool isCorrect = false;
-  int? correctAnswerIndex; // Track the index of the correct answer after shuffling
-  List<String> shuffledAnswers = []; // Store shuffled answers for current question
+  int?
+  correctAnswerIndex; // Track the index of the correct answer after shuffling
+  List<String> shuffledAnswers =
+      []; // Store shuffled answers for current question
 
   void checkAnswer(int answerIndex) {
     final isCorrectAnswer = answerIndex == correctAnswerIndex;
-    
+
     // Play appropriate sound
     if (isCorrectAnswer) {
       appController.playGameBonus();
     } else {
       appController.playBubblePop();
     }
-    
+
     setState(() {
       if (!isCorrectAnswer) {
         selectedAnswerIndices.add(answerIndex);
@@ -50,15 +52,13 @@ class _CompleteSentenceState extends State<CompleteSentence> {
       selectedAnswerIndex = answerIndex;
       showCorrect = true;
       isCorrect = isCorrectAnswer;
-      
+
       // Update scores
       if (isCorrectAnswer) {
         storage.incCompleteSentenceCorrect();
-    
       } else {
         // Increment wrong answers counter for incorrect selections
         storage.incCompleteSentenceWrong();
-    
       }
     });
 
@@ -76,11 +76,10 @@ class _CompleteSentenceState extends State<CompleteSentence> {
             selectedAnswerIndex = null;
             selectedAnswerIndices.clear();
             //choose a random question y no se puede repetir si ya su indice esta en usedQuestionIndices
-              
 
-              while (usedQuestionIndices.contains(currentQuestionIndex)) {
-                currentQuestionIndex = Random().nextInt(numberOfSentences);
-              }
+            while (usedQuestionIndices.contains(currentQuestionIndex)) {
+              currentQuestionIndex = Random().nextInt(numberOfSentences);
+            }
             usedQuestionIndices.add(currentQuestionIndex);
             _shuffleAnswers(); // Shuffle answers for the new question
           });
@@ -91,12 +90,16 @@ class _CompleteSentenceState extends State<CompleteSentence> {
 
   void _shuffleAnswers() {
     final currentQuestion = Sentences.sentences[currentQuestionIndex];
-    final List<String> answers = List<String>.from(currentQuestion['answers'] as List);
-    
+    final List<String> answers = List<String>.from(
+      currentQuestion['answers'] as List,
+    );
+
     // Shuffle answers and track correct answer position
     shuffledAnswers = List.from(answers);
     shuffledAnswers.shuffle();
-    correctAnswerIndex = shuffledAnswers.indexOf(answers[0]); // Original correct answer
+    correctAnswerIndex = shuffledAnswers.indexOf(
+      answers[0],
+    ); // Original correct answer
   }
 
   @override
@@ -126,50 +129,96 @@ class _CompleteSentenceState extends State<CompleteSentence> {
       MyColors.purple,
     ];
 
-    return Padding(
-      padding: const EdgeInsets.all(16.0),
-      child: SizedBox(
-        width: min(screenWidth *0.9, 600),
-        child: Column(
-          mainAxisAlignment: MainAxisAlignment.center,
-          children: [
-            Score(
-                  game: "CompleteSentence",
-                ),
-           
-            // Question Card
-          SentenceContainer(sentence: sentence),
-            const SizedBox(height: 10),
+    return SafeArea(
+      child: Column(
+        children: [
+          // Header with Score
+          Padding(
+            padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
+            child: Score(game: "CompleteSentence"),
+          ),
 
-          
-            // Answer Options
-            Expanded(
-              child: ListView.builder(
-               // no scroll
-           
-                itemCount: shuffledAnswers.length,
-                itemBuilder: (context, index) {
-                  bool isSelected = selectedAnswerIndex == index || selectedAnswerIndices.contains(index);
-                  bool isCorrectAnswer = index == correctAnswerIndex;
-                  
-               
-                  return OptionButton(
-                    letter: String.fromCharCode(65 + index),
-                    text: shuffledAnswers[index],
-                    color:  isCorrectAnswer && isSelected ? Colors.green : colors[index],
-                    onTap: () => checkAnswer(index),
-                    isSelected: isSelected,
-                    isCorrect: isCorrectAnswer,
-                    showResult: showCorrect,
-                  );
-                },
+          Expanded(
+            child: Padding(
+              padding: const EdgeInsets.all(16.0),
+              child: SizedBox(
+                width: min(screenWidth * 0.9, 600),
+                child: Column(
+                  mainAxisAlignment: MainAxisAlignment.center,
+                  children: [
+                    // Question Card
+                    Container(
+                      padding: const EdgeInsets.all(20),
+                      decoration: BoxDecoration(
+                        color: Colors.white,
+                        borderRadius: BorderRadius.circular(25),
+                        boxShadow: [
+                          BoxShadow(
+                            color: Colors.orange.withOpacity(0.2),
+                            blurRadius: 15,
+                            offset: const Offset(0, 8),
+                          ),
+                        ],
+                        border: Border.all(
+                          color: Colors.orange.shade200,
+                          width: 2,
+                        ),
+                      ),
+                      child: Column(
+                        children: [
+                          const Text(
+                            "Complete the sentence:",
+                            style: TextStyle(
+                              fontSize: 18,
+                              color: Colors.orange,
+                              fontWeight: FontWeight.bold,
+                            ),
+                          ),
+                          const SizedBox(height: 15),
+                          SentenceContainer(sentence: sentence),
+                        ],
+                      ),
+                    ),
+                    const SizedBox(height: 30),
+
+                    // Answer Options
+                    Expanded(
+                      child: ListView.separated(
+                        itemCount: shuffledAnswers.length,
+                        separatorBuilder: (context, index) =>
+                            const SizedBox(height: 12),
+                        itemBuilder: (context, index) {
+                          bool isSelected =
+                              selectedAnswerIndex == index ||
+                              selectedAnswerIndices.contains(index);
+                          bool isCorrectAnswer = index == correctAnswerIndex;
+
+                          return AnimatedScale(
+                            scale: isSelected ? 1.02 : 1.0,
+                            duration: const Duration(milliseconds: 200),
+                            child: OptionButton(
+                              letter: String.fromCharCode(65 + index),
+                              text: shuffledAnswers[index],
+                              color: isCorrectAnswer && showCorrect
+                                  ? Colors.green
+                                  : (isSelected && !isCorrectAnswer
+                                        ? Colors.red
+                                        : colors[index % colors.length]),
+                              onTap: () => checkAnswer(index),
+                              isSelected: isSelected,
+                              isCorrect: isCorrectAnswer,
+                              showResult: showCorrect,
+                            ),
+                          );
+                        },
+                      ),
+                    ),
+                  ],
+                ),
               ),
             ),
-          
-
-            
-          ],
-        ),
+          ),
+        ],
       ),
     );
   }

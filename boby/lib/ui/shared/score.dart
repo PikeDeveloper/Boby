@@ -1,6 +1,6 @@
 import 'package:boby/controllers/app_controller.dart';
 import 'package:boby/services/storage_service.dart';
-import 'package:boby/utils/colors.dart';
+
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 
@@ -74,55 +74,86 @@ class Score extends StatelessWidget {
     return GestureDetector(
       onTap: () => _showRestoreDialog(context, istablet, isLandscape),
       child: Container(
-        width: screenSize.width * 0.8,
-        margin: const EdgeInsets.all(8),
-        padding: const EdgeInsets.all(8),
+        width: isLandscape ? screenSize.width * 0.6 : screenSize.width * 0.9,
+        margin: const EdgeInsets.symmetric(vertical: 10, horizontal: 20),
+        padding: const EdgeInsets.symmetric(vertical: 8, horizontal: 16),
         decoration: BoxDecoration(
           color: Colors.white,
-          borderRadius: BorderRadius.circular(15),
+          borderRadius: BorderRadius.circular(30),
+          border: Border.all(color: const Color(0xFF1E88E5), width: 3),
           boxShadow: [
             BoxShadow(
-              color: Colors.black.withOpacity(0.1),
-              blurRadius: 4,
-              offset: const Offset(0, 2),
+              color: Colors.black.withOpacity(0.15),
+              blurRadius: 8,
+              offset: const Offset(0, 4),
             ),
           ],
         ),
         child: Obx(
           () => Row(
-            mainAxisSize: MainAxisSize.min,
-            mainAxisAlignment: MainAxisAlignment.center,
+            mainAxisAlignment: MainAxisAlignment.spaceBetween,
             children: [
-              getBadge(
-                double.parse(_getCorrectValue()),
-                double.parse(_getWrongValue()),
-                istablet,
-                isLandscape,
+              // Level Badge
+              Container(
+                padding: const EdgeInsets.all(4),
+                decoration: BoxDecoration(
+                  color: Colors.blue.withOpacity(0.1),
+                  shape: BoxShape.circle,
+                ),
+                child: getBadge(
+                  double.parse(_getCorrectValue()),
+                  double.parse(_getWrongValue()),
+                  istablet,
+                  isLandscape,
+                ),
               ),
-              const Spacer(),
-              _buildScoreItem(
-                "Correct",
-                _getCorrectValue(),
-                MyColors.green,
-                isLandscape,
-                istablet,
+
+              // Stats
+              Row(
+                mainAxisSize: MainAxisSize.min,
+                children: [
+                  _buildScoreItem(
+                    Icons.check_circle_rounded,
+                    _getCorrectValue(),
+                    Colors.green,
+                    isLandscape,
+                    istablet,
+                  ),
+                  Container(
+                    height: 24,
+                    width: 2,
+                    margin: const EdgeInsets.symmetric(horizontal: 12),
+                    color: Colors.grey.shade300,
+                  ),
+                  _buildScoreItem(
+                    Icons.cancel_rounded,
+                    _getWrongValue(),
+                    Colors.red,
+                    isLandscape,
+                    istablet,
+                  ),
+                ],
               ),
-              const SizedBox(width: 16),
-              _buildScoreItem(
-                "Wrong",
-                _getWrongValue(),
-                MyColors.red,
-                isLandscape,
-                istablet,
+
+              // Hidden trigger for reactivity (kept but minimized)
+              SizedBox(
+                width: 0,
+                height: 0,
+                child: Text(appController.noShow.value),
               ),
-              Text(appController.noShow.value, style: TextStyle(fontSize: 1)),
-              const SizedBox(width: 16),
-              const Spacer(),
-              getBadge(
-                double.parse(_getCorrectValue()),
-                double.parse(_getWrongValue()),
-                istablet,
-                isLandscape,
+
+              // Menu Icon
+              Container(
+                padding: const EdgeInsets.all(4),
+                decoration: BoxDecoration(
+                  color: Colors.orange.withOpacity(0.1),
+                  shape: BoxShape.circle,
+                ),
+                child: const Icon(
+                  Icons.menu_rounded,
+                  color: Colors.orange,
+                  size: 28,
+                ),
               ),
             ],
           ),
@@ -132,7 +163,7 @@ class Score extends StatelessWidget {
   }
 
   Widget _buildScoreItem(
-    String label,
+    IconData icon,
     String value,
     Color color,
     bool isLandscape,
@@ -140,18 +171,12 @@ class Score extends StatelessWidget {
   ) {
     return Row(
       children: [
-        Text(
-          "$label: ",
-          style: TextStyle(
-            fontSize: isLandscape || istablet ? 35 : 16,
-            fontWeight: FontWeight.w600,
-            color: color,
-          ),
-        ),
+        Icon(icon, color: color, size: isLandscape || istablet ? 32 : 24),
+        const SizedBox(width: 6),
         Text(
           value,
           style: TextStyle(
-            fontSize: isLandscape || istablet ? 35 : 16,
+            fontSize: isLandscape || istablet ? 28 : 20,
             fontWeight: FontWeight.bold,
             color: color,
           ),

@@ -17,19 +17,19 @@ class LettersSoup extends StatefulWidget {
 class _LettersSoupState extends State<LettersSoup> {
   static const int size = 6;
   final Color colorLetter = const Color.fromARGB(238, 64, 64, 64);
-  
+
   // List of colors for different words (darker shades for better text contrast)
   final List<Color> wordColors = [
     Colors.red.shade400,
-       Colors.purple.shade400,
+    Colors.purple.shade400,
     Colors.green.shade400,
     Colors.orange.shade400,
-     Colors.blue.shade400,
+    Colors.blue.shade400,
     Colors.teal.shade400,
     Colors.pink.shade400,
     Colors.indigo.shade400,
   ];
-  
+
   // Map to store colors for each word
   final Map<String, Color> wordColorMap = {};
   late List<String> words;
@@ -57,19 +57,21 @@ class _LettersSoupState extends State<LettersSoup> {
   Widget build(BuildContext context) {
     final screenSize = MediaQuery.of(context).size;
     final isLandscape = screenSize.width > screenSize.height;
-    bool istablet = screenSize.width > Constants.tabletSize;  
+    bool istablet = screenSize.width > Constants.tabletSize;
     return Stack(
       children: [
         Padding(
-          padding:   const EdgeInsets.symmetric(horizontal: 10, vertical: 12),
+          padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 12),
           child: Column(
             crossAxisAlignment: CrossAxisAlignment.stretch,
             children: [
               Text(
                 topicTitle,
                 textAlign: TextAlign.center,
-                style:
-                    const TextStyle(fontSize: 20, fontWeight: FontWeight.bold),
+                style: const TextStyle(
+                  fontSize: 20,
+                  fontWeight: FontWeight.bold,
+                ),
               ),
               const SizedBox(height: 8),
               _buildWordList(isLandscape, istablet),
@@ -81,52 +83,58 @@ class _LettersSoupState extends State<LettersSoup> {
           ),
         ),
         if (foundWords.length == words.length)
-          WinnerScreen(onTap: () {
-            setState(() {
-              _selectRandomCategory();
-              grid = _generateGrid(size, words);
-              foundWords.clear();
-              foundCells.clear();
-              foundPaths.clear();
-              start = null;
-              end = null;
-              selectionPath = [];
-            });
-          }),
+          WinnerScreen(
+            onTap: () {
+              setState(() {
+                _selectRandomCategory();
+                grid = _generateGrid(size, words);
+                foundWords.clear();
+                foundCells.clear();
+                foundPaths.clear();
+                start = null;
+                end = null;
+                selectionPath = [];
+              });
+            },
+          ),
       ],
     );
   }
 
-  Widget _buildWordList( bool isLandscape, bool istablet) {
+  Widget _buildWordList(bool isLandscape, bool istablet) {
     return Wrap(
       alignment: WrapAlignment.center,
       spacing: 8,
       runSpacing: 4,
       children: words
-          .map((w) => Container(
-                padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 6),
-                decoration: BoxDecoration(
-                  color:  Colors.grey.shade300,
-                  borderRadius: BorderRadius.circular(10),
-                  border: Border.all(
-                    color: wordColorMap[w]?.withValues(alpha: 1) ?? Colors.grey.shade300,
-                    width: 2,
-                  ),
+          .map(
+            (w) => Container(
+              padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 6),
+              decoration: BoxDecoration(
+                color: Colors.grey.shade300,
+                borderRadius: BorderRadius.circular(10),
+                border: Border.all(
+                  color:
+                      wordColorMap[w]?.withValues(alpha: 1) ??
+                      Colors.grey.shade300,
+                  width: 2,
                 ),
-                child: Text(
-                  w,
-                  style: TextStyle(
-                    fontSize: isLandscape || istablet ? 25 : 16,
-                    color: colorLetter,
-                    fontWeight: FontWeight.bold,
-                    decoration: foundWords.contains(w)
-                        ? TextDecoration.lineThrough
-                        : null,
-                    decorationColor: colorLetter,
-                    decorationThickness: 2,
-                  ),
+              ),
+              child: Text(
+                w,
+                style: TextStyle(
+                  fontSize: isLandscape || istablet ? 25 : 16,
+                  color: colorLetter,
+                  fontWeight: FontWeight.bold,
+                  decoration: foundWords.contains(w)
+                      ? TextDecoration.lineThrough
+                      : null,
+                  decorationColor: colorLetter,
+                  decorationThickness: 2,
                 ),
-              ))
+              ),
+            ),
+          )
           .toList(),
     );
   }
@@ -148,12 +156,12 @@ class _LettersSoupState extends State<LettersSoup> {
     else if (row == size - 1 && col == size - 1) {
       return const BorderRadius.only(bottomRight: Radius.circular(12));
     }
-    
+
     // For all other cells, no rounded corners
     return BorderRadius.zero;
   }
 
-  Widget _buildGrid( bool isLandscape, bool istablet) {
+  Widget _buildGrid(bool isLandscape, bool istablet) {
     final available =
         MediaQuery.of(context).size.width - 20; // 10px margin each side
     final gridWidth = available > 600 ? 600.0 : available;
@@ -221,10 +229,7 @@ class _LettersSoupState extends State<LettersSoup> {
                         Container(
                           decoration: BoxDecoration(
                             color: Colors.grey.shade200,
-                            border: Border.all(
-                              color: Colors.black12,
-                              width: 1,
-                            ),
+                            border: Border.all(color: Colors.black12, width: 1),
                             borderRadius: _getBorderRadius(r, c, size),
                           ),
                           alignment: Alignment.center,
@@ -239,7 +244,7 @@ class _LettersSoupState extends State<LettersSoup> {
                         if (isPartOfFoundWord(p))
                           Container(
                             decoration: BoxDecoration(
-                            //  color: getHighlightColor(p)?.withOpacity(0.3),
+                              //  color: getHighlightColor(p)?.withOpacity(0.3),
                               borderRadius: _getBorderRadius(r, c, size),
                             ),
                           ),
@@ -365,7 +370,7 @@ class _LettersSoupState extends State<LettersSoup> {
     }
     return false;
   }
-  
+
   // Get the highlight color of the word at a specific cell
   Color? getHighlightColor(Point p) {
     for (var i = 0; i < foundPaths.length; i++) {
@@ -386,32 +391,32 @@ class _LettersSoupState extends State<LettersSoup> {
       });
       return;
     }
-    
+
     final idx = _rng.nextInt(list.length);
     final item = list[idx];
     final newTitle = (item['title'] ?? 'Words').toString();
     final raw = (item['words'] as List).map((e) => e.toString()).toList();
-    
+
     // Normalize: keep only A-Z letters and uppercase
     final normalized = raw
         .map((e) => e.toUpperCase().replaceAll(RegExp(r'[^A-Z]'), ''))
         .where((w) => w.isNotEmpty)
         .toList();
-        
+
     // Prefer words that fit the grid (<= size). If none fit, fall back to all.
     final eligible = normalized.where((w) => w.length <= size).toList();
     final pool = eligible.isNotEmpty ? eligible : List<String>.from(normalized);
     final selected = <String>[];
-    
+
     while (selected.length < 4 && pool.isNotEmpty) {
       final i = _rng.nextInt(pool.length);
       selected.add(pool.removeAt(i));
     }
-    
+
     setState(() {
       words = selected;
       topicTitle = newTitle;
-      
+
       // Clear previous state
       foundWords.clear();
       foundCells.clear();
@@ -420,13 +425,13 @@ class _LettersSoupState extends State<LettersSoup> {
       end = null;
       selectionPath = [];
       _playedWin = false;
-      
+
       // Assign colors to words
       wordColorMap.clear();
       for (var i = 0; i < words.length; i++) {
         wordColorMap[words[i]] = wordColors[i % wordColors.length];
       }
-      
+
       // Regenerate grid with new words
       grid = _generateGrid(size, words);
     });
@@ -628,13 +633,19 @@ class _SelectionPainter extends CustomPainter {
     final a = path.first;
     final b = path.last;
 
-    final aCenter =
-        Offset(a.c * cellSize + cellSize / 2, a.r * cellSize + cellSize / 2);
-    final bCenter =
-        Offset(b.c * cellSize + cellSize / 2, b.r * cellSize + cellSize / 2);
+    final aCenter = Offset(
+      a.c * cellSize + cellSize / 2,
+      a.r * cellSize + cellSize / 2,
+    );
+    final bCenter = Offset(
+      b.c * cellSize + cellSize / 2,
+      b.r * cellSize + cellSize / 2,
+    );
 
-    final mid =
-        Offset((aCenter.dx + bCenter.dx) / 2, (aCenter.dy + bCenter.dy) / 2);
+    final mid = Offset(
+      (aCenter.dx + bCenter.dx) / 2,
+      (aCenter.dy + bCenter.dy) / 2,
+    );
     final dx = bCenter.dx - aCenter.dx;
     final dy = bCenter.dy - aCenter.dy;
     final angle = math.atan2(dy, dx);
@@ -642,7 +653,10 @@ class _SelectionPainter extends CustomPainter {
 
     final thickness = cellSize * 0.8;
     final rect = Rect.fromCenter(
-        center: mid, width: length + thickness, height: thickness);
+      center: mid,
+      width: length + thickness,
+      height: thickness,
+    );
     final rrect = RRect.fromRectAndRadius(rect, Radius.circular(thickness / 2));
 
     canvas.save();
