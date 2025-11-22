@@ -1,6 +1,6 @@
 import 'package:boby/ui/screens/setting_screen/widgets/background_settins.dart';
 import 'package:boby/ui/screens/setting_screen/widgets/badge_setting.dart';
-import 'package:boby/ui/screens/setting_screen/widgets/match_it.sattings.dart';
+import 'package:boby/ui/screens/setting_screen/widgets/match_it_sattings.dart';
 import 'package:boby/ui/screens/setting_screen/widgets/memory_settings.dart';
 import 'package:boby/ui/screens/setting_screen/widgets/more_apps.dart';
 import 'package:flutter/material.dart';
@@ -13,92 +13,56 @@ class SettingScreen extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return Scaffold(
-      extendBodyBehindAppBar: true,
-      appBar: AppBar(
-        backgroundColor: Colors.transparent,
-        elevation: 0,
-        leading: IconButton(
-          icon: Container(
-            padding: const EdgeInsets.all(8),
-            decoration: BoxDecoration(
-              color: Colors.white,
-              shape: BoxShape.circle,
-              boxShadow: [
-                BoxShadow(color: Colors.black.withOpacity(0.1), blurRadius: 5),
-              ],
+    return SafeArea(
+      child: SingleChildScrollView(
+        padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 10),
+        child: Column(
+          children: [
+            // Header
+            const SizedBox(height: 10),
+            const WordOfImages(letters: "SETTINGS", letterSize: 35),
+            const SizedBox(height: 30),
+
+            // Background Settings
+            _buildSection(
+              title: "BACKGROUNDS",
+              content: const BackgroundSettings(),
+              color: Colors.blue,
             ),
-            child: const Icon(
-              Icons.arrow_back_rounded,
-              color: Color(0xFF1E88E5),
+            const SizedBox(height: 25),
+
+            // Memory Settings
+            _buildSection(
+              title: "MEMORY",
+              content: const MemrySettings(),
+              color: Colors.purple,
             ),
-          ),
-          onPressed: () => Navigator.of(context).pop(),
-        ),
-      ),
-      body: Container(
-        decoration: const BoxDecoration(
-          gradient: LinearGradient(
-            begin: Alignment.topCenter,
-            end: Alignment.bottomCenter,
-            colors: [
-              Color(0xFFE3F2FD), // Light Blue
-              Color(0xFFBBDEFB), // Blue 100
-            ],
-          ),
-        ),
-        child: SafeArea(
-          child: SingleChildScrollView(
-            padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 10),
-            child: Column(
-              children: [
-                // Header
-                const SizedBox(height: 10),
-                const WordOfImages(letters: "SETTINGS", letterSize: 35),
-                const SizedBox(height: 30),
+            const SizedBox(height: 25),
 
-                // Background Settings
-                _buildSection(
-                  title: "BACKGROUNDS",
-                  content: const BackgroundSettings(),
-                  color: Colors.blue,
-                ),
-                const SizedBox(height: 25),
-
-                // Memory Settings
-                _buildSection(
-                  title: "MEMORY",
-                  content: const MemrySettings(),
-                  color: Colors.purple,
-                ),
-                const SizedBox(height: 25),
-
-                // Match Settings
-                _buildSection(
-                  title: "MATCH",
-                  content: const MatchItSettings(),
-                  color: Colors.orange,
-                ),
-                const SizedBox(height: 25),
-
-                // Badge Settings
-                _buildSection(
-                  title: "BADGE",
-                  content: const BadgeSettings(),
-                  color: Colors.green,
-                ),
-                const SizedBox(height: 25),
-
-                // More Apps
-                _buildSection(
-                  title: "MORE",
-                  content: const MoreApps(),
-                  color: Colors.pink,
-                ),
-                const SizedBox(height: 50),
-              ],
+            // Match Settings
+            _buildSection(
+              title: "MATCH",
+              content: const MatchItSettings(),
+              color: Colors.orange,
             ),
-          ),
+            const SizedBox(height: 25),
+
+            // Badge Settings
+            _buildSection(
+              title: "BADGE",
+              content: const BadgeSettings(),
+              color: Colors.green,
+            ),
+            const SizedBox(height: 25),
+
+            // More Apps
+            _buildSection(
+              title: "MORE",
+              content: const MoreApps(),
+              color: Colors.pink,
+            ),
+            const SizedBox(height: 50),
+          ],
         ),
       ),
     );
