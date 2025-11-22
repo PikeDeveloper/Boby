@@ -163,8 +163,9 @@ class _WordGuessScreenState extends State<WordGuessScreen> {
         if (hasCtrl) {
           Get.find<AppController>().playMenuSound(_correctWordSound);
           // Show celebration overlay for 1 second
-          Get.find<AppController>()
-              .showCelebration(duration: const Duration(seconds: 1));
+          Get.find<AppController>().showCelebration(
+            duration: const Duration(seconds: 1),
+          );
         }
         Future.delayed(const Duration(milliseconds: 1000), () {
           if (!mounted) return;
@@ -199,7 +200,7 @@ class _WordGuessScreenState extends State<WordGuessScreen> {
     final screenSize = MediaQuery.of(context).size;
     final minSize = min(screenSize.width, screenSize.height);
     bool isLandscape = screenSize.width > screenSize.height;
-    bool istablet = screenSize.width > Constants.tabletSize; 
+    bool istablet = screenSize.width > Constants.tabletSize;
 
     // Split keys into two rows
     final firstRow = keys.take((keys.length / 2).ceil()).toList();
@@ -209,125 +210,158 @@ class _WordGuessScreenState extends State<WordGuessScreen> {
     Widget celebrationOverlay = const SizedBox.shrink();
     if (Get.isRegistered<AppController>()) {
       final app = Get.find<AppController>();
-      celebrationOverlay = Obx(() => app.celebrationVisible.value
-          ? const CelebrationImage()
-          : const SizedBox.shrink());
+      celebrationOverlay = Obx(
+        () => app.celebrationVisible.value
+            ? const CelebrationImage()
+            : const SizedBox.shrink(),
+      );
     }
 
-    return Stack(
-      fit: StackFit.expand,
-      children: [
-        celebrationOverlay,
-        Column(
-          crossAxisAlignment: CrossAxisAlignment.center,
-          mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-          mainAxisSize: MainAxisSize.min,
-          children: [
-            WordGuessWord(),
-            
-            SizedBox(
-              width: isLandscape ? minSize * 0.4 : min(minSize * 0.7, 300),
-              height: isLandscape ? minSize * 0.4 : min(minSize * 0.7, 300),
-              child: ClipRRect(
-                borderRadius: BorderRadius.circular(25),
-                child: PageView.builder(
-                  controller: _pageController,
-                  physics: const BouncingScrollPhysics(),
-                  onPageChanged: (index) {
-                    setState(() {
-                      currentIndex = index;
-                    });
-                    _startRound();
-                  },
-                  itemCount: shuffledAssets.length,
-                  itemBuilder: (context, index) {
-                    final path = shuffledAssets[index]["image"] ?? "";
-                    return Image.asset(
-                      path,
-                      fit: BoxFit.contain,
-                      errorBuilder: (c, e, s) => const Center(
-                          child: Icon(Icons.image_not_supported, size: 48)),
-                    );
-                  },
-                ),
+    return SafeArea(
+      child: Stack(
+        fit: StackFit.expand,
+        children: [
+          celebrationOverlay,
+          Column(
+            crossAxisAlignment: CrossAxisAlignment.center,
+            mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+            mainAxisSize: MainAxisSize.min,
+            children: [
+              Padding(
+                padding: const EdgeInsets.only(top: 8.0),
+                child: WordGuessWord(),
               ),
-            ),
-            const SizedBox(height: 16),
 
-            // Answer slots (lines to place letters)
-            Column(
-              children: [
-                Center(
-                  child: Wrap(
-                    spacing: 8,
-                    runSpacing: 8,
-                    children: List.generate(slots.length, (i) {
-                      final s = slots[i];
-                      return GestureDetector(
-                        onTap: () => _onSlotTap(i),
-                        child: Container(
-                          width: isLandscape || istablet ? 80 : 36,
-                          height: isLandscape || istablet ? 80 : 48,
-                          alignment: Alignment.center,
-                          decoration: BoxDecoration(
-                            borderRadius: BorderRadius.circular(8),
-                            border: Border.all(
-                                color:
-                                    _showError ? Colors.red : Colors.grey.shade400,
-                                width: 2),
-                            color: s.char == null
-                                ? Colors.transparent
-                                : Theme.of(context)
-                                    .colorScheme
-                                    .primary
-                                    .withOpacity(0.1),
-                          ),
-                          child: s.char == null
-                              ? const SizedBox.shrink()
-                              : Image.asset(
-                                  "assets/letters_2/${s.char}.png",
-                                  height: isLandscape || istablet ? 60 : 36,
-                                  fit: BoxFit.contain,
-                                ),
+              // Image Card
+              Container(
+                width: isLandscape ? minSize * 0.4 : min(minSize * 0.7, 300),
+                height: isLandscape ? minSize * 0.4 : min(minSize * 0.7, 300),
+                decoration: BoxDecoration(
+                  color: Colors.white,
+                  borderRadius: BorderRadius.circular(25),
+                  boxShadow: [
+                    BoxShadow(
+                      color: Colors.teal.withOpacity(0.2),
+                      blurRadius: 15,
+                      offset: const Offset(0, 8),
+                    ),
+                  ],
+                  border: Border.all(color: Colors.white, width: 4),
+                ),
+                child: ClipRRect(
+                  borderRadius: BorderRadius.circular(21),
+                  child: PageView.builder(
+                    controller: _pageController,
+                    physics: const BouncingScrollPhysics(),
+                    onPageChanged: (index) {
+                      setState(() {
+                        currentIndex = index;
+                      });
+                      _startRound();
+                    },
+                    itemCount: shuffledAssets.length,
+                    itemBuilder: (context, index) {
+                      final path = shuffledAssets[index]["image"] ?? "";
+                      return Image.asset(
+                        path,
+                        fit: BoxFit.contain,
+                        errorBuilder: (c, e, s) => const Center(
+                          child: Icon(Icons.image_not_supported, size: 48),
                         ),
                       );
-                    }),
+                    },
                   ),
                 ),
-                 const SizedBox(height: 16),
+              ),
+              const SizedBox(height: 16),
 
-            ControlButtons(next: _next, back: _back, clue: _clue),
+              // Answer slots (lines to place letters)
+              Column(
+                children: [
+                  Center(
+                    child: Wrap(
+                      spacing: 8,
+                      runSpacing: 8,
+                      children: List.generate(slots.length, (i) {
+                        final s = slots[i];
+                        return GestureDetector(
+                          onTap: () => _onSlotTap(i),
+                          child: AnimatedContainer(
+                            duration: const Duration(milliseconds: 200),
+                            width: isLandscape || istablet ? 80 : 40,
+                            height: isLandscape || istablet ? 80 : 50,
+                            alignment: Alignment.center,
+                            decoration: BoxDecoration(
+                              borderRadius: BorderRadius.circular(12),
+                              border: Border.all(
+                                color: _showError
+                                    ? Colors.red
+                                    : (s.char != null
+                                          ? Colors.teal
+                                          : Colors.grey.shade400),
+                                width: 2,
+                              ),
+                              color: s.char == null
+                                  ? Colors.white.withOpacity(0.5)
+                                  : Colors.white,
+                              boxShadow: s.char != null
+                                  ? [
+                                      BoxShadow(
+                                        color: Colors.black.withOpacity(0.1),
+                                        blurRadius: 4,
+                                        offset: const Offset(0, 2),
+                                      ),
+                                    ]
+                                  : [],
+                            ),
+                            child: s.char == null
+                                ? const SizedBox.shrink()
+                                : Image.asset(
+                                    "assets/letters_2/${s.char}.png",
+                                    height: isLandscape || istablet ? 60 : 36,
+                                    fit: BoxFit.contain,
+                                  ),
+                          ),
+                        );
+                      }),
+                    ),
+                  ),
+                  const SizedBox(height: 16),
 
-            const SizedBox(height: 20),
+                  ControlButtons(next: _next, back: _back, clue: _clue),
 
-            // Two rows of letters to choose
-            _KeysRow(
-              keysRow: firstRow,
-              onTap: (idxInRow) => _onKeyTap(idxInRow),
-              baseIndex: 0,
-            ),
-            const SizedBox(height: 8),
-            _KeysRow(
-              keysRow: secondRow,
-              onTap: (idxInRow) =>
-                  _onKeyTap((keys.length / 2).ceil() + idxInRow),
-              baseIndex: (keys.length / 2).ceil(),
-            ),
-            const SizedBox(height: 16),
-              ],
-            ),
+                  const SizedBox(height: 20),
 
-           
-          ],
-        ),
-      ],
+                  // Two rows of letters to choose
+                  _KeysRow(
+                    keysRow: firstRow,
+                    onTap: (idxInRow) => _onKeyTap(idxInRow),
+                    baseIndex: 0,
+                  ),
+                  const SizedBox(height: 8),
+                  _KeysRow(
+                    keysRow: secondRow,
+                    onTap: (idxInRow) =>
+                        _onKeyTap((keys.length / 2).ceil() + idxInRow),
+                    baseIndex: (keys.length / 2).ceil(),
+                  ),
+                  const SizedBox(height: 16),
+                ],
+              ),
+            ],
+          ),
+        ],
+      ),
     );
   }
 }
 
 class _KeysRow extends StatelessWidget {
-  const _KeysRow(
-      {required this.keysRow, required this.onTap, required this.baseIndex});
+  const _KeysRow({
+    required this.keysRow,
+    required this.onTap,
+    required this.baseIndex,
+  });
 
   final List<_KeyChar> keysRow;
   final void Function(int idxInRow) onTap;
@@ -337,29 +371,36 @@ class _KeysRow extends StatelessWidget {
   Widget build(BuildContext context) {
     final screenSize = MediaQuery.of(context).size;
     bool isLandscape = screenSize.width > screenSize.height;
-    bool istablet = screenSize.width > Constants.tabletSize; 
+    bool istablet = screenSize.width > Constants.tabletSize;
     return Center(
       child: Wrap(
-        spacing: 8,
+        spacing: 6,
+        runSpacing: 6,
         children: List.generate(keysRow.length, (i) {
           final k = keysRow[i];
           return SizedBox(
-            width: isLandscape || istablet ? 80 : 36, 
-            height: isLandscape || istablet ? 80 : 44,
+            width: isLandscape || istablet ? 80 : 40,
+            height: isLandscape || istablet ? 80 : 45,
             child: ElevatedButton(
               onPressed: k.used ? null : () => onTap(i),
               style: ElevatedButton.styleFrom(
                 padding: EdgeInsets.zero,
+                backgroundColor: Colors.white,
+                foregroundColor: Colors.teal.shade700,
+                elevation: k.used ? 0 : 2,
                 shape: RoundedRectangleBorder(
-                    borderRadius: BorderRadius.circular(8)),
-              ),
-              child: Text(
-                k.char,
-                style: TextStyle(
-                  fontSize: isLandscape || istablet ? 40 : 16,
-                  fontWeight: FontWeight.bold,
+                  borderRadius: BorderRadius.circular(12),
                 ),
               ),
+              child: k.used
+                  ? const SizedBox.shrink()
+                  : Text(
+                      k.char,
+                      style: TextStyle(
+                        fontSize: isLandscape || istablet ? 40 : 20,
+                        fontWeight: FontWeight.bold,
+                      ),
+                    ),
             ),
           );
         }),

@@ -40,7 +40,7 @@ class _FigureOptionsGrid extends StatelessWidget {
   final void Function(String) onTap;
   final bool Function(String) isWrong;
   final bool Function(String) isCorrect;
-  
+
   const _FigureOptionsGrid({
     required this.options,
     required this.assets,
@@ -55,18 +55,14 @@ class _FigureOptionsGrid extends StatelessWidget {
     final isLandscape = screenSize.width > screenSize.height;
     bool istablet = screenSize.width > Constants.tabletSize;
 
+    // Color choices with human-readable names
+    final List<Color> colors = const [
+      (Colors.blue),
+      (Colors.yellow),
+      (Colors.purple),
+      (Colors.orange),
+    ];
 
-      // Color choices with human-readable names
-  final List< Color> colors = const [
- 
- 
-    ( Colors.blue),
-    ( Colors.yellow),
-    ( Colors.purple),
-    ( Colors.orange),
-   
-  ];
-    
     return GridView.builder(
       shrinkWrap: true,
       physics: const NeverScrollableScrollPhysics(),
@@ -85,17 +81,18 @@ class _FigureOptionsGrid extends StatelessWidget {
         );
         final wrong = isWrong(label);
         final correct = isCorrect(label);
-        
+
         return GestureDetector(
           onTap: () => onTap(label),
           child: Container(
             decoration: BoxDecoration(
-              
               borderRadius: BorderRadius.circular(16),
               border: Border.all(
-                color: wrong 
-                  ? Colors.red 
-                  : correct ? Colors.green : colors[index] ,
+                color: wrong
+                    ? Colors.red
+                    : correct
+                    ? Colors.green
+                    : colors[index],
                 width: 4,
               ),
               boxShadow: [
@@ -116,16 +113,18 @@ class _FigureOptionsGrid extends StatelessWidget {
                     Image.asset(
                       asset['image']!,
                       fit: BoxFit.cover,
-                      errorBuilder: (context, error, stackTrace) => 
+                      errorBuilder: (context, error, stackTrace) =>
                           _buildFallbackContent(label),
                     )
                   else
                     _buildFallbackContent(label),
-                  
+
                   // Overlay for wrong/correct state
                   if (wrong || correct)
                     Container(
-                      color: (wrong ? Colors.red : Colors.green).withOpacity(0.3),
+                      color: (wrong ? Colors.red : Colors.green).withOpacity(
+                        0.3,
+                      ),
                       child: Center(
                         child: Icon(
                           wrong ? Icons.close : Icons.check,
@@ -142,7 +141,7 @@ class _FigureOptionsGrid extends StatelessWidget {
       },
     );
   }
-  
+
   Widget _buildFallbackContent(String label) {
     return Container(
       color: Colors.grey[200],
@@ -191,18 +190,18 @@ class _MatchItScreenState extends State<MatchItScreen> {
 
   //number choices
   final List<Map<String, dynamic>> _numbers = [
-    {"number": 1, "letter": "one"}, 
+    {"number": 1, "letter": "one"},
     {"number": 2, "letter": "two"},
     {"number": 3, "letter": "three"},
     {"number": 4, "letter": "four"},
     {"number": 5, "letter": "five"},
-    {"number": 6, "letter": "six"},   
+    {"number": 6, "letter": "six"},
     {"number": 7, "letter": "seven"},
     {"number": 8, "letter": "eight"},
     {"number": 9, "letter": "nine"},
     {"number": 10, "letter": "ten"},
     {"number": 11, "letter": "eleven"},
-    {"number": 12, "letter": "twelve"},   
+    {"number": 12, "letter": "twelve"},
     {"number": 13, "letter": "thirteen"},
     {"number": 14, "letter": "fourteen"},
     {"number": 15, "letter": "fifteen"},
@@ -234,12 +233,12 @@ class _MatchItScreenState extends State<MatchItScreen> {
   final Set<String> _wrongColorLabels = {};
   final Set<int> _wrongNumberValues = {};
   final Set<String> _wrongFigureLabels = {};
-  
+
   // Store the complete figure data for display
   List<Map<String, String>> _figureAssets = [];
   // Feedback state
   bool _isLocked = false; // prevents taps during feedback
-  bool _showCorrectOverlay = false; // show green check over the target 
+  bool _showCorrectOverlay = false; // show green check over the target
 
   @override
   void initState() {
@@ -286,7 +285,7 @@ class _MatchItScreenState extends State<MatchItScreen> {
     // Build 4 color options including the correct one
     final Set<int> usedIdx = {_colors.indexOf(_targetColor!)};
     final List<(String, Color)> opts = [_targetColor!];
-    
+
     // Add 3 more distinct colors
     while (opts.length < 4) {
       final idx = _rng.nextInt(_colors.length);
@@ -294,11 +293,11 @@ class _MatchItScreenState extends State<MatchItScreen> {
         opts.add(_colors[idx]);
       }
     }
-    
+
     // Shuffle the options
     opts.shuffle(_rng);
     _colorOptions = opts;
-    
+
     // Clear other states
     _targetNumber = null;
     _targetFigure = null;
@@ -315,7 +314,7 @@ class _MatchItScreenState extends State<MatchItScreen> {
   void _generateNumberRound() {
     _targetNumber = _rng.nextInt(20) + 1; // 1..20
     final Set<int> opts = {_targetNumber!};
-    
+
     // Generate 3 more distinct numbers
     while (opts.length < 4) {
       // Generate numbers within 10 of the target number, but at least 1 and at most 99
@@ -328,10 +327,10 @@ class _MatchItScreenState extends State<MatchItScreen> {
           newNum = (_targetNumber! - offset).clamp(1, 99);
         }
       } while (opts.contains(newNum));
-      
+
       opts.add(newNum);
     }
-    
+
     _numberOptions = opts.toList()..shuffle(_rng);
     _targetShapePath = null;
     _targetColor = null;
@@ -341,8 +340,6 @@ class _MatchItScreenState extends State<MatchItScreen> {
     _wrongFigureLabels.clear();
 
     //change de target number to the target number in letter
-  
-    
   }
 
   void _generateFigureRound() {
@@ -353,14 +350,14 @@ class _MatchItScreenState extends State<MatchItScreen> {
       _generateShapeRound();
       return;
     }
-    
+
     // Select a random target figure
     _targetFigure = pool[_rng.nextInt(pool.length)];
-    
+
     // Build 4 figure options including the correct one
     final Set<int> usedIndices = {pool.indexOf(_targetFigure!)};
     final List<Map<String, String>> opts = [_targetFigure!];
-    
+
     while (opts.length < 4 && usedIndices.length < pool.length) {
       final idx = _rng.nextInt(pool.length);
       if (usedIndices.add(idx)) {
@@ -374,7 +371,7 @@ class _MatchItScreenState extends State<MatchItScreen> {
         opts.add(pool[idx]);
       }
     }
-    
+
     // Shuffle the options
     opts.shuffle(_rng);
     _figureOptions = opts.map((fig) => fig['name']!).toList();
@@ -474,21 +471,24 @@ class _MatchItScreenState extends State<MatchItScreen> {
     final screenSize = MediaQuery.of(context).size;
     final isLandscape = screenSize.width > screenSize.height;
     bool istablet = screenSize.width > Constants.tabletSize;
-    
+
     return Padding(
       padding: const EdgeInsets.all(16.0),
       child: Column(
         children: [
-       Score(game: "MatchIt"),  
+          Score(game: "MatchIt"),
 
           Spacer(),
 
-           WordOfImages(letters: _currentTargetWord.toUpperCase(), letterSize: isLandscape || istablet ? 90 : 40),
-         Spacer(),
-     
+          WordOfImages(
+            letters: _currentTargetWord.toUpperCase(),
+            letterSize: isLandscape || istablet ? 90 : 40,
+          ),
+          Spacer(),
+
           // Main content area (now empty since we show the word at the top)
           const Spacer(),
-          
+
           // Show the options at the bottom
           if (_roundType == _RoundType.shape) ...[
             _ColorOptionsGrid(
@@ -500,17 +500,15 @@ class _MatchItScreenState extends State<MatchItScreen> {
                   _targetColor != null &&
                   label == _targetColor!.$1 &&
                   _isLocked,
-            )
+            ),
           ] else if (_roundType == _RoundType.number) ...[
             NumberOptionsGrid(
               options: _numberOptions,
               onTap: _onNumberTap,
               isWrong: (value) => _wrongNumberValues.contains(value),
               isCorrect: (value) =>
-                  _targetNumber != null &&
-                  value == _targetNumber &&
-                  _isLocked,
-            )
+                  _targetNumber != null && value == _targetNumber && _isLocked,
+            ),
           ] else ...[
             _FigureOptionsGrid(
               options: _figureOptions,
@@ -522,9 +520,8 @@ class _MatchItScreenState extends State<MatchItScreen> {
                   label == _targetFigure!["name"] &&
                   _isLocked,
             ),
-          
           ],
-           Spacer()
+          Spacer(),
           // Options are now shown above in the main content area
         ],
       ),
@@ -532,16 +529,13 @@ class _MatchItScreenState extends State<MatchItScreen> {
   }
 }
 
-
-
-
 class _ColorOptionsGrid extends StatelessWidget {
   final List<(String, Color)> options;
   final List<String> shapes;
   final void Function((String, Color)) onTap;
   final bool Function(String) isWrong;
   final bool Function(String) isCorrect;
-  
+
   const _ColorOptionsGrid({
     required this.options,
     required this.shapes,
@@ -554,11 +548,13 @@ class _ColorOptionsGrid extends StatelessWidget {
   Widget build(BuildContext context) {
     final screenSize = MediaQuery.of(context).size;
     final isLandscape = screenSize.width > screenSize.height;
-    bool istablet = screenSize.width > Constants.tabletSize; 
-    
+    bool istablet = screenSize.width > Constants.tabletSize;
+
     // Use the first shape for all color options
-    final shapePath = shapes.isNotEmpty ? shapes[0] : 'assets/shapes/shape_1.png';
-    
+    final shapePath = shapes.isNotEmpty
+        ? shapes[0]
+        : 'assets/shapes/shape_1.png';
+
     return GridView.builder(
       shrinkWrap: true,
       physics: const NeverScrollableScrollPhysics(),
@@ -571,23 +567,24 @@ class _ColorOptionsGrid extends StatelessWidget {
       itemCount: options.length,
       itemBuilder: (context, index) {
         if (index >= options.length) return const SizedBox.shrink();
-        
+
         final opt = options[index];
         final wrong = isWrong(opt.$1);
         final correct = isCorrect(opt.$1);
-        
+
         return GestureDetector(
           onTap: () => onTap(opt),
           child: Container(
             decoration: BoxDecoration(
               borderRadius: BorderRadius.circular(16),
               border: Border.all(
-                color: wrong 
-                  ? Colors.red 
-                  : correct ? Colors.green : Colors.transparent,
+                color: wrong
+                    ? Colors.red
+                    : correct
+                    ? Colors.green
+                    : Colors.transparent,
                 width: 4,
               ),
-             
             ),
             child: ClipRRect(
               borderRadius: BorderRadius.circular(12),
@@ -604,11 +601,13 @@ class _ColorOptionsGrid extends StatelessWidget {
                       height: double.infinity,
                     ),
                   ),
-                  
+
                   // Overlay for wrong/correct state
                   if (wrong || correct)
                     Container(
-                      color: (wrong ? Colors.red : Colors.green).withOpacity(0.3),
+                      color: (wrong ? Colors.red : Colors.green).withOpacity(
+                        0.3,
+                      ),
                       child: Center(
                         child: Icon(
                           wrong ? Icons.close : Icons.check,
@@ -627,6 +626,5 @@ class _ColorOptionsGrid extends StatelessWidget {
   }
 }
 // Removed _ColorOptionButton as it's no longer needed
-
 
 // _WordPng removed: options now render direct Text labels

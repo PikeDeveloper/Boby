@@ -199,7 +199,7 @@ class _CompleteSentenceState extends State<CompleteSentence> {
                             child: OptionButton(
                               letter: String.fromCharCode(65 + index),
                               text: shuffledAnswers[index],
-                              color: isCorrectAnswer && showCorrect
+                              color: isCorrectAnswer && isSelected
                                   ? Colors.green
                                   : (isSelected && !isCorrectAnswer
                                         ? Colors.red

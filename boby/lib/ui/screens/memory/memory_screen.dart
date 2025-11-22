@@ -54,9 +54,9 @@ class _MemoryScreenState extends State<MemoryScreen>
   void _initializeGame({int? rows, int? cols}) {
     // Increment game version to force new colors
     _gameVersion++;
-    
+
     // Reset game state
-    
+
     // Leer configuración actual si no se pasa
     final gridStr = StorageService.instance.getMemoryGrid();
     if (rows == null || cols == null) {
@@ -270,8 +270,9 @@ class _MemoryScreenState extends State<MemoryScreen>
                   width: minSide * 0.8,
                   height: minSide * 0.8,
                   child: ValueListenableBuilder(
-                    valueListenable: StorageService.instance
-                        .listenable(keys: [StorageService.memoryGridKey]),
+                    valueListenable: StorageService.instance.listenable(
+                      keys: [StorageService.memoryGridKey],
+                    ),
                     builder: (context, box, _) {
                       // actualizar dimensiones según selección
                       final gridStr = StorageService.instance.getMemoryGrid();
@@ -315,17 +316,20 @@ class _MemoryScreenState extends State<MemoryScreen>
           ],
         ),
         if (isGameWon)
-          WinnerScreen(onTap: () {
-            _initializeGame();
-            setState(() {});
-          })
+          WinnerScreen(
+            onTap: () {
+              _initializeGame();
+              setState(() {});
+            },
+          ),
       ],
     );
   }
 
   Widget _buildCard(int index) {
     final card = cards[index];
-    final isFlipped = flippedCards.contains(index) || matchedCards.contains(index);
+    final isFlipped =
+        flippedCards.contains(index) || matchedCards.contains(index);
     final isMatched = matchedCards.contains(index);
 
     if (card.name == "Empty") {
@@ -347,7 +351,9 @@ class _MemoryScreenState extends State<MemoryScreen>
     cards[index] = updatedCard;
 
     return MemoryCard(
-      key: ValueKey('card_${card.id}_${isFlipped ? 'flipped' : 'hidden'}_${_gameVersion}'),
+      key: ValueKey(
+        'card_${card.id}_${isFlipped ? 'flipped' : 'hidden'}_${_gameVersion}',
+      ),
       id: card.id,
       image: card.image,
       name: card.name,
@@ -379,11 +385,8 @@ class MemoryCardData {
     required this.colorKey,
     this.sound = "",
   });
-  
-  MemoryCardData copyWith({
-    bool? isFlipped,
-    bool? isMatched,
-  }) {
+
+  MemoryCardData copyWith({bool? isFlipped, bool? isMatched}) {
     return MemoryCardData(
       id: id,
       image: image,
