@@ -63,7 +63,7 @@ class SentenceContainer extends StatelessWidget {
               sentence,
               style:  TextStyle(
                 color: Color.fromARGB(255, 16, 69, 245),
-                fontSize:  isTablet || iisLandscape ? 30 : 20,
+                fontSize:  isTablet || iisLandscape ? 30 : 25,
                 fontWeight: FontWeight.w700,
               ),
               textAlign: TextAlign.center,

@@ -34,7 +34,7 @@ class BadgeSettings extends StatelessWidget {
           ),
           child: Row(
             children: [
-              Image.asset(element["image"]!, width: 30, height: 30),
+              Image.asset(element["image"]!, width: 40, height: 40),
               SizedBox(width: 10),
               Text("Corrects answers: ", style: style),
               Text(">= " + element["value"]! + "%", style: style), 

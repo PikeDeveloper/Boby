@@ -2,14 +2,14 @@ import 'package:boby/ui/screens/word_guess/widgets/celebration_image.dart';
 import 'package:boby/ui/shared/score.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
-import 'package:dotted_border/dotted_border.dart' show DottedBorder, RoundedRectDottedBorderOptions;
+import 'package:dotted_border/dotted_border.dart'
+    show DottedBorder, RoundedRectDottedBorderOptions;
 import '../../../utils/constants.dart';
 import 'widgets/card_sound.dart';
 import 'package:boby/controllers/app_controller.dart';
 import 'package:just_audio/just_audio.dart';
 import 'package:boby/services/storage_service.dart';
 
-  
 class ListCardSounds extends StatefulWidget {
   const ListCardSounds({super.key});
 
@@ -23,17 +23,17 @@ class _ListCardSoundsState extends State<ListCardSounds> {
   int? activeCardIndex;
   final AppController app = Get.find<AppController>();
 
-    final String _winSound = "assets/sounds/winner-game.wav";
+  final String _winSound = "assets/sounds/winner-game.wav";
   final String _wrongMatchSound = "assets/sounds/bubble-pop.wav";
   final String _gameOverSound = "assets/sounds/game-over-trombone.wav";
   final AudioPlayer _audioPlayer = AudioPlayer();
-  
+
   @override
   void dispose() {
     _audioPlayer.dispose();
     super.dispose();
   }
-  
+
   Future<void> _playSound(String soundPath) async {
     try {
       await _audioPlayer.setAsset(soundPath);
@@ -43,25 +43,26 @@ class _ListCardSoundsState extends State<ListCardSounds> {
       debugPrint('Error playing sound: $e');
     }
   }
-  
+
   @override
   void didChangeDependencies() {
     super.didChangeDependencies();
     _loadRandomCards();
   }
-  
+
   List<Map<String, String>> shuffledNames = [];
-  
+
   void _loadRandomCards() {
     // Reset card names
     for (int i = 0; i < cardNames.length; i++) {
       cardNames[i] = null;
     }
-    
+
     // Shuffle and take 4 random assets
-    final shuffled = List<Map<String, String>>.from(Constants.assets)..shuffle();
+    final shuffled = List<Map<String, String>>.from(Constants.assets)
+      ..shuffle();
     assets = shuffled.take(4).toList();
-    
+
     // Create a copy of assets for shuffling just the names
     shuffledNames = List<Map<String, String>>.from(assets)..shuffle();
   }
@@ -69,7 +70,7 @@ class _ListCardSoundsState extends State<ListCardSounds> {
   Future<void> _checkAllCardsMatched() async {
     // Check if all cards are filled
     bool allFilled = cardNames.every((name) => name != null);
-    
+
     if (allFilled) {
       final storage = StorageService.instance;
       // Check if all cards have their correct names
@@ -79,17 +80,17 @@ class _ListCardSoundsState extends State<ListCardSounds> {
           currentCorrect++;
         }
       }
-      
+
       // Update scores in storage
       final int currentWrong = assets.length - currentCorrect;
       await storage.incSoundCardsCorrect(currentCorrect);
       await storage.incSoundCardsWrong(currentWrong);
-      
+
       if (currentCorrect == assets.length) {
         // All correct - win
         await _playSound(_winSound);
         app.celebrationVisible.value = true;
-        
+
         // Hide celebration and load new cards after 1 second
         await Future.delayed(const Duration(seconds: 1));
         app.celebrationVisible.value = false;
@@ -99,7 +100,7 @@ class _ListCardSoundsState extends State<ListCardSounds> {
       } else {
         // Some wrong - game over
         await _playSound(_gameOverSound);
-        
+
         // Clear all cards after a short delay
         await Future.delayed(const Duration(seconds: 1));
         setState(() {
@@ -142,77 +143,75 @@ class _ListCardSoundsState extends State<ListCardSounds> {
     final currentCorrect = getCorrectCount();
     final totalCount = assets.length;
 
-
-     
-
     bool isLandscape = screenSize.width / screenSize.height > 1;
-    bool istablet = screenSize.width > Constants.tabletSize; 
-
-
+    bool istablet = screenSize.width > Constants.tabletSize;
 
     return Stack(
       children: [
-        Obx(() => app.celebrationVisible.value
-          ? const CelebrationImage()
-          : const SizedBox.shrink()),
+        Obx(
+          () => app.celebrationVisible.value
+              ? const CelebrationImage()
+              : const SizedBox.shrink(),
+        ),
         SafeArea(
           child: Column(
             children: [
               Column(
                 children: [
-                
                   // Total scores
-                  Score(
-                    game: "SoundCards", 
-                   
-                  ),
+                  Score(game: "SoundCards"),
                 ],
               ),
               // Top half of screen - Cards
               SizedBox(
-                height: (screenSize.height - safePadding.top - safePadding.bottom) * (isLandscape ? 0.6 : 0.5),
+                height:
+                    (screenSize.height - safePadding.top - safePadding.bottom) *
+                    (isLandscape ? 0.6 : 0.5),
                 child: Center(
                   child: SingleChildScrollView(
                     child: Column(
                       mainAxisSize: MainAxisSize.min,
                       mainAxisAlignment: MainAxisAlignment.center,
                       children: [
+                        isLandscape || istablet
+                            ? Row(
+                                mainAxisAlignment:
+                                    MainAxisAlignment.spaceEvenly,
+                                children: [
+                                  if (assets.isNotEmpty) _buildCardTarget(0),
+                                  if (assets.length > 1) _buildCardTarget(1),
 
-                        isLandscape || istablet ?
-                        Row(
-                          mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-                          children: 
-                          [
-                             if (assets.isNotEmpty) _buildCardTarget(0),
-                                if (assets.length > 1) _buildCardTarget(1),
-                                
-                                if (assets.length > 2) _buildCardTarget(2),
-                                if (assets.length > 3) _buildCardTarget(3),
-                          ]
-                          ):
-                          
-                        // First row of cards
-                        Column(
-                          children: [
-                            Row(
-                              mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-                              children: [
-                                if (assets.isNotEmpty) _buildCardTarget(0),
-                                if (assets.length > 1) _buildCardTarget(1),
-                              ],
-                            ),
-                             const SizedBox(height: 20),
-                         Row(
-                            mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-                            children: [
-                              if (assets.length > 2) _buildCardTarget(2),
-                              if (assets.length > 3) _buildCardTarget(3),
-                            ],
-                          ),
-                          ],
-                        ),
-                       
-                        
+                                  if (assets.length > 2) _buildCardTarget(2),
+                                  if (assets.length > 3) _buildCardTarget(3),
+                                ],
+                              )
+                            :
+                              // First row of cards
+                              Column(
+                                children: [
+                                  Row(
+                                    mainAxisAlignment:
+                                        MainAxisAlignment.spaceEvenly,
+                                    children: [
+                                      if (assets.isNotEmpty)
+                                        _buildCardTarget(0),
+                                      if (assets.length > 1)
+                                        _buildCardTarget(1),
+                                    ],
+                                  ),
+                                  const SizedBox(height: 20),
+                                  Row(
+                                    mainAxisAlignment:
+                                        MainAxisAlignment.spaceEvenly,
+                                    children: [
+                                      if (assets.length > 2)
+                                        _buildCardTarget(2),
+                                      if (assets.length > 3)
+                                        _buildCardTarget(3),
+                                    ],
+                                  ),
+                                ],
+                              ),
                       ],
                     ),
                   ),
@@ -221,7 +220,10 @@ class _ListCardSoundsState extends State<ListCardSounds> {
               // Bottom half of screen - All names and score
               Expanded(
                 child: Container(
-                  padding: const EdgeInsets.symmetric(horizontal: 20.0, vertical: 0.0),
+                  padding: const EdgeInsets.symmetric(
+                    horizontal: 20.0,
+                    vertical: 0.0,
+                  ),
                   child: Column(
                     mainAxisAlignment: MainAxisAlignment.center,
                     children: [
@@ -243,24 +245,42 @@ class _ListCardSoundsState extends State<ListCardSounds> {
                         Expanded(
                           child: Column(
                             mainAxisAlignment: MainAxisAlignment.center,
-                         
+
                             children: [
                               // First row of names
                               Row(
-                                mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+                                mainAxisAlignment:
+                                    MainAxisAlignment.spaceEvenly,
                                 children: [
-                                  if (shuffledNames.isNotEmpty) _buildNameContainer(shuffledNames[0]["name"]!, 0),
-                                  if (shuffledNames.length > 1) _buildNameContainer(shuffledNames[1]["name"]!, 1),
+                                  if (shuffledNames.isNotEmpty)
+                                    _buildNameContainer(
+                                      shuffledNames[0]["name"]!,
+                                      0,
+                                    ),
+                                  if (shuffledNames.length > 1)
+                                    _buildNameContainer(
+                                      shuffledNames[1]["name"]!,
+                                      1,
+                                    ),
                                 ],
                               ),
                               if (shuffledNames.length > 2) ...[
                                 const SizedBox(height: 5),
                                 // Second row of names
                                 Row(
-                                  mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+                                  mainAxisAlignment:
+                                      MainAxisAlignment.spaceEvenly,
                                   children: [
-                                    if (shuffledNames.length > 2) _buildNameContainer(shuffledNames[2]["name"]!, 2),
-                                    if (shuffledNames.length > 3) _buildNameContainer(shuffledNames[3]["name"]!, 3),
+                                    if (shuffledNames.length > 2)
+                                      _buildNameContainer(
+                                        shuffledNames[2]["name"]!,
+                                        2,
+                                      ),
+                                    if (shuffledNames.length > 3)
+                                      _buildNameContainer(
+                                        shuffledNames[3]["name"]!,
+                                        3,
+                                      ),
                                   ],
                                 ),
                               ],
@@ -278,7 +298,6 @@ class _ListCardSoundsState extends State<ListCardSounds> {
     );
   }
 
-
   Widget _buildCardTarget(int index) {
     return DragTarget<String>(
       onWillAcceptWithDetails: (details) {
@@ -291,25 +310,25 @@ class _ListCardSoundsState extends State<ListCardSounds> {
       onAccept: (name) async {
         // Play sound when dropping a name
         await _playSound(_wrongMatchSound);
-        
+
         setState(() {
           // Remove from previous position if it exists
           final previousIndex = cardNames.indexOf(name);
           if (previousIndex != -1) {
             cardNames[previousIndex] = null;
           }
-          
+
           // Add to new position - store the actual name that was dragged
           cardNames[index] = name;
           activeCardIndex = null;
         });
-        
+
         // Check if all cards are filled
         await _checkAllCardsMatched();
       },
       builder: (context, candidateData, rejectedData) {
         return CardSound(
-          colorKey: 0,  
+          colorKey: 0,
           image: assets[index]["image"]!,
           name: cardNames[index] ?? '',
           sound: assets[index]["sound"]!,
@@ -328,13 +347,12 @@ class _ListCardSoundsState extends State<ListCardSounds> {
     // Don't show the name if it's already on a card
     if (cardNames.contains(name)) {
       return Container(
-  
         width: 150,
         padding: const EdgeInsets.symmetric(vertical: 8, horizontal: 12),
         child: const SizedBox.shrink(),
       );
     }
-    
+
     return Draggable<String>(
       data: name,
       feedback: Material(
@@ -348,14 +366,18 @@ class _ListCardSoundsState extends State<ListCardSounds> {
               color: const Color(0xFF1E88E5),
               strokeWidth: 2,
               dashPattern: const [6, 4],
-            
             ),
             child: Container(
               width: double.infinity,
               padding: const EdgeInsets.symmetric(vertical: 8, horizontal: 12),
               decoration: BoxDecoration(
                 borderRadius: BorderRadius.circular(16),
-                color: const Color.fromARGB(232, 242, 242, 242).withOpacity(0.8),
+                color: const Color.fromARGB(
+                  232,
+                  242,
+                  242,
+                  242,
+                ).withOpacity(0.8),
               ),
               child: Text(
                 name,
@@ -373,14 +395,13 @@ class _ListCardSoundsState extends State<ListCardSounds> {
       // Container con borde segmentado --------------//
       childWhenDragging: Container(
         width: 150,
-   //     padding: const EdgeInsets.symmetric(vertical: 8, horizontal: 12),
+        //     padding: const EdgeInsets.symmetric(vertical: 8, horizontal: 12),
         child: DottedBorder(
           options: RoundedRectDottedBorderOptions(
             color: const Color(0xFF1E88E5),
             strokeWidth: 2,
             dashPattern: const [6, 4],
             radius: const Radius.circular(20),
-            
           ),
           child: Container(
             width: double.infinity,
@@ -411,7 +432,6 @@ class _ListCardSoundsState extends State<ListCardSounds> {
             strokeWidth: 2,
             dashPattern: const [6, 4],
             radius: const Radius.circular(20),
-       
           ),
           child: Container(
             width: double.infinity,

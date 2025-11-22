@@ -32,7 +32,7 @@ class OptionButton extends StatelessWidget {
     final bool isTablet = screenWidth > Constants.tabletSize;
     final bool iisLandscape = screenWidth > screenHeight;
 
-    double height =  isTablet || iisLandscape ? 60 : 40;
+    double height =  isTablet || iisLandscape ? 70 : 55;
     double width =  isTablet || iisLandscape ? 500 : 300;
     double radiusContainer = 15;
 

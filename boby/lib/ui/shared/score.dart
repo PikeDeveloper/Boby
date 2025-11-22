@@ -9,13 +9,7 @@ import '../../utils/constants.dart';
 class Score extends StatelessWidget {
   final String game;
 
-
-  const Score({
-    super.key, 
-    required this.game,
-
-  });
-
+  const Score({super.key, required this.game});
 
   getBadge(double correct, double wrong, bool isTablet, bool isLandscape) {
     double average = (correct / (correct + wrong)) * 100;
@@ -29,11 +23,12 @@ class Score extends StatelessWidget {
     } else {
       badge = "assets/bronze.png";
     }
-    return Image.asset(badge, width: isTablet || isLandscape ? 40 : 30, height: isTablet || isLandscape ? 50 : 30);
-  
+    return Image.asset(
+      badge,
+      width: isTablet || isLandscape ? 40 : 30,
+      height: isTablet || isLandscape ? 50 : 30,
+    );
   }
-
-
 
   String _getCorrectValue() {
     switch (game) {
@@ -74,7 +69,7 @@ class Score extends StatelessWidget {
     final screenSize = MediaQuery.of(context).size;
     final appController = Get.find<AppController>();
     final isLandscape = screenSize.width > screenSize.height;
-    bool istablet = screenSize.width > Constants.tabletSize;  
+    bool istablet = screenSize.width > Constants.tabletSize;
 
     return GestureDetector(
       onTap: () => _showRestoreDialog(context, istablet, isLandscape),
@@ -93,21 +88,42 @@ class Score extends StatelessWidget {
             ),
           ],
         ),
-        child: Obx (
+        child: Obx(
           () => Row(
             mainAxisSize: MainAxisSize.min,
             mainAxisAlignment: MainAxisAlignment.center,
             children: [
-              getBadge(double.parse(_getCorrectValue()), double.parse(_getWrongValue()) , istablet, isLandscape),
+              getBadge(
+                double.parse(_getCorrectValue()),
+                double.parse(_getWrongValue()),
+                istablet,
+                isLandscape,
+              ),
               const Spacer(),
-              _buildScoreItem("Correct", _getCorrectValue(), MyColors.green, isLandscape, istablet),
+              _buildScoreItem(
+                "Correct",
+                _getCorrectValue(),
+                MyColors.green,
+                isLandscape,
+                istablet,
+              ),
               const SizedBox(width: 16),
-              _buildScoreItem("Wrong", _getWrongValue(), MyColors.red, isLandscape, istablet),
-              Text( appController.noShow.value, style: TextStyle(fontSize:1, ),),
+              _buildScoreItem(
+                "Wrong",
+                _getWrongValue(),
+                MyColors.red,
+                isLandscape,
+                istablet,
+              ),
+              Text(appController.noShow.value, style: TextStyle(fontSize: 1)),
               const SizedBox(width: 16),
               const Spacer(),
-              getBadge(double.parse(_getCorrectValue()), double.parse(_getWrongValue()), istablet, isLandscape),
-
+              getBadge(
+                double.parse(_getCorrectValue()),
+                double.parse(_getWrongValue()),
+                istablet,
+                isLandscape,
+              ),
             ],
           ),
         ),
@@ -115,7 +131,13 @@ class Score extends StatelessWidget {
     );
   }
 
-  Widget _buildScoreItem(String label, String value, Color color , bool isLandscape, bool istablet) {
+  Widget _buildScoreItem(
+    String label,
+    String value,
+    Color color,
+    bool isLandscape,
+    bool istablet,
+  ) {
     return Row(
       children: [
         Text(
@@ -123,7 +145,7 @@ class Score extends StatelessWidget {
           style: TextStyle(
             fontSize: isLandscape || istablet ? 35 : 16,
             fontWeight: FontWeight.w600,
-            color: color
+            color: color,
           ),
         ),
         Text(
@@ -138,71 +160,216 @@ class Score extends StatelessWidget {
     );
   }
 
-  void _showRestoreDialog(BuildContext context, bool istablet, bool isLandscape) {
-    double average = (double.parse(_getCorrectValue()) / (double.parse(_getCorrectValue()) + double.parse(_getWrongValue()))) * 100;
-String level = "";
+  void _showRestoreDialog(
+    BuildContext context,
+    bool istablet,
+    bool isLandscape,
+  ) {
+    double correct = double.parse(_getCorrectValue());
+    double wrong = double.parse(_getWrongValue());
+    double total = correct + wrong;
+    double average = total == 0 ? 0 : (correct / total) * 100;
+
+    String level = "";
+    Color levelColor;
+
     if (average >= 90) {
       level = "Diamond";
+      levelColor = Colors.blueAccent;
     } else if (average >= 80) {
       level = "Gold";
+      levelColor = Colors.amber;
     } else if (average >= 50) {
       level = "Silver";
+      levelColor = Colors.grey;
     } else {
       level = "Bronze";
+      levelColor = Colors.brown;
     }
 
     showDialog(
       context: context,
-      builder: (context) => AlertDialog(
-        title: const Text(
-          //'Restablecer Puntuación',
-           "Restore Score",
-          style: TextStyle(fontWeight: FontWeight.bold),
+      builder: (context) => Dialog(
+        shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(25)),
+        elevation: 10,
+        backgroundColor: Colors.transparent,
+        child: Container(
+          padding: const EdgeInsets.all(20),
+          decoration: BoxDecoration(
+            color: Colors.white,
+            borderRadius: BorderRadius.circular(25),
+            border: Border.all(color: const Color(0xFF1E88E5), width: 4),
+            boxShadow: [
+              BoxShadow(
+                color: Colors.black.withOpacity(0.2),
+                blurRadius: 15,
+                offset: const Offset(0, 5),
+              ),
+            ],
+          ),
+          child: Column(
+            mainAxisSize: MainAxisSize.min,
+            children: [
+              // Header with Game Name
+              Text(
+                game,
+                style: const TextStyle(
+                  fontSize: 28,
+                  fontWeight: FontWeight.bold,
+                  color: Color(0xFF1E88E5),
+                ),
+              ),
+              const SizedBox(height: 20),
+
+              // Level Section
+              Container(
+                padding: const EdgeInsets.symmetric(
+                  horizontal: 20,
+                  vertical: 10,
+                ),
+                decoration: BoxDecoration(
+                  color: levelColor.withOpacity(0.1),
+                  borderRadius: BorderRadius.circular(20),
+                  border: Border.all(color: levelColor, width: 2),
+                ),
+                child: Row(
+                  mainAxisSize: MainAxisSize.min,
+                  children: [
+                    Text(
+                      "Level: $level",
+                      style: TextStyle(
+                        fontSize: 22,
+                        fontWeight: FontWeight.bold,
+                        color: levelColor,
+                      ),
+                    ),
+                    const SizedBox(width: 10),
+                    getBadge(correct, wrong, istablet, isLandscape),
+                  ],
+                ),
+              ),
+              const SizedBox(height: 25),
+
+              // Stats Section
+              Row(
+                mainAxisAlignment: MainAxisAlignment.spaceAround,
+                children: [
+                  _buildStatBox(
+                    "Correct",
+                    correct.toInt().toString(),
+                    Colors.green,
+                  ),
+                  _buildStatBox("Wrong", wrong.toInt().toString(), Colors.red),
+                ],
+              ),
+
+              const SizedBox(height: 30),
+
+              // Buttons Section
+              Row(
+                mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+                children: [
+                  // Share Button
+                  _buildActionButton(
+                    icon: Icons.share_rounded,
+                    label: "Share",
+                    color: Colors.purple,
+                    onTap: () {
+                      // Share functionality to be implemented
+                    },
+                  ),
+
+                  // Reset Button
+                  _buildActionButton(
+                    icon: Icons.refresh_rounded,
+                    label: "Reset",
+                    color: Colors.orange,
+                    onTap: () {
+                      _resetScores();
+                      Navigator.of(context).pop();
+                    },
+                  ),
+                ],
+              ),
+
+              const SizedBox(height: 15),
+
+              // Cancel Button
+              TextButton(
+                onPressed: () => Navigator.of(context).pop(),
+                style: TextButton.styleFrom(foregroundColor: Colors.grey),
+                child: const Text(
+                  "Close",
+                  style: TextStyle(fontSize: 18, fontWeight: FontWeight.w600),
+                ),
+              ),
+            ],
+          ),
         ),
-        content: Column(
-          mainAxisSize: MainAxisSize.min,
+      ),
+    );
+  }
+
+  Widget _buildStatBox(String label, String value, Color color) {
+    return Column(
+      children: [
+        Text(
+          value,
+          style: TextStyle(
+            fontSize: 32,
+            fontWeight: FontWeight.bold,
+            color: color,
+          ),
+        ),
+        Text(
+          label,
+          style: TextStyle(
+            fontSize: 16,
+            fontWeight: FontWeight.w500,
+            color: color.withOpacity(0.8),
+          ),
+        ),
+      ],
+    );
+  }
+
+  Widget _buildActionButton({
+    required IconData icon,
+    required String label,
+    required Color color,
+    required VoidCallback onTap,
+  }) {
+    return InkWell(
+      onTap: onTap,
+      borderRadius: BorderRadius.circular(15),
+      child: Container(
+        padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 10),
+        decoration: BoxDecoration(
+          color: color.withOpacity(0.1),
+          borderRadius: BorderRadius.circular(15),
+          border: Border.all(color: color, width: 2),
+        ),
+        child: Column(
           children: [
-
-
-            Row(
-              children: [
-                const Text('Your level is ' , style: TextStyle(fontSize: 20),),
-                Text(level, style: TextStyle(fontSize: 20, fontWeight: FontWeight.bold),),
-                SizedBox(width: 5),
-                getBadge(double.parse(_getCorrectValue()), double.parse(_getWrongValue()) , istablet, isLandscape),
-              ],
+            Icon(icon, color: color, size: 28),
+            const SizedBox(height: 4),
+            Text(
+              label,
+              style: TextStyle(
+                color: color,
+                fontWeight: FontWeight.bold,
+                fontSize: 14,
+              ),
             ),
-            const SizedBox(height: 30),
-            const Text('Do you want to reset the score?' , style: TextStyle(fontSize: 20),),
           ],
         ),
-        actions: [
-          TextButton(
-            onPressed: () => Navigator.of(context).pop(),
-             style: TextButton.styleFrom(
-              foregroundColor: Colors.blue,
-            ),
-            child: const Text('Cancel' , style: TextStyle(fontSize: 20),),
-          ),
-          TextButton(
-            onPressed: () {
-              _resetScores();
-              Navigator.of(context).pop();
-           
-            },
-            style: TextButton.styleFrom(
-              foregroundColor: Colors.red,
-            ),
-            child: const Text('Reset' , style: TextStyle(fontSize: 20),),
-          ),
-        ],
       ),
     );
   }
 
   void _resetScores() {
     final appController = Get.find<AppController>();
-    
+
     switch (game) {
       case "Math":
         StorageService.instance.setMathCorrect(0);
@@ -221,15 +388,16 @@ String level = "";
         StorageService.instance.setWordGuessWrong(0);
         break;
       case "MatchIt":
-        StorageService.instance.setMatchItCorrect(0); 
+        StorageService.instance.setMatchItCorrect(0);
         StorageService.instance.setMatchItWrong(0);
         break;
       case "CompleteSentence":
-        StorageService.instance.setCompleteSentenceCorrect(0); 
+        StorageService.instance.setCompleteSentenceCorrect(0);
         StorageService.instance.setCompleteSentenceWrong(0);
         break;
-
     }
-    appController.noShow.value == "no"? appController.noShow.value = "yes": appController.noShow.value = "no";
+    appController.noShow.value == "no"
+        ? appController.noShow.value = "yes"
+        : appController.noShow.value = "no";
   }
 }
