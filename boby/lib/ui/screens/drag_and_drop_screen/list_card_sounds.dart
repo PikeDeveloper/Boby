@@ -140,6 +140,7 @@ class _ListCardSoundsState extends State<ListCardSounds> {
   @override
   Widget build(BuildContext context) {
     final screenSize = MediaQuery.of(context).size;
+    final shortHeight = screenSize.height < 680;
 
     final currentCorrect = getCorrectCount();
     final totalCount = assets.length;
@@ -176,16 +177,19 @@ class _ListCardSoundsState extends State<ListCardSounds> {
               ),
               isWide ? const Spacer() : const SizedBox(height: 10),
               Center(
-                child: isLandscape || istablet
-                    ? Row(
-                        mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-                        children: [
-                          if (assets.isNotEmpty) _buildCardTarget(0),
-                          if (assets.length > 1) _buildCardTarget(1),
+                child: isLandscape || istablet || shortHeight
+                    ? SingleChildScrollView(
+                        scrollDirection: Axis.horizontal,
+                        child: Row(
+                          mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+                          children: [
+                            if (assets.isNotEmpty) _buildCardTarget(0),
+                            if (assets.length > 1) _buildCardTarget(1),
 
-                          if (assets.length > 2) _buildCardTarget(2),
-                          if (assets.length > 3) _buildCardTarget(3),
-                        ],
+                            if (assets.length > 2) _buildCardTarget(2),
+                            if (assets.length > 3) _buildCardTarget(3),
+                          ],
+                        ),
                       )
                     :
                       // First row of cards

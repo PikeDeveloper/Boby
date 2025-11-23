@@ -21,9 +21,9 @@ class CompleteSentence extends StatefulWidget {
 class _CompleteSentenceState extends State<CompleteSentence> {
   final StorageService storage = Get.find<StorageService>();
   final AppController appController = Get.find<AppController>();
-  int currentQuestionIndex = 0;
+  late int currentQuestionIndex;
   bool showCorrect = false;
-  List<int> usedQuestionIndices = [0];
+  List<int> usedQuestionIndices = [];
   Set<int> selectedAnswerIndices = {};
   int? selectedAnswerIndex;
   bool isCorrect = false;
@@ -108,6 +108,10 @@ class _CompleteSentenceState extends State<CompleteSentence> {
     // Initialize scores
     storage.setCompleteSentenceCorrect(storage.getCompleteSentenceCorrect());
     storage.setCompleteSentenceWrong(storage.getCompleteSentenceWrong());
+
+    int numberOfSentences = Sentences.sentences.length;
+    currentQuestionIndex = Random().nextInt(numberOfSentences);
+    usedQuestionIndices.add(currentQuestionIndex);
     // Shuffle answers for the first question
     _shuffleAnswers();
   }
@@ -123,10 +127,10 @@ class _CompleteSentenceState extends State<CompleteSentence> {
     final bool iisLandscape = screenWidth > screenHeight;
 
     List<Color> colors = [
-      MyColors.guayaba,
-      MyColors.blue,
-      MyColors.yellow,
       MyColors.purple,
+      MyColors.blue,
+      MyColors.darkBlue,
+      MyColors.yellow,
     ];
 
     return SafeArea(
@@ -139,82 +143,79 @@ class _CompleteSentenceState extends State<CompleteSentence> {
           ),
 
           Expanded(
-            child: Padding(
-              padding: const EdgeInsets.all(16.0),
-              child: SizedBox(
-                width: min(screenWidth * 0.9, 600),
-                child: Column(
-                  mainAxisAlignment: MainAxisAlignment.center,
-                  children: [
-                    // Question Card
-                    Container(
-                      padding: const EdgeInsets.all(20),
-                      decoration: BoxDecoration(
-                        color: Colors.white,
-                        borderRadius: BorderRadius.circular(25),
-                        boxShadow: [
-                          BoxShadow(
-                            color: Colors.orange.withOpacity(0.2),
-                            blurRadius: 15,
-                            offset: const Offset(0, 8),
-                          ),
-                        ],
-                        border: Border.all(
-                          color: Colors.orange.shade200,
-                          width: 2,
+            child: SizedBox(
+              width: min(screenWidth * 0.9, 600),
+              child: Column(
+                mainAxisAlignment: MainAxisAlignment.center,
+                children: [
+                  // Question Card
+                  Container(
+                    padding: const EdgeInsets.all(20),
+                    decoration: BoxDecoration(
+                      color: Colors.white,
+                      borderRadius: BorderRadius.circular(25),
+                      boxShadow: [
+                        BoxShadow(
+                          color: Colors.orange.withOpacity(0.2),
+                          blurRadius: 15,
+                          offset: const Offset(0, 8),
                         ),
+                      ],
+                      border: Border.all(
+                        color: Colors.orange.shade200,
+                        width: 2,
                       ),
-                      child: Column(
-                        children: [
-                          const Text(
-                            "Complete the sentence:",
-                            style: TextStyle(
-                              fontSize: 18,
-                              color: Colors.orange,
-                              fontWeight: FontWeight.bold,
-                            ),
+                    ),
+                    child: Column(
+                      children: [
+                        const Text(
+                          "Complete the sentence:",
+                          style: TextStyle(
+                            fontSize: 18,
+                            color: Colors.orange,
+                            fontWeight: FontWeight.bold,
                           ),
-                          const SizedBox(height: 15),
-                          SentenceContainer(sentence: sentence),
-                        ],
-                      ),
-                    ),
-                    const SizedBox(height: 30),
+                        ),
+                        const SizedBox(height: 10),
 
-                    // Answer Options
-                    Expanded(
-                      child: ListView.separated(
-                        itemCount: shuffledAnswers.length,
-                        separatorBuilder: (context, index) =>
-                            const SizedBox(height: 12),
-                        itemBuilder: (context, index) {
-                          bool isSelected =
-                              selectedAnswerIndex == index ||
-                              selectedAnswerIndices.contains(index);
-                          bool isCorrectAnswer = index == correctAnswerIndex;
-
-                          return AnimatedScale(
-                            scale: isSelected ? 1.02 : 1.0,
-                            duration: const Duration(milliseconds: 200),
-                            child: OptionButton(
-                              letter: String.fromCharCode(65 + index),
-                              text: shuffledAnswers[index],
-                              color: isCorrectAnswer && isSelected
-                                  ? Colors.green
-                                  : (isSelected && !isCorrectAnswer
-                                        ? Colors.red
-                                        : colors[index % colors.length]),
-                              onTap: () => checkAnswer(index),
-                              isSelected: isSelected,
-                              isCorrect: isCorrectAnswer,
-                              showResult: showCorrect,
-                            ),
-                          );
-                        },
-                      ),
+                        SentenceContainer(sentence: sentence),
+                      ],
                     ),
-                  ],
-                ),
+                  ),
+                  const SizedBox(height: 10),
+                  // Answer Options
+                  Expanded(
+                    child: ListView.separated(
+                      itemCount: shuffledAnswers.length,
+                      separatorBuilder: (context, index) =>
+                          const SizedBox(height: 12),
+                      itemBuilder: (context, index) {
+                        bool isSelected =
+                            selectedAnswerIndex == index ||
+                            selectedAnswerIndices.contains(index);
+                        bool isCorrectAnswer = index == correctAnswerIndex;
+
+                        return AnimatedScale(
+                          scale: isSelected ? 1.02 : 1.0,
+                          duration: const Duration(milliseconds: 200),
+                          child: OptionButton(
+                            letter: String.fromCharCode(65 + index),
+                            text: shuffledAnswers[index],
+                            color: isCorrectAnswer && isSelected
+                                ? Colors.green
+                                : (isSelected && !isCorrectAnswer
+                                      ? Colors.red
+                                      : colors[index % colors.length]),
+                            onTap: () => checkAnswer(index),
+                            isSelected: isSelected,
+                            isCorrect: isCorrectAnswer,
+                            showResult: showCorrect,
+                          ),
+                        );
+                      },
+                    ),
+                  ),
+                ],
               ),
             ),
           ),

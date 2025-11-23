@@ -11,13 +11,12 @@ class SentenceContainer extends StatelessWidget {
   final Color beige = const Color.fromARGB(255, 247, 233, 142);
 
   final double borderRadius = 15;
-  final double height = 100;
+  final double height = 70;
   final double width = 350;
 
   final double margin = 4;
 
   final double borderRadiusFactor = 2;
-  
 
   @override
   Widget build(BuildContext context) {
@@ -26,57 +25,58 @@ class SentenceContainer extends StatelessWidget {
     final screenHeight = screenSize.height;
     final bool isTablet = screenWidth > Constants.tabletSize;
     final bool iisLandscape = screenWidth > screenHeight;
-    
+
     return Stack(
       alignment: Alignment.center,
       children: [
         Container(
-          padding:  EdgeInsets.all(margin),
-       
+          padding: EdgeInsets.all(margin),
+
           decoration: BoxDecoration(
             color: brown,
             borderRadius: BorderRadius.circular(borderRadius),
           ),
-          child:  Container(
-            padding:  EdgeInsets.all(margin),
-     
-          decoration: BoxDecoration(
-            
-            color: yellow,
-            borderRadius: BorderRadius.circular(borderRadius -  borderRadiusFactor),
-          ),
-          child:  Container(
-            padding:  EdgeInsets.all(margin),      
-          decoration: BoxDecoration(
-            color: brown,
-            borderRadius: BorderRadius.circular(borderRadius -  borderRadiusFactor *2),
-          ),
           child: Container(
-          height: height,
-          
-          decoration: BoxDecoration(
-            color: beige,
-            borderRadius: BorderRadius.circular(borderRadius -  borderRadiusFactor * 3),
-          ),
-          child: Center(
-            child: Text(
-              sentence,
-              style:  TextStyle(
-                color: Color.fromARGB(255, 16, 69, 245),
-                fontSize:  isTablet || iisLandscape ? 30 : 25,
-                fontWeight: FontWeight.w700,
+            padding: EdgeInsets.all(margin),
+
+            decoration: BoxDecoration(
+              color: yellow,
+              borderRadius: BorderRadius.circular(
+                borderRadius - borderRadiusFactor,
               ),
-              textAlign: TextAlign.center,
+            ),
+            child: Container(
+              padding: EdgeInsets.all(margin),
+              decoration: BoxDecoration(
+                color: brown,
+                borderRadius: BorderRadius.circular(
+                  borderRadius - borderRadiusFactor * 2,
+                ),
+              ),
+              child: Container(
+                height: height,
+
+                decoration: BoxDecoration(
+                  color: beige,
+                  borderRadius: BorderRadius.circular(
+                    borderRadius - borderRadiusFactor * 3,
+                  ),
+                ),
+                child: Center(
+                  child: Text(
+                    sentence,
+                    style: TextStyle(
+                      color: Color.fromARGB(255, 16, 69, 245),
+                      fontSize: isTablet || iisLandscape ? 30 : 25,
+                      fontWeight: FontWeight.w700,
+                    ),
+                    textAlign: TextAlign.center,
+                  ),
+                ),
+              ),
             ),
           ),
         ),
-        
-        ),
-        )
-        ),
-        
-        
-
       ],
     );
   }

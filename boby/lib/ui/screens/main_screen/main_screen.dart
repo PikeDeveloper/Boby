@@ -1,5 +1,6 @@
 import 'package:boby/controllers/app_controller.dart';
 import 'package:boby/ui/screens/complete_sentence/complete_sentence.dart';
+import 'package:boby/ui/screens/drag_and_drop_screen/list_card_sounds.dart';
 import 'package:boby/ui/screens/letters_soup/letters_soup.dart';
 import 'package:boby/ui/screens/main_screen/widgets/background.dart';
 import 'package:boby/ui/screens/math_screen/math_screen.dart';
@@ -10,7 +11,6 @@ import '../../shared/main_menu.dart';
 import '../match_it/match_it.dart';
 import '../memory/memory_screen.dart';
 import '../setting_screen/setting_sacreen.dart';
-import '../sound_cards_screen/list_card_sounds.dart';
 
 class MainScreen extends StatelessWidget {
   static const String route = '/main_screen';
@@ -22,8 +22,8 @@ class MainScreen extends StatelessWidget {
     MemoryScreen(),
     LettersSoup(),
     // BallomScreen(),
-   // MathScreen(),
-    CompleteSentence(), 
+    // MathScreen(),
+    CompleteSentence(),
     WordGuessScreen(),
     MatchItScreen(),
     SettingScreen(),

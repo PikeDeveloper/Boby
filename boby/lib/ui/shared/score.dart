@@ -300,6 +300,12 @@ class _ScoreDialogContentState extends State<_ScoreDialogContent> {
   final GlobalKey _shareBtnKey = GlobalKey();
   bool showQRCode = false;
 
+  @override
+  void didChangeDependencies() {
+    super.didChangeDependencies();
+    precacheImage(const AssetImage("assets/ios_qr.jpeg"), context);
+  }
+
   Future<void> _captureAndShare() async {
     // Capture the position of the share button before hiding it
     final RenderBox? box =
@@ -314,7 +320,7 @@ class _ScoreDialogContentState extends State<_ScoreDialogContent> {
     });
 
     // Wait for the UI to update and render the QR code
-    await Future.delayed(const Duration(milliseconds: 100));
+    await Future.delayed(const Duration(milliseconds: 300));
 
     try {
       RenderRepaintBoundary boundary =

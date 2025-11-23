@@ -25,7 +25,7 @@ class SettingScreen extends StatelessWidget {
 
             // Background Settings
             _buildSection(
-              title: "BACKGROUNDS",
+              title: "BACKGROUNDS IMAGES",
               content: const BackgroundSettings(),
               color: Colors.blue,
             ),
@@ -33,7 +33,7 @@ class SettingScreen extends StatelessWidget {
 
             // Memory Settings
             _buildSection(
-              title: "MEMORY",
+              title: "MEMORY LEVEL",
               content: const MemrySettings(),
               color: Colors.purple,
             ),
@@ -41,7 +41,7 @@ class SettingScreen extends StatelessWidget {
 
             // Match Settings
             _buildSection(
-              title: "MATCH",
+              title: "MATCH ITEMS",
               content: const MatchItSettings(),
               color: Colors.orange,
             ),
@@ -49,7 +49,7 @@ class SettingScreen extends StatelessWidget {
 
             // Badge Settings
             _buildSection(
-              title: "BADGE",
+              title: "BADGE INFORMATION",
               content: const BadgeSettings(),
               color: Colors.green,
             ),
@@ -57,7 +57,7 @@ class SettingScreen extends StatelessWidget {
 
             // More Apps
             _buildSection(
-              title: "MORE",
+              title: "MORE APPS",
               content: const MoreApps(),
               color: Colors.pink,
             ),
@@ -93,7 +93,7 @@ class SettingScreen extends StatelessWidget {
           // Section Header
           Container(
             width: double.infinity,
-            padding: const EdgeInsets.symmetric(vertical: 12, horizontal: 20),
+            padding: const EdgeInsets.symmetric(vertical: 12, horizontal: 10),
             decoration: BoxDecoration(
               color: color.withOpacity(0.1),
               borderRadius: const BorderRadius.only(
@@ -113,7 +113,10 @@ class SettingScreen extends StatelessWidget {
           ),
 
           // Section Content
-          Padding(padding: const EdgeInsets.all(20), child: content),
+          Padding(
+            padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 10),
+            child: content,
+          ),
         ],
       ),
     );

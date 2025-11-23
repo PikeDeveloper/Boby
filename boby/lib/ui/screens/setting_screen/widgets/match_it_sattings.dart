@@ -80,7 +80,7 @@ class MatchItSettings extends StatelessWidget {
       onTap: onTap,
       child: AnimatedContainer(
         duration: const Duration(milliseconds: 200),
-        width: 100,
+        width: 80,
         padding: const EdgeInsets.all(10),
         decoration: BoxDecoration(
           color: isSelected ? color.withOpacity(0.1) : Colors.grey.shade50,
