@@ -140,12 +140,13 @@ class _ListCardSoundsState extends State<ListCardSounds> {
   @override
   Widget build(BuildContext context) {
     final screenSize = MediaQuery.of(context).size;
-    final safePadding = MediaQuery.of(context).padding;
+
     final currentCorrect = getCorrectCount();
     final totalCount = assets.length;
 
     bool isLandscape = screenSize.width / screenSize.height > 1;
     bool istablet = screenSize.width > Constants.tabletSize;
+    bool isWide = isLandscape && istablet;
 
     return Stack(
       children: [
@@ -162,18 +163,18 @@ class _ListCardSoundsState extends State<ListCardSounds> {
               Score(game: "SoundCards"),
 
               // Top half of screen - Cards
-              const Spacer(),
+              isWide ? const Spacer() : const SizedBox(height: 10),
               Row(
                 mainAxisAlignment: MainAxisAlignment.center,
                 children: [
-                  WordOfImages(letters: "DRAG", letterSize: 50),
+                  WordOfImages(letters: "DRAG", letterSize: isWide ? 50 : 25),
                   const SizedBox(width: 10),
-                  WordOfImages(letters: "AND", letterSize: 50),
+                  WordOfImages(letters: "AND", letterSize: isWide ? 50 : 25),
                   const SizedBox(width: 10),
-                  WordOfImages(letters: "DROP", letterSize: 50),
+                  WordOfImages(letters: "DROP", letterSize: isWide ? 50 : 25),
                 ],
               ),
-              const Spacer(),
+              isWide ? const Spacer() : const SizedBox(height: 10),
               Center(
                 child: isLandscape || istablet
                     ? Row(
@@ -208,7 +209,7 @@ class _ListCardSoundsState extends State<ListCardSounds> {
                         ],
                       ),
               ),
-              const Spacer(),
+              isWide ? const Spacer() : const SizedBox(height: 10),
               // Bottom half of screen - All names and score
               Expanded(
                 child: Column(
@@ -276,7 +277,7 @@ class _ListCardSoundsState extends State<ListCardSounds> {
                   ],
                 ),
               ),
-              const Spacer(),
+              isWide ? const Spacer() : const SizedBox(height: 10),
             ],
           ),
         ),
