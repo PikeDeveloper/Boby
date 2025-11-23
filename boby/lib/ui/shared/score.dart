@@ -33,6 +33,7 @@ class Score extends StatelessWidget {
     }
     return Image.asset(
       badge,
+      key: ValueKey(badge),
       width: isTablet || isLandscape ? 40 : 30,
       height: isTablet || isLandscape ? 50 : 30,
     );
@@ -108,11 +109,18 @@ class Score extends StatelessWidget {
                   color: Colors.blue.withOpacity(0.1),
                   shape: BoxShape.circle,
                 ),
-                child: getBadge(
-                  double.parse(_getCorrectValue()),
-                  double.parse(_getWrongValue()),
-                  istablet,
-                  isLandscape,
+                child: AnimatedSwitcher(
+                  duration: const Duration(milliseconds: 300),
+                  transitionBuilder:
+                      (Widget child, Animation<double> animation) {
+                        return ScaleTransition(scale: animation, child: child);
+                      },
+                  child: getBadge(
+                    double.parse(_getCorrectValue()),
+                    double.parse(_getWrongValue()),
+                    istablet,
+                    isLandscape,
+                  ),
                 ),
               ),
 

@@ -160,7 +160,6 @@ class _ListCardSoundsState extends State<ListCardSounds> {
           child: Column(
             mainAxisAlignment: MainAxisAlignment.center,
             children: [
-              const SizedBox(height: 20),
               Score(game: "DragAndDrop"),
 
               // Top half of screen - Cards
