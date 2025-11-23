@@ -146,7 +146,7 @@ class _ListCardSoundsState extends State<ListCardSounds> {
 
     bool isLandscape = screenSize.width / screenSize.height > 1;
     bool istablet = screenSize.width > Constants.tabletSize;
-    bool isWide = isLandscape && istablet;
+    bool isWide = isLandscape || istablet;
 
     return Stack(
       children: [
@@ -160,7 +160,7 @@ class _ListCardSoundsState extends State<ListCardSounds> {
             mainAxisAlignment: MainAxisAlignment.center,
             children: [
               const SizedBox(height: 20),
-              Score(game: "SoundCards"),
+              Score(game: "DragAndDrop"),
 
               // Top half of screen - Cards
               isWide ? const Spacer() : const SizedBox(height: 10),
