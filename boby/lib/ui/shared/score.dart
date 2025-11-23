@@ -1,6 +1,12 @@
+import 'dart:math';
+
 import 'package:boby/controllers/app_controller.dart';
 import 'package:boby/services/storage_service.dart';
 
+import 'dart:ui' as ui;
+import 'dart:typed_data';
+import 'package:flutter/rendering.dart';
+import 'package:share_plus/share_plus.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 
@@ -10,6 +16,8 @@ class Score extends StatelessWidget {
   final String game;
 
   const Score({super.key, required this.game});
+
+  final bool showQRCode = false;
 
   getBadge(double correct, double wrong, bool isTablet, bool isLandscape) {
     double average = (correct / (correct + wrong)) * 100;
@@ -214,180 +222,17 @@ class Score extends StatelessWidget {
 
     showDialog(
       context: context,
-      builder: (context) => Dialog(
-        shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(25)),
-        elevation: 10,
-        backgroundColor: Colors.transparent,
-        child: Container(
-          padding: const EdgeInsets.all(20),
-          decoration: BoxDecoration(
-            color: Colors.white,
-            borderRadius: BorderRadius.circular(25),
-            border: Border.all(color: const Color(0xFF1E88E5), width: 4),
-            boxShadow: [
-              BoxShadow(
-                color: Colors.black.withOpacity(0.2),
-                blurRadius: 15,
-                offset: const Offset(0, 5),
-              ),
-            ],
-          ),
-          child: Column(
-            mainAxisSize: MainAxisSize.min,
-            children: [
-              // Header with Game Name
-              Text(
-                game,
-                style: const TextStyle(
-                  fontSize: 28,
-                  fontWeight: FontWeight.bold,
-                  color: Color(0xFF1E88E5),
-                ),
-              ),
-              const SizedBox(height: 20),
-
-              // Level Section
-              Container(
-                padding: const EdgeInsets.symmetric(
-                  horizontal: 20,
-                  vertical: 10,
-                ),
-                decoration: BoxDecoration(
-                  color: levelColor.withOpacity(0.1),
-                  borderRadius: BorderRadius.circular(20),
-                  border: Border.all(color: levelColor, width: 2),
-                ),
-                child: Row(
-                  mainAxisSize: MainAxisSize.min,
-                  children: [
-                    Text(
-                      "Level: $level",
-                      style: TextStyle(
-                        fontSize: 22,
-                        fontWeight: FontWeight.bold,
-                        color: levelColor,
-                      ),
-                    ),
-                    const SizedBox(width: 10),
-                    getBadge(correct, wrong, istablet, isLandscape),
-                  ],
-                ),
-              ),
-              const SizedBox(height: 25),
-
-              // Stats Section
-              Row(
-                mainAxisAlignment: MainAxisAlignment.spaceAround,
-                children: [
-                  _buildStatBox(
-                    "Correct",
-                    correct.toInt().toString(),
-                    Colors.green,
-                  ),
-                  _buildStatBox("Wrong", wrong.toInt().toString(), Colors.red),
-                ],
-              ),
-
-              const SizedBox(height: 30),
-
-              // Buttons Section
-              Row(
-                mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-                children: [
-                  // Share Button
-                  _buildActionButton(
-                    icon: Icons.share_rounded,
-                    label: "Share",
-                    color: Colors.purple,
-                    onTap: () {
-                      // Share functionality to be implemented
-                    },
-                  ),
-
-                  // Reset Button
-                  _buildActionButton(
-                    icon: Icons.refresh_rounded,
-                    label: "Reset",
-                    color: Colors.orange,
-                    onTap: () {
-                      _resetScores();
-                      Navigator.of(context).pop();
-                    },
-                  ),
-                ],
-              ),
-
-              const SizedBox(height: 15),
-
-              // Cancel Button
-              TextButton(
-                onPressed: () => Navigator.of(context).pop(),
-                style: TextButton.styleFrom(foregroundColor: Colors.grey),
-                child: const Text(
-                  "Close",
-                  style: TextStyle(fontSize: 18, fontWeight: FontWeight.w600),
-                ),
-              ),
-            ],
-          ),
-        ),
-      ),
-    );
-  }
-
-  Widget _buildStatBox(String label, String value, Color color) {
-    return Column(
-      children: [
-        Text(
-          value,
-          style: TextStyle(
-            fontSize: 32,
-            fontWeight: FontWeight.bold,
-            color: color,
-          ),
-        ),
-        Text(
-          label,
-          style: TextStyle(
-            fontSize: 16,
-            fontWeight: FontWeight.w500,
-            color: color.withOpacity(0.8),
-          ),
-        ),
-      ],
-    );
-  }
-
-  Widget _buildActionButton({
-    required IconData icon,
-    required String label,
-    required Color color,
-    required VoidCallback onTap,
-  }) {
-    return InkWell(
-      onTap: onTap,
-      borderRadius: BorderRadius.circular(15),
-      child: Container(
-        padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 10),
-        decoration: BoxDecoration(
-          color: color.withOpacity(0.1),
-          borderRadius: BorderRadius.circular(15),
-          border: Border.all(color: color, width: 2),
-        ),
-        child: Column(
-          children: [
-            Icon(icon, color: color, size: 28),
-            const SizedBox(height: 4),
-            Text(
-              label,
-              style: TextStyle(
-                color: color,
-                fontWeight: FontWeight.bold,
-                fontSize: 14,
-              ),
-            ),
-          ],
-        ),
+      builder: (context) => _ScoreDialogContent(
+        game: game,
+        level: level,
+        levelColor: levelColor,
+        correct: correct,
+        wrong: wrong,
+        badge: getBadge(correct, wrong, istablet, isLandscape),
+        onReset: () {
+          _resetScores();
+          Navigator.of(context).pop();
+        },
       ),
     );
   }
@@ -424,5 +269,298 @@ class Score extends StatelessWidget {
     appController.noShow.value == "no"
         ? appController.noShow.value = "yes"
         : appController.noShow.value = "no";
+  }
+}
+
+class _ScoreDialogContent extends StatefulWidget {
+  final String game;
+  final String level;
+  final Color levelColor;
+  final double correct;
+  final double wrong;
+  final Widget badge;
+  final VoidCallback onReset;
+
+  const _ScoreDialogContent({
+    required this.game,
+    required this.level,
+    required this.levelColor,
+    required this.correct,
+    required this.wrong,
+    required this.badge,
+    required this.onReset,
+  });
+
+  @override
+  State<_ScoreDialogContent> createState() => _ScoreDialogContentState();
+}
+
+class _ScoreDialogContentState extends State<_ScoreDialogContent> {
+  final GlobalKey _globalKey = GlobalKey();
+  final GlobalKey _shareBtnKey = GlobalKey();
+  bool showQRCode = false;
+
+  Future<void> _captureAndShare() async {
+    // Capture the position of the share button before hiding it
+    final RenderBox? box =
+        _shareBtnKey.currentContext?.findRenderObject() as RenderBox?;
+    Rect? shareOrigin;
+    if (box != null) {
+      shareOrigin = box.localToGlobal(Offset.zero) & box.size;
+    }
+
+    setState(() {
+      showQRCode = true;
+    });
+
+    // Wait for the UI to update and render the QR code
+    await Future.delayed(const Duration(milliseconds: 100));
+
+    try {
+      RenderRepaintBoundary boundary =
+          _globalKey.currentContext!.findRenderObject()
+              as RenderRepaintBoundary;
+      ui.Image image = await boundary.toImage(pixelRatio: 3.0);
+      ByteData? byteData = await image.toByteData(
+        format: ui.ImageByteFormat.png,
+      );
+
+      if (byteData != null) {
+        final Uint8List pngBytes = byteData.buffer.asUint8List();
+
+        final xFile = XFile.fromData(
+          pngBytes,
+          mimeType: 'image/png',
+          name: 'boby_score.png',
+        );
+
+        await Share.shareXFiles(
+          [xFile],
+          text:
+              "Check out my score in Boby! https://apps.apple.com/hn/app/boby/id6753878717",
+          sharePositionOrigin: shareOrigin,
+        );
+      }
+    } catch (e) {
+      print("Error capturing or sharing image: $e");
+    }
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    final screen = MediaQuery.of(context).size;
+    return Dialog(
+      shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(25)),
+      elevation: 10,
+      backgroundColor: Colors.transparent,
+      child: Column(
+        mainAxisSize: MainAxisSize.min,
+        children: [
+          RepaintBoundary(
+            key: _globalKey,
+            child: Container(
+              padding: const EdgeInsets.all(20),
+              width: min(screen.width, 500),
+              decoration: BoxDecoration(
+                color: Colors.white,
+                borderRadius: BorderRadius.circular(25),
+                border: Border.all(color: const Color(0xFF1E88E5), width: 4),
+                boxShadow: [
+                  BoxShadow(
+                    color: Colors.black.withOpacity(0.2),
+                    blurRadius: 15,
+                    offset: const Offset(0, 5),
+                  ),
+                ],
+              ),
+              child: Column(
+                mainAxisSize: MainAxisSize.min,
+                children: [
+                  // Header with Game Name
+                  Text(
+                    widget.game,
+                    style: const TextStyle(
+                      fontSize: 28,
+                      fontWeight: FontWeight.bold,
+                      color: Color(0xFF1E88E5),
+                    ),
+                  ),
+                  const SizedBox(height: 20),
+
+                  // Level Section
+                  Container(
+                    padding: const EdgeInsets.symmetric(
+                      horizontal: 20,
+                      vertical: 10,
+                    ),
+                    decoration: BoxDecoration(
+                      color: widget.levelColor.withOpacity(0.1),
+                      borderRadius: BorderRadius.circular(20),
+                      border: Border.all(color: widget.levelColor, width: 2),
+                    ),
+                    child: Row(
+                      mainAxisSize: MainAxisSize.min,
+                      children: [
+                        Text(
+                          "Level: ${widget.level}",
+                          style: TextStyle(
+                            fontSize: 22,
+                            fontWeight: FontWeight.bold,
+                            color: widget.levelColor,
+                          ),
+                        ),
+                        const SizedBox(width: 10),
+                        widget.badge,
+                      ],
+                    ),
+                  ),
+                  const SizedBox(height: 25),
+
+                  // Stats Section
+                  Row(
+                    mainAxisAlignment: MainAxisAlignment.spaceAround,
+                    children: [
+                      _buildStatBox(
+                        "Correct",
+                        widget.correct.toInt().toString(),
+                        Colors.green,
+                      ),
+                      _buildStatBox(
+                        "Wrong",
+                        widget.wrong.toInt().toString(),
+                        Colors.red,
+                      ),
+                    ],
+                  ),
+                  const SizedBox(height: 20),
+
+                  if (showQRCode)
+                    Container(
+                      padding: const EdgeInsets.all(10),
+                      decoration: BoxDecoration(
+                        color: Colors.white,
+                        borderRadius: BorderRadius.circular(20),
+                      ),
+                      child: Image.asset(
+                        "assets/ios_qr.jpeg",
+                        width: 200,
+                        height: 200,
+                      ),
+                    )
+                  else
+                    // Buttons Section (Outside RepaintBoundary to avoid capturing buttons)
+                    Container(
+                      padding: const EdgeInsets.all(10),
+                      decoration: BoxDecoration(
+                        color: Colors.white,
+                        borderRadius: BorderRadius.circular(20),
+                      ),
+                      child: Row(
+                        mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+                        children: [
+                          // Share Button
+                          _buildActionButton(
+                            key: _shareBtnKey,
+                            icon: Icons.share_rounded,
+                            label: "Share",
+                            color: Colors.purple,
+                            onTap: _captureAndShare,
+                          ),
+
+                          // Reset Button
+                          _buildActionButton(
+                            icon: Icons.refresh_rounded,
+                            label: "Reset",
+                            color: Colors.orange,
+                            onTap: widget.onReset,
+                          ),
+                        ],
+                      ),
+                    ),
+
+                  const SizedBox(height: 15),
+
+                  // Cancel Button
+                  TextButton(
+                    onPressed: () => Navigator.of(context).pop(),
+                    style: TextButton.styleFrom(
+                      foregroundColor: Colors
+                          .white, // Changed to white for better visibility on overlay
+                      backgroundColor: Colors.black26,
+                    ),
+                    child: const Text(
+                      "Close",
+                      style: TextStyle(
+                        fontSize: 18,
+                        fontWeight: FontWeight.w600,
+                      ),
+                    ),
+                  ),
+                ],
+              ),
+            ),
+          ),
+        ],
+      ),
+    );
+  }
+
+  Widget _buildStatBox(String label, String value, Color color) {
+    return Column(
+      children: [
+        Text(
+          value,
+          style: TextStyle(
+            fontSize: 32,
+            fontWeight: FontWeight.bold,
+            color: color,
+          ),
+        ),
+        Text(
+          label,
+          style: TextStyle(
+            fontSize: 16,
+            fontWeight: FontWeight.w500,
+            color: color.withOpacity(0.8),
+          ),
+        ),
+      ],
+    );
+  }
+
+  Widget _buildActionButton({
+    Key? key,
+    required IconData icon,
+    required String label,
+    required Color color,
+    required VoidCallback onTap,
+  }) {
+    return InkWell(
+      key: key,
+      onTap: onTap,
+      borderRadius: BorderRadius.circular(15),
+      child: Container(
+        padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 10),
+        decoration: BoxDecoration(
+          color: color.withOpacity(0.1),
+          borderRadius: BorderRadius.circular(15),
+          border: Border.all(color: color, width: 2),
+        ),
+        child: Column(
+          children: [
+            Icon(icon, color: color, size: 28),
+            const SizedBox(height: 4),
+            Text(
+              label,
+              style: TextStyle(
+                color: color,
+                fontWeight: FontWeight.bold,
+                fontSize: 14,
+              ),
+            ),
+          ],
+        ),
+      ),
+    );
   }
 }

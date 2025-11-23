@@ -1,5 +1,6 @@
 import 'package:boby/ui/screens/word_guess/widgets/celebration_image.dart';
 import 'package:boby/ui/shared/score.dart';
+import 'package:boby/ui/shared/word_of_images.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:dotted_border/dotted_border.dart'
@@ -155,142 +156,127 @@ class _ListCardSoundsState extends State<ListCardSounds> {
         ),
         SafeArea(
           child: Column(
+            mainAxisAlignment: MainAxisAlignment.center,
             children: [
-              Column(
+              const SizedBox(height: 20),
+              Score(game: "SoundCards"),
+
+              // Top half of screen - Cards
+              const Spacer(),
+              Row(
+                mainAxisAlignment: MainAxisAlignment.center,
                 children: [
-                  // Total scores
-                  Score(game: "SoundCards"),
+                  WordOfImages(letters: "DRAG", letterSize: 50),
+                  const SizedBox(width: 10),
+                  WordOfImages(letters: "AND", letterSize: 50),
+                  const SizedBox(width: 10),
+                  WordOfImages(letters: "DROP", letterSize: 50),
                 ],
               ),
-              // Top half of screen - Cards
-              SizedBox(
-                height:
-                    (screenSize.height - safePadding.top - safePadding.bottom) *
-                    (isLandscape ? 0.6 : 0.5),
-                child: Center(
-                  child: SingleChildScrollView(
-                    child: Column(
-                      mainAxisSize: MainAxisSize.min,
-                      mainAxisAlignment: MainAxisAlignment.center,
-                      children: [
-                        isLandscape || istablet
-                            ? Row(
-                                mainAxisAlignment:
-                                    MainAxisAlignment.spaceEvenly,
-                                children: [
-                                  if (assets.isNotEmpty) _buildCardTarget(0),
-                                  if (assets.length > 1) _buildCardTarget(1),
+              const Spacer(),
+              Center(
+                child: isLandscape || istablet
+                    ? Row(
+                        mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+                        children: [
+                          if (assets.isNotEmpty) _buildCardTarget(0),
+                          if (assets.length > 1) _buildCardTarget(1),
 
-                                  if (assets.length > 2) _buildCardTarget(2),
-                                  if (assets.length > 3) _buildCardTarget(3),
-                                ],
-                              )
-                            :
-                              // First row of cards
-                              Column(
-                                children: [
-                                  Row(
-                                    mainAxisAlignment:
-                                        MainAxisAlignment.spaceEvenly,
-                                    children: [
-                                      if (assets.isNotEmpty)
-                                        _buildCardTarget(0),
-                                      if (assets.length > 1)
-                                        _buildCardTarget(1),
-                                    ],
-                                  ),
-                                  const SizedBox(height: 20),
-                                  Row(
-                                    mainAxisAlignment:
-                                        MainAxisAlignment.spaceEvenly,
-                                    children: [
-                                      if (assets.length > 2)
-                                        _buildCardTarget(2),
-                                      if (assets.length > 3)
-                                        _buildCardTarget(3),
-                                    ],
-                                  ),
-                                ],
-                              ),
-                      ],
-                    ),
-                  ),
-                ),
+                          if (assets.length > 2) _buildCardTarget(2),
+                          if (assets.length > 3) _buildCardTarget(3),
+                        ],
+                      )
+                    :
+                      // First row of cards
+                      Column(
+                        children: [
+                          Row(
+                            mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+                            children: [
+                              if (assets.isNotEmpty) _buildCardTarget(0),
+                              if (assets.length > 1) _buildCardTarget(1),
+                            ],
+                          ),
+                          const SizedBox(height: 20),
+                          Row(
+                            mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+                            children: [
+                              if (assets.length > 2) _buildCardTarget(2),
+                              if (assets.length > 3) _buildCardTarget(3),
+                            ],
+                          ),
+                        ],
+                      ),
               ),
+              const Spacer(),
               // Bottom half of screen - All names and score
               Expanded(
-                child: Container(
-                  padding: const EdgeInsets.symmetric(
-                    horizontal: 20.0,
-                    vertical: 0.0,
-                  ),
-                  child: Column(
-                    mainAxisAlignment: MainAxisAlignment.center,
-                    children: [
-                      // Show score when all cards are filled
-                      if (cardNames.every((name) => name != null))
-                        Padding(
-                          padding: const EdgeInsets.only(bottom: 5.0),
-                          child: Text(
-                            '$currentCorrect/$totalCount',
-                            style: TextStyle(
-                              fontSize: 72,
-                              fontWeight: FontWeight.bold,
-                              color: getScoreColor(),
-                            ),
+                child: Column(
+                  mainAxisAlignment: MainAxisAlignment.center,
+                  children: [
+                    // Show score when all cards are filled
+                    if (cardNames.every((name) => name != null))
+                      Padding(
+                        padding: const EdgeInsets.only(bottom: 5.0),
+                        child: Text(
+                          '$currentCorrect/$totalCount',
+                          style: TextStyle(
+                            fontSize: 72,
+                            fontWeight: FontWeight.bold,
+                            color: getScoreColor(),
                           ),
-                        )
-                      else
-                        // Show names when not all cards are filled
-                        Expanded(
-                          child: Column(
-                            mainAxisAlignment: MainAxisAlignment.center,
+                        ),
+                      )
+                    else
+                      // Show names when not all cards are filled
+                      Expanded(
+                        child: Column(
+                          mainAxisAlignment: MainAxisAlignment.center,
 
-                            children: [
-                              // First row of names
+                          children: [
+                            // First row of names
+                            Row(
+                              mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+                              children: [
+                                if (shuffledNames.isNotEmpty)
+                                  _buildNameContainer(
+                                    shuffledNames[0]["name"]!,
+                                    0,
+                                  ),
+                                if (shuffledNames.length > 1)
+                                  _buildNameContainer(
+                                    shuffledNames[1]["name"]!,
+                                    1,
+                                  ),
+                              ],
+                            ),
+                            if (shuffledNames.length > 2) ...[
+                              const SizedBox(height: 5),
+                              // Second row of names
                               Row(
                                 mainAxisAlignment:
                                     MainAxisAlignment.spaceEvenly,
                                 children: [
-                                  if (shuffledNames.isNotEmpty)
+                                  if (shuffledNames.length > 2)
                                     _buildNameContainer(
-                                      shuffledNames[0]["name"]!,
-                                      0,
+                                      shuffledNames[2]["name"]!,
+                                      2,
                                     ),
-                                  if (shuffledNames.length > 1)
+                                  if (shuffledNames.length > 3)
                                     _buildNameContainer(
-                                      shuffledNames[1]["name"]!,
-                                      1,
+                                      shuffledNames[3]["name"]!,
+                                      3,
                                     ),
                                 ],
                               ),
-                              if (shuffledNames.length > 2) ...[
-                                const SizedBox(height: 5),
-                                // Second row of names
-                                Row(
-                                  mainAxisAlignment:
-                                      MainAxisAlignment.spaceEvenly,
-                                  children: [
-                                    if (shuffledNames.length > 2)
-                                      _buildNameContainer(
-                                        shuffledNames[2]["name"]!,
-                                        2,
-                                      ),
-                                    if (shuffledNames.length > 3)
-                                      _buildNameContainer(
-                                        shuffledNames[3]["name"]!,
-                                        3,
-                                      ),
-                                  ],
-                                ),
-                              ],
                             ],
-                          ),
+                          ],
                         ),
-                    ],
-                  ),
+                      ),
+                  ],
                 ),
               ),
+              const Spacer(),
             ],
           ),
         ),

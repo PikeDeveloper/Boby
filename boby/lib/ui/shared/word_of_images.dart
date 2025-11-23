@@ -1,8 +1,11 @@
 import 'package:flutter/material.dart';
 
 class WordOfImages extends StatelessWidget {
-  const WordOfImages(
-      {super.key, required this.letters, required this.letterSize});
+  const WordOfImages({
+    super.key,
+    required this.letters,
+    required this.letterSize,
+  });
 
   final String letters;
   final double letterSize;
@@ -21,8 +24,10 @@ class WordOfImages extends StatelessWidget {
         mainAxisSize: MainAxisSize.min,
         children: [
           for (int i = 0; i < letters.length; i++) ...[
-            Image.asset("assets/letters_2/${letters[i]}.png",
-                height: letterSize),
+            Image.asset(
+              "assets/letters_2/${letters[i]}.png",
+              height: letterSize,
+            ),
             if (i != letters.length - 1) const SizedBox(width: 6),
           ],
         ],
@@ -53,14 +58,16 @@ class WordOfImages extends StatelessWidget {
             mainAxisSize: MainAxisSize.min,
             children: [
               for (int j = 0; j < words[i].length; j++) ...[
-                Image.asset("assets/letters_2/${words[i][j]}.png",
-                    height: letterSize),
+                Image.asset(
+                  "assets/letters_2/${words[i][j]}.png",
+                  height: letterSize,
+                ),
                 if (j != words[i].length - 1) const SizedBox(width: 10),
               ],
             ],
           ),
           if (i != words.length - 1) const SizedBox(height: 6),
-        ]
+        ],
       ],
     );
   }
