@@ -17,11 +17,12 @@ class MainMenu extends StatelessWidget {
     {
       "name": "Letters Soup",
       "route": "2",
-      "image": "assets/letters_soup_icon.png"
+      "image": "assets/letters_soup_icon.png",
     },
     {"name": "Settings", "route": "3", "image": "assets/math_icon.png"},
     {"name": "Word Guess", "route": "4", "image": "assets/word_guess_icon.png"},
     {"name": "Match It", "route": "5", "image": "assets/match_it_icon.png"},
+    {"name": "Names", "route": "6", "image": "assets/match_it_icon.png"},
   ];
 
   @override
@@ -48,10 +49,7 @@ class MainMenu extends StatelessWidget {
           child: SizedBox(
             width: minSide * 0.3,
             height: minSide * 0.3,
-            child: Image.asset(
-              option["image"]!,
-              fit: BoxFit.cover,
-            ),
+            child: Image.asset(option["image"]!, fit: BoxFit.cover),
           ),
         ),
       );
