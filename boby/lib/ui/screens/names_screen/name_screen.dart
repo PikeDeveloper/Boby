@@ -1,7 +1,4 @@
-import 'package:boby/controllers/app_controller.dart';
 import 'package:boby/ui/screens/drag_and_drop_screen/widgets/card_sound.dart';
-import 'package:boby/ui/shared/word_of_images.dart';
-import 'package:get/get.dart';
 import 'package:boby/utils/colors.dart';
 import 'package:boby/utils/constants.dart';
 import 'package:flutter/material.dart';
@@ -11,63 +8,58 @@ class NameScreen extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final screenSize = MediaQuery.of(context).size;
+    final width = screenSize.width;
+
     List cards = Constants.assets;
-    List colors = [
-      MyColors.yellow,
-      MyColors.purple,
-      MyColors.lightPurple,
-      MyColors.red,
-      MyColors.green,
-      MyColors.blue,
-      MyColors.darkBlue,
-    ];
-    return Stack(
-      children: [
-        Row(
-          mainAxisAlignment: MainAxisAlignment.center,
-          children: [
-            Container(
-              decoration: BoxDecoration(
-                color: Colors.white,
-                borderRadius: BorderRadius.circular(10),
-              ),
-              child: Text(
-                "Listen to some names in English.",
-                style: TextStyle(
-                  fontSize: 22,
-                  fontWeight: FontWeight.w600,
-                  color: MyColors.darkBlue,
-                ),
-              ),
+    return SafeArea(
+      child: Column(
+        children: [
+          const SizedBox(height: 20),
+          Container(
+            padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 10),
+            decoration: BoxDecoration(
+              color: Colors.white,
+              borderRadius: BorderRadius.circular(10),
             ),
-          ],
-        ),
-        SingleChildScrollView(
-          child: Row(
-            children: [
-              const SizedBox(height: 20),
-              //crea un grid con las c
-              GridView.builder(
-                scrollDirection: Axis.horizontal,
-                shrinkWrap: true,
-                physics: const NeverScrollableScrollPhysics(),
-                gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
-                  crossAxisCount: 2,
-                ),
-                itemCount: cards.length,
-                itemBuilder: (context, index) {
-                  return CardSound(
+            child: Text(
+              "Listen to some names in English.",
+              style: TextStyle(
+                fontSize: 22,
+                fontWeight: FontWeight.w600,
+                color: MyColors.darkBlue,
+              ),
+              textAlign: TextAlign.center,
+            ),
+          ),
+          const SizedBox(height: 20),
+          Expanded(
+            child: GridView.builder(
+              gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
+                crossAxisCount: width > 710
+                    ? 4
+                    : width > 500
+                    ? 3
+                    : 2,
+                childAspectRatio: 0.8, // Adjust as needed
+              ),
+              itemCount: cards.length,
+              itemBuilder: (context, index) {
+                return Padding(
+                  padding: const EdgeInsets.all(8.0),
+                  child: CardSound(
                     sound: cards[index]["sound"]!,
                     name: cards[index]["name"]!,
                     image: cards[index]["image"]!,
                     colorKey: 0,
-                  );
-                },
-              ),
-            ],
+                  ),
+                );
+              },
+            ),
           ),
-        ),
-      ],
+          const SizedBox(height: 20),
+        ],
+      ),
     );
   }
 }
