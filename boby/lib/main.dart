@@ -1,4 +1,4 @@
-import 'package:boby/ui/screens/bonus_sreen/bonus_screen.dart';
+import 'package:boby/controllers/app_controller.dart';
 import 'package:boby/ui/screens/main_screen/main_screen.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
@@ -14,6 +14,7 @@ Future<void> main() async {
 
   // Initialize services
   await Get.putAsync<StorageService>(() => StorageService.init());
+  Get.put(AppController());
 
   runApp(const MainApp());
 }
@@ -26,7 +27,7 @@ class MainApp extends StatelessWidget {
     return GetMaterialApp(
       debugShowCheckedModeBanner: false,
       title: 'Material App',
-      initialRoute: BonusScreen.route,
+      initialRoute: MainScreen.route,
       getPages: Routes.routes,
       theme: ThemeData(
         textTheme: GoogleFonts.comicNeueTextTheme(),
