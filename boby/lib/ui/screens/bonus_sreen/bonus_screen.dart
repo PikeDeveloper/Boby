@@ -19,6 +19,7 @@ class _BonusScreenState extends State<BonusScreen>
   // Game State
   late Map<String, dynamic> _targetCategory;
   final List<FloatingWord> _activeWords = [];
+  final List<ScoreFeedbackItem> _feedbacks = [];
 
   // Configuration
   final int _maxWords = 5;
@@ -43,6 +44,7 @@ class _BonusScreenState extends State<BonusScreen>
     _targetCategory =
         BonusWords.bonusWords[_random.nextInt(BonusWords.bonusWords.length)];
     _activeWords.clear();
+    _feedbacks.clear();
   }
 
   void _onTick(Duration elapsed) {
@@ -65,6 +67,12 @@ class _BonusScreenState extends State<BonusScreen>
           _timeSinceLastSpawn = 0;
         }
       }
+
+      // 4. Update feedbacks (remove old ones)
+      final now = DateTime.now();
+      _feedbacks.removeWhere(
+        (item) => now.difference(item.creationTime).inMilliseconds > 1000,
+      );
     });
   }
 
@@ -100,7 +108,7 @@ class _BonusScreenState extends State<BonusScreen>
         text: wordText,
         x: startX,
         y: 1.1, // Start just below screen
-        speed: 0.005 + _random.nextDouble() * 0.005, // Random speed
+        speed: 0.002 + _random.nextDouble() * 0.002, // Random speed
         isTarget: correctOptions.contains(wordText),
       ),
     );
@@ -112,10 +120,24 @@ class _BonusScreenState extends State<BonusScreen>
     setState(() {
       if (word.isTarget) {
         word.color = Colors.green;
+        _addFeedback(word, "+2", Colors.green);
       } else {
         word.color = Colors.red;
+        _addFeedback(word, "-1", Colors.red);
       }
     });
+  }
+
+  void _addFeedback(FloatingWord word, String text, Color color) {
+    _feedbacks.add(
+      ScoreFeedbackItem(
+        text: text,
+        x: word.x,
+        y: word.y,
+        color: color,
+        creationTime: DateTime.now(),
+      ),
+    );
   }
 
   @override
@@ -187,6 +209,45 @@ class _BonusScreenState extends State<BonusScreen>
               ),
             );
           }).toList(),
+
+          // Score Feedbacks
+          ..._feedbacks.map((feedback) {
+            final age = DateTime.now()
+                .difference(feedback.creationTime)
+                .inMilliseconds;
+            final progress = age / 1000.0; // 0.0 to 1.0
+
+            // Simple animation: Move up slightly and fade out
+            final double currentY = feedback.y - (progress * 0.1);
+            final double opacity = (1.0 - progress).clamp(0.0, 1.0);
+            final double scale = 1.0 + (sin(progress * pi) * 0.5); // Pop effect
+
+            return Positioned(
+              left: MediaQuery.of(context).size.width * feedback.x,
+              top: MediaQuery.of(context).size.height * currentY,
+              child: Opacity(
+                opacity: opacity,
+                child: Transform.scale(
+                  scale: scale,
+                  child: Container(
+                    padding: const EdgeInsets.all(8),
+                    decoration: BoxDecoration(
+                      color: feedback.color,
+                      shape: BoxShape.circle,
+                    ),
+                    child: Text(
+                      feedback.text,
+                      style: const TextStyle(
+                        fontSize: 24,
+                        fontWeight: FontWeight.bold,
+                        color: Colors.white,
+                      ),
+                    ),
+                  ),
+                ),
+              ),
+            );
+          }).toList(),
         ],
       ),
     );
@@ -208,5 +269,21 @@ class FloatingWord {
     required this.speed,
     required this.isTarget,
     this.color,
+  });
+}
+
+class ScoreFeedbackItem {
+  String text;
+  double x;
+  double y;
+  Color color;
+  DateTime creationTime;
+
+  ScoreFeedbackItem({
+    required this.text,
+    required this.x,
+    required this.y,
+    required this.color,
+    required this.creationTime,
   });
 }
