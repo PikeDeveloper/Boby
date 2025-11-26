@@ -1,5 +1,7 @@
 import 'dart:math';
 import 'package:boby/controllers/app_controller.dart';
+import 'package:boby/services/storage_service.dart';
+import 'package:boby/ui/shared/score.dart';
 import 'package:boby/ui/shared/word_of_images.dart';
 import 'package:boby/utils/colors.dart';
 import 'package:flutter/material.dart';
@@ -19,6 +21,8 @@ class _BonusScreenState extends State<BonusScreen>
     with SingleTickerProviderStateMixin {
   late Ticker _ticker;
   final Random _random = Random();
+
+  final StorageService storage = Get.find<StorageService>();
 
   // Game State
   late Map<String, dynamic> _targetCategory;
@@ -110,23 +114,7 @@ class _BonusScreenState extends State<BonusScreen>
 
   void _handleGameOver() {
     // Show game over dialog or navigate away
-    showDialog(
-      context: context,
-      barrierDismissible: false,
-      builder: (context) => AlertDialog(
-        title: const Text("Time's Up!"),
-        content: const Text("Great job!"),
-        actions: [
-          TextButton(
-            onPressed: () {
-              Navigator.of(context).pop(); // Close dialog
-              Navigator.of(context).pop(); // Close screen
-            },
-            child: const Text("OK"),
-          ),
-        ],
-      ),
-    );
+    Get.back();
   }
 
   void _spawnWord() {
@@ -175,10 +163,13 @@ class _BonusScreenState extends State<BonusScreen>
         word.color = Colors.green;
         _addFeedback(word, "+2", Colors.green);
         Get.find<AppController>().playGameBonus();
+        storage.incCompleteSentenceCorrect();
+        storage.incCompleteSentenceCorrect();
       } else {
         word.color = Colors.red;
         _addFeedback(word, "-1", Colors.red);
         Get.find<AppController>().playBubblePop();
+        storage.incCompleteSentenceWrong();
       }
     });
   }
@@ -197,154 +188,172 @@ class _BonusScreenState extends State<BonusScreen>
 
   @override
   Widget build(BuildContext context) {
-    return Stack(
-      children: [
-        // Background or other UI elements could go here
-
-        // Header
-        Positioned(
-          top: 100,
-          left: 0,
-          right: 0,
-          child: Column(
-            children: [
-              //barra regresiva  de 10seg
-              Container(
-                height: 20,
-                width: MediaQuery.of(context).size.width * 0.8,
-                margin: const EdgeInsets.symmetric(horizontal: 20),
-                decoration: BoxDecoration(
-                  color: Colors.grey[200],
-                  borderRadius: BorderRadius.circular(10),
-                ),
-                child: Align(
-                  alignment: Alignment.centerLeft,
-                  child: Container(
-                    height: 20,
-                    width:
-                        (MediaQuery.of(context).size.width * 0.8) *
-                        (1.0 -
-                            (_elapsedTime.inMilliseconds /
-                                    _gameDuration.inMilliseconds)
-                                .clamp(0.0, 1.0)),
-                    decoration: BoxDecoration(
-                      color: Colors.blue,
-                      borderRadius: BorderRadius.circular(10),
-                    ),
-                  ),
-                ),
-              ),
-
-              Container(
-                padding: const EdgeInsets.symmetric(horizontal: 20),
-
-                width: double.infinity,
-                alignment: Alignment.center,
-                decoration: BoxDecoration(
-                  color: Colors.white,
-                  borderRadius: BorderRadius.circular(20),
-                  boxShadow: [
-                    BoxShadow(
-                      color: Colors.black.withOpacity(0.1),
-                      blurRadius: 4,
-                      offset: const Offset(0, 2),
-                    ),
-                  ],
-                ),
-                child: Column(
-                  children: [
-                    Text(
-                      "Touch the words related to:",
-                      style: TextStyle(fontSize: 20, color: MyColors.darkBlue),
-                    ),
-                    const SizedBox(height: 10),
-                    WordOfImages(
-                      letters: _targetCategory['word'],
-                      letterSize: 25,
-                    ),
-                  ],
-                ),
-              ),
-            ],
-          ),
-        ),
-
-        // Floating Words
-        ..._activeWords.map((word) {
-          return Positioned(
-            left: MediaQuery.of(context).size.width * word.x,
-            top: MediaQuery.of(context).size.height * word.y,
-            child: GestureDetector(
-              onTap: () => _handleTap(word),
-              child: Container(
-                padding: const EdgeInsets.symmetric(
-                  horizontal: 16,
-                  vertical: 8,
-                ),
-                decoration: BoxDecoration(
-                  color: word.color ?? Colors.white,
-                  borderRadius: BorderRadius.circular(20),
-                  boxShadow: [
-                    BoxShadow(
-                      color: Colors.black.withOpacity(0.1),
-                      blurRadius: 4,
-                      offset: const Offset(0, 2),
-                    ),
-                  ],
-                  border: Border.all(color: Colors.blue.withOpacity(0.3)),
-                ),
-                child: Text(
-                  word.text,
-                  style: TextStyle(
-                    fontSize: 20,
-                    fontWeight: FontWeight.bold,
-                    color: word.color != null ? Colors.white : Colors.black87,
-                  ),
-                ),
+    return Scaffold(
+      body: Stack(
+        children: [
+          // Background or other UI elements could go here
+          Container(
+            height: double.infinity,
+            width: double.infinity,
+            decoration: const BoxDecoration(
+              image: DecorationImage(
+                image: AssetImage('assets/images/bonus_background.png'),
+                fit: BoxFit.cover,
               ),
             ),
-          );
-        }).toList(),
+          ),
 
-        // Score Feedbacks
-        ..._feedbacks.map((feedback) {
-          final age = DateTime.now()
-              .difference(feedback.creationTime)
-              .inMilliseconds;
-          final progress = age / 1000.0; // 0.0 to 1.0
+          // Header
+          Positioned(
+            top: 100,
+            left: 0,
+            right: 0,
+            child: Column(
+              children: [
+                Score(game: "CompleteSentence"),
+                Container(
+                  padding: const EdgeInsets.symmetric(
+                    horizontal: 20,
+                    vertical: 10,
+                  ),
 
-          // Simple animation: Move up slightly and fade out
-          final double currentY = feedback.y - (progress * 0.1);
-          final double opacity = (1.0 - progress).clamp(0.0, 1.0);
-          final double scale = 1.0 + (sin(progress * pi) * 0.5); // Pop effect
-
-          return Positioned(
-            left: MediaQuery.of(context).size.width * feedback.x,
-            top: MediaQuery.of(context).size.height * currentY,
-            child: Opacity(
-              opacity: opacity,
-              child: Transform.scale(
-                scale: scale,
-                child: Container(
-                  padding: const EdgeInsets.all(8),
+                  width: double.infinity,
+                  alignment: Alignment.center,
                   decoration: BoxDecoration(
-                    color: feedback.color,
-                    shape: BoxShape.circle,
+                    color: Colors.white,
+                    borderRadius: BorderRadius.circular(20),
+                    boxShadow: [
+                      BoxShadow(
+                        color: Colors.black.withOpacity(0.1),
+                        blurRadius: 4,
+                        offset: const Offset(0, 2),
+                      ),
+                    ],
+                  ),
+                  child: Column(
+                    children: [
+                      //barra regresiva  de 10seg
+                      Container(
+                        height: 20,
+                        width: MediaQuery.of(context).size.width * 0.8,
+                        margin: const EdgeInsets.symmetric(horizontal: 20),
+                        decoration: BoxDecoration(
+                          color: Colors.grey[200],
+                          borderRadius: BorderRadius.circular(10),
+                        ),
+                        child: Align(
+                          alignment: Alignment.centerLeft,
+                          child: Container(
+                            height: 20,
+                            width:
+                                (MediaQuery.of(context).size.width * 0.8) *
+                                (1.0 -
+                                    (_elapsedTime.inMilliseconds /
+                                            _gameDuration.inMilliseconds)
+                                        .clamp(0.0, 1.0)),
+                            decoration: BoxDecoration(
+                              color: Colors.blue,
+                              borderRadius: BorderRadius.circular(10),
+                            ),
+                          ),
+                        ),
+                      ),
+                      Text(
+                        "Touch the words related to:",
+                        style: TextStyle(
+                          fontSize: 20,
+                          color: MyColors.darkBlue,
+                        ),
+                      ),
+                      const SizedBox(height: 10),
+                      WordOfImages(
+                        letters: _targetCategory['word'],
+                        letterSize: 25,
+                      ),
+                    ],
+                  ),
+                ),
+              ],
+            ),
+          ),
+
+          // Floating Words
+          ..._activeWords.map((word) {
+            return Positioned(
+              left: MediaQuery.of(context).size.width * word.x,
+              top: MediaQuery.of(context).size.height * word.y,
+              child: GestureDetector(
+                onTap: () => _handleTap(word),
+                child: Container(
+                  padding: const EdgeInsets.symmetric(
+                    horizontal: 16,
+                    vertical: 8,
+                  ),
+                  decoration: BoxDecoration(
+                    color: word.color ?? Colors.white,
+                    borderRadius: BorderRadius.circular(20),
+                    boxShadow: [
+                      BoxShadow(
+                        color: Colors.black.withOpacity(0.1),
+                        blurRadius: 4,
+                        offset: const Offset(0, 2),
+                      ),
+                    ],
+                    border: Border.all(color: Colors.blue.withOpacity(0.3)),
                   ),
                   child: Text(
-                    feedback.text,
-                    style: const TextStyle(
-                      fontSize: 24,
+                    word.text,
+                    style: TextStyle(
+                      fontSize: 20,
                       fontWeight: FontWeight.bold,
-                      color: Colors.white,
+                      color: word.color != null ? Colors.white : Colors.black87,
                     ),
                   ),
                 ),
               ),
-            ),
-          );
-        }).toList(),
-      ],
+            );
+          }).toList(),
+
+          // Score Feedbacks
+          ..._feedbacks.map((feedback) {
+            final age = DateTime.now()
+                .difference(feedback.creationTime)
+                .inMilliseconds;
+            final progress = age / 1000.0; // 0.0 to 1.0
+
+            // Simple animation: Move up slightly and fade out
+            final double currentY = feedback.y - (progress * 0.1);
+            final double opacity = (1.0 - progress).clamp(0.0, 1.0);
+            final double scale = 1.0 + (sin(progress * pi) * 0.5); // Pop effect
+
+            return Positioned(
+              left: MediaQuery.of(context).size.width * feedback.x,
+              top: MediaQuery.of(context).size.height * currentY,
+              child: Opacity(
+                opacity: opacity,
+                child: Transform.scale(
+                  scale: scale,
+                  child: Container(
+                    padding: const EdgeInsets.all(8),
+                    decoration: BoxDecoration(
+                      color: feedback.color,
+                      shape: BoxShape.circle,
+                    ),
+                    child: Text(
+                      feedback.text,
+                      style: const TextStyle(
+                        fontSize: 24,
+                        fontWeight: FontWeight.bold,
+                        color: Colors.white,
+                      ),
+                    ),
+                  ),
+                ),
+              ),
+            );
+          }).toList(),
+        ],
+      ),
     );
   }
 }
