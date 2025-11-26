@@ -33,7 +33,7 @@ class BonusWords {
       ],
     },
     {
-      "word": "Countries",
+      "word": "COUNTRIES",
       "options": [
         "CANADA",
         "CHINA",
@@ -64,7 +64,7 @@ class BonusWords {
       ],
     },
     {
-      "word": "DAYS OF THE WEEK",
+      "word": "DAYS",
       "options": [
         "MONDAY",
         "TUESDAY",
@@ -136,7 +136,7 @@ class BonusWords {
       ],
     },
     {
-      "word": "TRANSPORTATION",
+      "word": "TRANSPORT",
       "options": [
         "CAR",
         "BUS",

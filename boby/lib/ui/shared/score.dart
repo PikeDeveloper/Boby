@@ -50,7 +50,7 @@ class Score extends StatelessWidget {
       case "MatchIt":
         return StorageService.instance.getMatchItCorrect().toString();
       case "CompleteSentence":
-        return StorageService.instance.getCompleteSentenceCorrect().toString();
+        return StorageService.instance.completeSentenceCorrect.value.toString();
       default:
         return "0";
     }
@@ -67,7 +67,7 @@ class Score extends StatelessWidget {
       case "MatchIt":
         return StorageService.instance.getMatchItWrong().toString();
       case "CompleteSentence":
-        return StorageService.instance.getCompleteSentenceWrong().toString();
+        return StorageService.instance.completeSentenceWrong.value.toString();
       default:
         return "0";
     }

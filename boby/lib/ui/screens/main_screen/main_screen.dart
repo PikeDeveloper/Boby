@@ -3,7 +3,6 @@ import 'package:boby/ui/screens/complete_sentence/complete_sentence.dart';
 import 'package:boby/ui/screens/drag_and_drop_screen/list_card_sounds.dart';
 import 'package:boby/ui/screens/letters_soup/letters_soup.dart';
 import 'package:boby/ui/screens/main_screen/widgets/background.dart';
-import 'package:boby/ui/screens/math_screen/math_screen.dart';
 import 'package:boby/ui/screens/names_screen/name_screen.dart';
 import 'package:boby/ui/screens/word_guess/word_guess_screen.dart';
 import 'package:flutter/material.dart';
@@ -22,8 +21,6 @@ class MainScreen extends StatelessWidget {
     ListCardSounds(),
     MemoryScreen(),
     LettersSoup(),
-    // BallomScreen(),
-    // MathScreen(),
     CompleteSentence(),
     WordGuessScreen(),
     MatchItScreen(),
@@ -43,13 +40,6 @@ class MainScreen extends StatelessWidget {
               onPressed: () {
                 appController.menuOpen.value = false;
                 appController.currentPage.value = 6;
-              },
-              icon: Image.asset("assets/settings_icon.png"),
-            ),
-            IconButton(
-              onPressed: () {
-                appController.menuOpen.value = false;
-                appController.currentPage.value = 7;
               },
               icon: Image.asset("assets/settings_icon.png"),
             ),

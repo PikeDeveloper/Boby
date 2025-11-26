@@ -167,7 +167,7 @@ class _BonusScreenState extends State<BonusScreen>
         storage.incCompleteSentenceCorrect();
       } else {
         word.color = Colors.red;
-        _addFeedback(word, "-1", Colors.red);
+        _addFeedback(word, "1", Colors.red);
         Get.find<AppController>().playBubblePop();
         storage.incCompleteSentenceWrong();
       }

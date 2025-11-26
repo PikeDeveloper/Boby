@@ -53,7 +53,7 @@ class _CompleteSentenceState extends State<CompleteSentence> {
         selectedAnswerIndices.clear();
         consecutiveCorrectAnswers++;
 
-        if (consecutiveCorrectAnswers == 2) {
+        if (consecutiveCorrectAnswers == 5) {
           consecutiveCorrectAnswers = 0;
           // Navigate to Bonus Screen
           Future.delayed(const Duration(milliseconds: 500), () {

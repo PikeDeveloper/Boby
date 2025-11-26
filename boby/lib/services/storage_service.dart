@@ -8,9 +8,9 @@ class StorageService extends GetxService {
     await instance._init();
     return instance;
   }
-  
+
   StorageService._();
-  
+
   static StorageService get instance => Get.find<StorageService>();
 
   static const String _boxName = 'app';
@@ -39,6 +39,10 @@ class StorageService extends GetxService {
       if (_box.get(_kMathOpDiv) == null) _kMathOpDiv: false,
       if (_box.get(_kMemoryGrid) == null) _kMemoryGrid: '3x3',
     });
+
+    // Initialize reactive variables
+    completeSentenceCorrect.value = getCompleteSentenceCorrect();
+    completeSentenceWrong.value = getCompleteSentenceWrong();
   }
 
   String? getBackground() => _box.get(_kBackground) as String?;
@@ -55,7 +59,7 @@ class StorageService extends GetxService {
   Future<void> setMathWrong(int value) => _box.put(_kMathWrong, value);
 
   int getMathTotalAttempts() => getMathCorrect() + getMathWrong();
-  
+
   // Memory game scores
   int getMemoryCorrect() => (_box.get('memory_correct') as int?) ?? 0;
   Future<void> incMemoryCorrect([int by = 1]) =>
@@ -72,7 +76,8 @@ class StorageService extends GetxService {
   Future<void> incSoundCardsCorrect([int by = 1]) =>
       _box.put('sound_cards_correct', getSoundCardsCorrect() + by);
   // Make sound cards scores reactive
-  RxInt get soundCardsCorrect => (_box.get('sound_cards_correct') as int? ?? 0).obs;
+  RxInt get soundCardsCorrect =>
+      (_box.get('sound_cards_correct') as int? ?? 0).obs;
   RxInt get soundCardsWrong => (_box.get('sound_cards_wrong') as int? ?? 0).obs;
 
   Future<void> setSoundCardsCorrect(int value) async {
@@ -80,27 +85,25 @@ class StorageService extends GetxService {
     soundCardsCorrect.value = value;
   }
 
-
   // Match It game scores
   int getMatchItCorrect() => (_box.get('match_it_correct') as int?) ?? 0;
   Future<void> incMatchItCorrect([int by = 1]) =>
       _box.put('match_it_correct', getMatchItCorrect() + by);
-  Future<void> setMatchItCorrect(int value) => _box.put('match_it_correct', value);
+  Future<void> setMatchItCorrect(int value) =>
+      _box.put('match_it_correct', value);
 
   int getMatchItWrong() => (_box.get('match_it_wrong') as int?) ?? 0;
   Future<void> incMatchItWrong([int by = 1]) =>
       _box.put('match_it_wrong', getMatchItWrong() + by);
   Future<void> setMatchItWrong(int value) => _box.put('match_it_wrong', value);
 
- 
-
   int getSoundCardsWrong() => (_box.get('sound_cards_wrong') as int?) ?? 0;
-  
+
   Future<void> setSoundCardsWrong(int value) async {
     await _box.put('sound_cards_wrong', value);
     soundCardsWrong.value = value;
   }
-  
+
   Future<void> incSoundCardsWrong([int by = 1]) async {
     final newValue = getSoundCardsWrong() + by;
     await _box.put('sound_cards_wrong', newValue);
@@ -111,28 +114,33 @@ class StorageService extends GetxService {
   int getWordGuessCorrect() => (_box.get('word_guess_correct') as int?) ?? 0;
   Future<void> incWordGuessCorrect([int by = 1]) =>
       _box.put('word_guess_correct', getWordGuessCorrect() + by);
-  Future<void> setWordGuessCorrect(int value) => _box.put('word_guess_correct', value);
+  Future<void> setWordGuessCorrect(int value) =>
+      _box.put('word_guess_correct', value);
 
   // Complete Sentence game scores
-  int getCompleteSentenceCorrect() => (_box.get('complete_sentence_correct') as int?) ?? 0;
+  int getCompleteSentenceCorrect() =>
+      (_box.get('complete_sentence_correct') as int?) ?? 0;
   final completeSentenceCorrect = 0.obs;
   Future<void> incCompleteSentenceCorrect([int by = 1]) async {
     final newValue = getCompleteSentenceCorrect() + by;
     await _box.put('complete_sentence_correct', newValue);
     completeSentenceCorrect.value = newValue;
   }
+
   Future<void> setCompleteSentenceCorrect(int value) async {
     await _box.put('complete_sentence_correct', value);
     completeSentenceCorrect.value = value;
   }
 
-  int getCompleteSentenceWrong() => (_box.get('complete_sentence_wrong') as int?) ?? 0;
+  int getCompleteSentenceWrong() =>
+      (_box.get('complete_sentence_wrong') as int?) ?? 0;
   final completeSentenceWrong = 0.obs;
   Future<void> incCompleteSentenceWrong([int by = 1]) async {
     final newValue = getCompleteSentenceWrong() + by;
     await _box.put('complete_sentence_wrong', newValue);
     completeSentenceWrong.value = newValue;
   }
+
   Future<void> setCompleteSentenceWrong(int value) async {
     await _box.put('complete_sentence_wrong', value);
     completeSentenceWrong.value = value;
@@ -141,7 +149,8 @@ class StorageService extends GetxService {
   int getWordGuessWrong() => (_box.get('word_guess_wrong') as int?) ?? 0;
   Future<void> incWordGuessWrong([int by = 1]) =>
       _box.put('word_guess_wrong', getWordGuessWrong() + by);
-  Future<void> setWordGuessWrong(int value) => _box.put('word_guess_wrong', value);
+  Future<void> setWordGuessWrong(int value) =>
+      _box.put('word_guess_wrong', value);
 
   double getMathAverage() {
     final total = getMathTotalAttempts();

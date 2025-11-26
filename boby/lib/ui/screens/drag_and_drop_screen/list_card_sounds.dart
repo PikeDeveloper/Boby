@@ -139,6 +139,7 @@ class _ListCardSoundsState extends State<ListCardSounds> {
 
   @override
   Widget build(BuildContext context) {
+    final appController = Get.find<AppController>();
     final screenSize = MediaQuery.of(context).size;
     final shortHeight = screenSize.height < 680;
 
@@ -175,42 +176,58 @@ class _ListCardSoundsState extends State<ListCardSounds> {
                 ],
               ),
               isWide ? const Spacer() : const SizedBox(height: 10),
-              Center(
-                child: isLandscape || istablet || shortHeight
-                    ? SingleChildScrollView(
-                        scrollDirection: Axis.horizontal,
-                        child: Row(
-                          mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-                          children: [
-                            if (assets.isNotEmpty) _buildCardTarget(0),
-                            if (assets.length > 1) _buildCardTarget(1),
+              Stack(
+                alignment: Alignment.center,
+                children: [
+                  Center(
+                    child: isLandscape || istablet || shortHeight
+                        ? SingleChildScrollView(
+                            scrollDirection: Axis.horizontal,
+                            child: Row(
+                              mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+                              children: [
+                                if (assets.isNotEmpty) _buildCardTarget(0),
+                                SizedBox(width: 40),
+                                if (assets.length > 1) _buildCardTarget(1),
+                                SizedBox(width: 60),
 
-                            if (assets.length > 2) _buildCardTarget(2),
-                            if (assets.length > 3) _buildCardTarget(3),
-                          ],
-                        ),
-                      )
-                    :
-                      // First row of cards
-                      Column(
-                        children: [
-                          Row(
-                            mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+                                if (assets.length > 2) _buildCardTarget(2),
+                                SizedBox(width: 40),
+                                if (assets.length > 3) _buildCardTarget(3),
+                              ],
+                            ),
+                          )
+                        :
+                          // First row of cards
+                          Column(
                             children: [
-                              if (assets.isNotEmpty) _buildCardTarget(0),
-                              if (assets.length > 1) _buildCardTarget(1),
+                              Row(
+                                mainAxisAlignment:
+                                    MainAxisAlignment.spaceEvenly,
+                                children: [
+                                  if (assets.isNotEmpty) _buildCardTarget(0),
+                                  if (assets.length > 1) _buildCardTarget(1),
+                                ],
+                              ),
+                              const SizedBox(height: 20),
+                              Row(
+                                mainAxisAlignment:
+                                    MainAxisAlignment.spaceEvenly,
+                                children: [
+                                  if (assets.length > 2) _buildCardTarget(2),
+                                  if (assets.length > 3) _buildCardTarget(3),
+                                ],
+                              ),
                             ],
                           ),
-                          const SizedBox(height: 20),
-                          Row(
-                            mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-                            children: [
-                              if (assets.length > 2) _buildCardTarget(2),
-                              if (assets.length > 3) _buildCardTarget(3),
-                            ],
-                          ),
-                        ],
-                      ),
+                  ),
+                  GestureDetector(
+                    onTap: () {
+                      appController.currentPage.value = 7;
+                    },
+                    child: Image.asset("assets/clue-icon.png", height: 30),
+                  ),
+                ],
               ),
               isWide ? const Spacer() : const SizedBox(height: 10),
               // Bottom half of screen - All names and score
