@@ -2,7 +2,6 @@ import 'package:boby/ui/screens/drag_and_drop_screen/widgets/name_contanier.dart
 import 'package:boby/ui/screens/word_guess/widgets/celebration_image.dart';
 import 'package:boby/ui/shared/score.dart';
 import 'package:boby/ui/shared/word_of_images.dart';
-import 'package:boby/utils/colors.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:dotted_border/dotted_border.dart'

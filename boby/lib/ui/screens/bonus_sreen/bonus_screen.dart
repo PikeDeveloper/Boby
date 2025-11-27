@@ -34,7 +34,7 @@ class _BonusScreenState extends State<BonusScreen>
   final String soundPathCorrectAnswer = "assets/sounds/game-bonus.wav";
 
   // Configuration
-  final int _maxWords = 5;
+  final int _maxWords = 10;
   final double _spawnInterval = 60.0; // Frames roughly
   double _timeSinceLastSpawn = 0;
 
@@ -64,6 +64,7 @@ class _BonusScreenState extends State<BonusScreen>
     _feedbacks.clear();
     _elapsedTime = Duration.zero;
     _isGameOver = false;
+    _timeSinceLastSpawn = _spawnInterval; // Force immediate spawn
   }
 
   Duration _lastElapsed = Duration.zero;

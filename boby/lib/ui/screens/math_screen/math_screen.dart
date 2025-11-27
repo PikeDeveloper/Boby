@@ -1,4 +1,3 @@
-
 import 'package:boby/ui/shared/score.dart';
 import 'package:flutter/material.dart';
 import 'dart:math';
@@ -124,9 +123,8 @@ class _MathScreenState extends State<MathScreen> {
   @override
   Widget build(BuildContext context) {
     final screenSize = MediaQuery.of(context).size;
-    final minSize = min(screenSize.width, screenSize.height);
     bool isLandscape = screenSize.width > screenSize.height;
-    bool istablet = screenSize.width > Constants.tabletSize;  
+    bool istablet = screenSize.width > Constants.tabletSize;
     return SafeArea(
       child: Center(
         child: Padding(
@@ -143,18 +141,17 @@ class _MathScreenState extends State<MathScreen> {
                     children: [
                       _buildSumRow(isLandscape, istablet),
                       if (_correctSelected != null)
-                        const Icon(
-                          Icons.check,
-                          color: Colors.green,
-                          size: 60,
-                        ),
+                        const Icon(Icons.check, color: Colors.green, size: 60),
                     ],
                   ),
-                   SizedBox(height:  isLandscape || istablet ? 300 : 80),
+                  SizedBox(height: isLandscape || istablet ? 300 : 80),
                   LayoutBuilder(
                     builder: (context, constraints) {
-                      final double buttonSize = (constraints.maxWidth - 48) /
-                          (isLandscape || istablet ? 4 : 2); // 2 columnas, 16px gaps 
+                      final double buttonSize =
+                          (constraints.maxWidth - 48) /
+                          (isLandscape || istablet
+                              ? 4
+                              : 2); // 2 columnas, 16px gaps
                       return Wrap(
                         alignment: WrapAlignment.center,
                         spacing: 16,
@@ -163,15 +160,19 @@ class _MathScreenState extends State<MathScreen> {
                             .map(
                               (opt) => SizedBox(
                                 width: buttonSize,
-                                height:  isLandscape || istablet ? 200 : 80,
+                                height: isLandscape || istablet ? 200 : 80,
                                 child: ElevatedButton(
                                   style: ElevatedButton.styleFrom(
                                     backgroundColor: _correctSelected == opt
                                         ? Colors.green
                                         : (_wrongSelecteds.contains(opt)
-                                            ? const Color.fromARGB(
-                                                113, 244, 67, 54)
-                                            : null),
+                                              ? const Color.fromARGB(
+                                                  113,
+                                                  244,
+                                                  67,
+                                                  54,
+                                                )
+                                              : null),
                                     shape: RoundedRectangleBorder(
                                       borderRadius: BorderRadius.circular(16),
                                     ),
@@ -179,7 +180,10 @@ class _MathScreenState extends State<MathScreen> {
                                   onPressed: _correctSelected != null
                                       ? null
                                       : () => _onSelect(context, opt),
-                                  child: _buildDigitImages(opt,  isLandscape || istablet ? 70 : 48),
+                                  child: _buildDigitImages(
+                                    opt,
+                                    isLandscape || istablet ? 70 : 48,
+                                  ),
                                 ),
                               ),
                             )
@@ -189,9 +193,7 @@ class _MathScreenState extends State<MathScreen> {
                   ),
                 ],
               ),
-              Score(
-             game: "Math",
-              ),
+              Score(game: "Math"),
             ],
           ),
         ),
@@ -199,8 +201,8 @@ class _MathScreenState extends State<MathScreen> {
     );
   }
 
-  Widget _buildSumRow( bool isLandscape, bool istablet) {
-     double imgH =  isLandscape || istablet ? 100 : 48;
+  Widget _buildSumRow(bool isLandscape, bool istablet) {
+    double imgH = isLandscape || istablet ? 100 : 48;
     return Row(
       mainAxisSize: MainAxisSize.min,
       crossAxisAlignment: CrossAxisAlignment.center,
