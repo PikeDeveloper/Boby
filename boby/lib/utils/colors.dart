@@ -9,5 +9,6 @@ class MyColors {
   static Color red = const Color(0xFFEF4444);
   static Color green = const Color.fromARGB(255, 1, 227, 114);
   static Color blue = const Color(0xFF25AFF4);
+  static Color lightBlue = const Color.fromARGB(255, 116, 146, 255);
   static Color darkBlue = const Color.fromARGB(255, 0, 180, 208);
 }

@@ -1,6 +1,8 @@
+import 'package:boby/ui/screens/drag_and_drop_screen/widgets/name_contanier.dart';
 import 'package:boby/ui/screens/word_guess/widgets/celebration_image.dart';
 import 'package:boby/ui/shared/score.dart';
 import 'package:boby/ui/shared/word_of_images.dart';
+import 'package:boby/utils/colors.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:dotted_border/dotted_border.dart'
@@ -260,14 +262,16 @@ class _ListCardSoundsState extends State<ListCardSounds> {
                               mainAxisAlignment: MainAxisAlignment.spaceEvenly,
                               children: [
                                 if (shuffledNames.isNotEmpty)
-                                  _buildNameContainer(
-                                    shuffledNames[0]["name"]!,
-                                    0,
+                                  NameContainer(
+                                    cardNames: cardNames,
+                                    name: shuffledNames[0]["name"]!,
+                                    index: 0,
                                   ),
                                 if (shuffledNames.length > 1)
-                                  _buildNameContainer(
-                                    shuffledNames[1]["name"]!,
-                                    1,
+                                  NameContainer(
+                                    cardNames: cardNames,
+                                    name: shuffledNames[1]["name"]!,
+                                    index: 1,
                                   ),
                               ],
                             ),
@@ -279,14 +283,16 @@ class _ListCardSoundsState extends State<ListCardSounds> {
                                     MainAxisAlignment.spaceEvenly,
                                 children: [
                                   if (shuffledNames.length > 2)
-                                    _buildNameContainer(
-                                      shuffledNames[2]["name"]!,
-                                      2,
+                                    NameContainer(
+                                      cardNames: cardNames,
+                                      name: shuffledNames[2]["name"]!,
+                                      index: 2,
                                     ),
                                   if (shuffledNames.length > 3)
-                                    _buildNameContainer(
-                                      shuffledNames[3]["name"]!,
-                                      3,
+                                    NameContainer(
+                                      cardNames: cardNames,
+                                      name: shuffledNames[3]["name"]!,
+                                      index: 3,
                                     ),
                                 ],
                               ),
@@ -347,118 +353,6 @@ class _ListCardSoundsState extends State<ListCardSounds> {
           activeCardIndex = null;
         });
       },
-    );
-  }
-
-  Widget _buildNameContainer(String name, int index) {
-    // Don't show the name if it's already on a card
-    if (cardNames.contains(name)) {
-      return Container(
-        width: 150,
-        padding: const EdgeInsets.symmetric(vertical: 8, horizontal: 12),
-        child: const SizedBox.shrink(),
-      );
-    }
-
-    return Draggable<String>(
-      data: name,
-      feedback: Material(
-        // Container con borde segmentado --------------//
-        child: Container(
-          width: 150,
-          padding: const EdgeInsets.symmetric(vertical: 8, horizontal: 12),
-          child: DottedBorder(
-            options: RoundedRectDottedBorderOptions(
-              radius: const Radius.circular(20),
-              color: const Color(0xFF1E88E5),
-              strokeWidth: 2,
-              dashPattern: const [6, 4],
-            ),
-            child: Container(
-              width: double.infinity,
-              padding: const EdgeInsets.symmetric(vertical: 8, horizontal: 12),
-              decoration: BoxDecoration(
-                borderRadius: BorderRadius.circular(16),
-                color: const Color.fromARGB(
-                  232,
-                  242,
-                  242,
-                  242,
-                ).withOpacity(0.8),
-              ),
-              child: Text(
-                name,
-                textAlign: TextAlign.center,
-                style: const TextStyle(
-                  fontSize: 16,
-                  fontWeight: FontWeight.w600,
-                  color: Color.fromARGB(255, 6, 45, 243),
-                ),
-              ),
-            ),
-          ),
-        ),
-      ),
-      // Container con borde segmentado --------------//
-      childWhenDragging: Container(
-        width: 150,
-        //     padding: const EdgeInsets.symmetric(vertical: 8, horizontal: 12),
-        child: DottedBorder(
-          options: RoundedRectDottedBorderOptions(
-            color: const Color(0xFF1E88E5),
-            strokeWidth: 2,
-            dashPattern: const [6, 4],
-            radius: const Radius.circular(20),
-          ),
-          child: Container(
-            width: double.infinity,
-            padding: const EdgeInsets.symmetric(vertical: 8, horizontal: 12),
-            decoration: BoxDecoration(
-              borderRadius: BorderRadius.circular(20),
-              color: Colors.grey[300],
-            ),
-            child: Text(
-              name,
-              textAlign: TextAlign.center,
-              style: TextStyle(
-                fontSize: 16,
-                fontWeight: FontWeight.w600,
-                color: Colors.grey[600],
-              ),
-            ),
-          ),
-        ),
-      ),
-      // Container con borde segmentado --------------//
-      child: Container(
-        width: 150,
-        padding: const EdgeInsets.symmetric(vertical: 8, horizontal: 12),
-        child: DottedBorder(
-          options: RoundedRectDottedBorderOptions(
-            color: const Color(0xFF1E88E5),
-            strokeWidth: 2,
-            dashPattern: const [6, 4],
-            radius: const Radius.circular(20),
-          ),
-          child: Container(
-            width: double.infinity,
-            padding: const EdgeInsets.symmetric(vertical: 8, horizontal: 12),
-            decoration: BoxDecoration(
-              borderRadius: BorderRadius.circular(20),
-              color: const Color.fromARGB(232, 242, 242, 242).withOpacity(0.8),
-            ),
-            child: Text(
-              name,
-              textAlign: TextAlign.center,
-              style: const TextStyle(
-                fontSize: 16,
-                fontWeight: FontWeight.w600,
-                color: Color.fromARGB(255, 6, 45, 243),
-              ),
-            ),
-          ),
-        ),
-      ),
     );
   }
 }
