@@ -13,6 +13,7 @@ class CardSound extends StatefulWidget {
     required this.image,
     this.isActive = false,
     required this.colorKey, // This will change with each game
+    this.onTap,
     super.key,
   });
 
@@ -25,6 +26,7 @@ class CardSound extends StatefulWidget {
   final String name;
   final String image;
   final bool isActive;
+  final VoidCallback? onTap;
 
   // Get the correct name for this card from the image path
   String get correctName {
@@ -74,16 +76,24 @@ class _CardSoundState extends State<CardSound>
   void initState() {
     super.initState();
     _jumpCtrl = AnimationController(
-        vsync: this, duration: const Duration(milliseconds: 300));
+      vsync: this,
+      duration: const Duration(milliseconds: 300),
+    );
     _jumpY = TweenSequence<double>([
       TweenSequenceItem(
-          tween: Tween(begin: 0.0, end: -16.0)
-              .chain(CurveTween(curve: Curves.easeOut)),
-          weight: 50),
+        tween: Tween(
+          begin: 0.0,
+          end: -16.0,
+        ).chain(CurveTween(curve: Curves.easeOut)),
+        weight: 50,
+      ),
       TweenSequenceItem(
-          tween: Tween(begin: -16.0, end: 0.0)
-              .chain(CurveTween(curve: Curves.easeIn)),
-          weight: 50),
+        tween: Tween(
+          begin: -16.0,
+          end: 0.0,
+        ).chain(CurveTween(curve: Curves.easeIn)),
+        weight: 50,
+      ),
     ]).animate(_jumpCtrl);
 
     // Get or create color for this card based on name and colorKey
@@ -101,10 +111,13 @@ class _CardSoundState extends State<CardSound>
 
       // Find an available color
       Color availableColor;
-      final availableColors = _borderColors.where((color) => !usedColors.contains(color)).toList();
+      final availableColors = _borderColors
+          .where((color) => !usedColors.contains(color))
+          .toList();
 
       if (availableColors.isNotEmpty) {
-        availableColor = availableColors[Random().nextInt(availableColors.length)];
+        availableColor =
+            availableColors[Random().nextInt(availableColors.length)];
       } else {
         // If all colors are used, start reusing them
         availableColor = _borderColors[Random().nextInt(_borderColors.length)];
@@ -127,7 +140,8 @@ class _CardSoundState extends State<CardSound>
   // Check if the device is an iPad
   bool get isTablet {
     final data = MediaQueryData.fromView(WidgetsBinding.instance.window);
-    return data.size.shortestSide >= 600; // 600 is a common breakpoint for tablets
+    return data.size.shortestSide >=
+        600; // 600 is a common breakpoint for tablets
   }
 
   @override
@@ -138,35 +152,37 @@ class _CardSoundState extends State<CardSound>
     double cardWidth = isTablet ? 170.0 : 150.0;
     double cardHeight = cardWidth * 1.2; // Maintain aspect ratio
 
-    if (((cardWidth * 4) +20) > minSize && isLandscape) {
+    if (((cardWidth * 4) + 20) > minSize && isLandscape) {
       cardWidth = minSize / 4;
       cardHeight = cardWidth * 1.2; // Maintain aspect ratio
-      
     }
 
     // Animations disabled: static card
 
     return GestureDetector(
       onTap: () async {
+        widget.onTap?.call();
         _jumpCtrl.forward(from: 0);
-        
+
         try {
           // Stop any currently playing sound
           await _audioPlayer.stop();
           _playerStateSubscription?.cancel();
-          
+
           // Play the sound
           await _audioPlayer.setAsset(widget.sound);
           await _audioPlayer.play();
-          
+
           if (mounted) {
             setState(() {
               _isPlaying = true;
             });
           }
-          
+
           // Listen for audio completion
-          _playerStateSubscription = _audioPlayer.playerStateStream.listen((state) {
+          _playerStateSubscription = _audioPlayer.playerStateStream.listen((
+            state,
+          ) {
             if (state.processingState == ProcessingState.completed) {
               if (mounted) {
                 setState(() {
@@ -197,103 +213,106 @@ class _CardSoundState extends State<CardSound>
               height: cardHeight,
               child: Card(
                 elevation: 4,
-               color: Colors.white,
+                color: Colors.white,
                 shape: RoundedRectangleBorder(
                   borderRadius: BorderRadius.circular(20),
-                  side: BorderSide(
-                    color: _borderColor,
-                    width: 3,
-                  ),
+                  side: BorderSide(color: _borderColor, width: 3),
                 ),
                 child: ClipRRect(
                   borderRadius: BorderRadius.circular(20),
                   child: Stack(
-                    
                     children: [
                       Image.asset(widget.image, fit: BoxFit.cover),
-                      
+
                       Positioned(
                         bottom: 10,
                         left: 10,
                         right: 10,
-                        child:
-
-!widget.name.isNotEmpty?
-
-
-
-                         Container(
-        width: 150,
-        padding: const EdgeInsets.symmetric(vertical: 1, horizontal: 12),
-        child: DottedBorder(
-          options: RoundedRectDottedBorderOptions(
-            color: const Color(0xFF1E88E5),
-            strokeWidth: 2,
-            dashPattern: const [6, 4],
-            radius: const Radius.circular(20),
-       
-          ),
-          child: Container(
-            width: double.infinity,
-            padding: const EdgeInsets.symmetric(vertical: 8, horizontal: 12),
-            decoration: BoxDecoration(
-              borderRadius: BorderRadius.circular(20),
-              color: const Color.fromARGB(232, 242, 242, 242).withOpacity(0.2),
-            ),
-            child: Text(
-            "",
-              textAlign: TextAlign.center,
-              style: const TextStyle(
-                fontSize: 16,
-                fontWeight: FontWeight.w600,
-                color: Color.fromARGB(255, 6, 45, 243),
-              ),
-            ),
-          ),
-        ),
-      ):
-
-
-
-
-
-
-
-                        
-                        
-                         Container(
-                          width: 130,
-                          padding: const EdgeInsets.symmetric(vertical: 8, horizontal: 12),
-                          decoration: BoxDecoration(
-                            borderRadius: BorderRadius.circular(20),
-                            color: const Color.fromARGB(232, 242, 242, 242).withOpacity(0.8), // Light blue background
-                            boxShadow: [
-                              BoxShadow(
-                                color: Colors.black.withOpacity(0.2),
-                                blurRadius: 5,
-                                spreadRadius: 2,
+                        child: !widget.name.isNotEmpty
+                            ? Container(
+                                width: 150,
+                                padding: const EdgeInsets.symmetric(
+                                  vertical: 1,
+                                  horizontal: 12,
+                                ),
+                                child: DottedBorder(
+                                  options: RoundedRectDottedBorderOptions(
+                                    color: const Color(0xFF1E88E5),
+                                    strokeWidth: 2,
+                                    dashPattern: const [6, 4],
+                                    radius: const Radius.circular(20),
+                                  ),
+                                  child: Container(
+                                    width: double.infinity,
+                                    padding: const EdgeInsets.symmetric(
+                                      vertical: 8,
+                                      horizontal: 12,
+                                    ),
+                                    decoration: BoxDecoration(
+                                      borderRadius: BorderRadius.circular(20),
+                                      color: const Color.fromARGB(
+                                        232,
+                                        242,
+                                        242,
+                                        242,
+                                      ).withOpacity(0.2),
+                                    ),
+                                    child: Text(
+                                      "",
+                                      textAlign: TextAlign.center,
+                                      style: const TextStyle(
+                                        fontSize: 16,
+                                        fontWeight: FontWeight.w600,
+                                        color: Color.fromARGB(255, 6, 45, 243),
+                                      ),
+                                    ),
+                                  ),
+                                ),
+                              )
+                            : Container(
+                                width: 130,
+                                padding: const EdgeInsets.symmetric(
+                                  vertical: 8,
+                                  horizontal: 12,
+                                ),
+                                decoration: BoxDecoration(
+                                  borderRadius: BorderRadius.circular(20),
+                                  color: const Color.fromARGB(
+                                    232,
+                                    242,
+                                    242,
+                                    242,
+                                  ).withOpacity(0.8), // Light blue background
+                                  boxShadow: [
+                                    BoxShadow(
+                                      color: Colors.black.withOpacity(0.2),
+                                      blurRadius: 5,
+                                      spreadRadius: 2,
+                                    ),
+                                  ],
+                                ),
+                                child: Text(
+                                  widget.name,
+                                  textAlign: TextAlign.center,
+                                  style: const TextStyle(
+                                    fontSize: 16,
+                                    fontWeight: FontWeight.w600,
+                                    color: Color.fromARGB(
+                                      255,
+                                      0,
+                                      0,
+                                      200,
+                                    ), // Blue text
+                                  ),
+                                ),
                               ),
-                            ],
-                          ),
-                          child: Text(
-                            widget.name,
-                            textAlign: TextAlign.center,
-                            style: const TextStyle(
-                              fontSize: 16,
-                              fontWeight: FontWeight.w600,
-                              color: Color.fromARGB(255, 0, 0, 200), // Blue text
-                            ),
-                          ),
-                        ),
                       ),
-                     
                     ],
                   ),
                 ),
               ),
             ),
           ),
-          
         ],
       ),
     );

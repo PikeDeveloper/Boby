@@ -31,6 +31,12 @@ class _ListCardSoundsState extends State<ListCardSounds> {
   final String _gameOverSound = "assets/sounds/game-over-trombone.wav";
   final AudioPlayer _audioPlayer = AudioPlayer();
 
+  // Tap to match state
+  String? selectedName;
+  int? selectedNameIndex;
+  final List<GlobalKey> _nameKeys = List.generate(4, (_) => GlobalKey());
+  final List<GlobalKey> _cardKeys = List.generate(4, (_) => GlobalKey());
+
   @override
   void dispose() {
     _audioPlayer.dispose();
@@ -137,6 +143,124 @@ class _ListCardSoundsState extends State<ListCardSounds> {
       return Colors.green;
     }
     return Colors.orange; // default to orange for 3/4
+  }
+
+  void _onNameTapped(String name, int index) {
+    setState(() {
+      if (selectedName == name) {
+        // Deselect if tapping the same name
+        selectedName = null;
+        selectedNameIndex = null;
+      } else {
+        // Select new name
+        selectedName = name;
+        selectedNameIndex = index;
+        _playSound("assets/sounds/bubble-pop.wav");
+      }
+    });
+  }
+
+  void _onCardTapped(int cardIndex) {
+    if (selectedName != null && selectedNameIndex != null) {
+      _animateMove(selectedNameIndex!, cardIndex, selectedName!);
+    }
+  }
+
+  void _animateMove(int nameIndex, int cardIndex, String name) {
+    final nameContext = _nameKeys[nameIndex].currentContext;
+    final cardContext = _cardKeys[cardIndex].currentContext;
+
+    if (nameContext != null && cardContext != null) {
+      final nameBox = nameContext.findRenderObject() as RenderBox;
+      final cardBox = cardContext.findRenderObject() as RenderBox;
+
+      final namePos = nameBox.localToGlobal(Offset.zero);
+      final cardPos = cardBox.localToGlobal(Offset.zero);
+
+      final overlayEntry = OverlayEntry(
+        builder: (context) {
+          return TweenAnimationBuilder<Offset>(
+            tween: Tween(begin: namePos, end: cardPos),
+            duration: const Duration(milliseconds: 500),
+            curve: Curves.easeInOut,
+            builder: (context, offset, child) {
+              return Positioned(
+                left: offset.dx,
+                top: offset.dy,
+                child: Material(
+                  color: Colors.transparent,
+                  child: Container(
+                    width: 150,
+                    padding: const EdgeInsets.symmetric(
+                      vertical: 8,
+                      horizontal: 12,
+                    ),
+                    decoration: BoxDecoration(
+                      borderRadius: BorderRadius.circular(20),
+                      color: const Color.fromARGB(
+                        232,
+                        242,
+                        242,
+                        242,
+                      ).withOpacity(0.8),
+                    ),
+                    child: Text(
+                      name,
+                      textAlign: TextAlign.center,
+                      style: const TextStyle(
+                        fontSize: 16,
+                        fontWeight: FontWeight.w600,
+                        color: Color.fromARGB(255, 6, 45, 243),
+                      ),
+                    ),
+                  ),
+                ),
+              );
+            },
+            onEnd: () {
+              // Animation complete
+              _handleMatch(cardIndex, name);
+            },
+          );
+        },
+      );
+
+      Overlay.of(context).insert(overlayEntry);
+
+      // Remove overlay after animation
+      Future.delayed(const Duration(milliseconds: 510), () {
+        overlayEntry.remove();
+      });
+
+      // Clear selection immediately so user can't double tap
+      setState(() {
+        selectedName = null;
+        selectedNameIndex = null;
+      });
+    } else {
+      // Fallback if contexts are null
+      _handleMatch(cardIndex, name);
+    }
+  }
+
+  void _handleMatch(int index, String name) async {
+    // Play sound when dropping a name
+    await _playSound(_wrongMatchSound);
+
+    setState(() {
+      // Remove from previous position if it exists
+      final previousIndex = cardNames.indexOf(name);
+      if (previousIndex != -1) {
+        cardNames[previousIndex] = null;
+      }
+
+      // Add to new position - store the actual name that was dragged
+      cardNames[index] = name;
+      activeCardIndex = null;
+    });
+
+    // Check if all cards are filled
+    await _checkAllCardsMatched();
   }
 
   @override
@@ -262,16 +386,32 @@ class _ListCardSoundsState extends State<ListCardSounds> {
                               mainAxisAlignment: MainAxisAlignment.spaceEvenly,
                               children: [
                                 if (shuffledNames.isNotEmpty)
-                                  NameContainer(
-                                    cardNames: cardNames,
-                                    name: shuffledNames[0]["name"]!,
-                                    index: 0,
+                                  KeyedSubtree(
+                                    key: _nameKeys[0],
+                                    child: NameContainer(
+                                      cardNames: cardNames,
+                                      name: shuffledNames[0]["name"]!,
+                                      index: 0,
+                                      onTap: () => _onNameTapped(
+                                        shuffledNames[0]["name"]!,
+                                        0,
+                                      ),
+                                      isSelected: selectedNameIndex == 0,
+                                    ),
                                   ),
                                 if (shuffledNames.length > 1)
-                                  NameContainer(
-                                    cardNames: cardNames,
-                                    name: shuffledNames[1]["name"]!,
-                                    index: 1,
+                                  KeyedSubtree(
+                                    key: _nameKeys[1],
+                                    child: NameContainer(
+                                      cardNames: cardNames,
+                                      name: shuffledNames[1]["name"]!,
+                                      index: 1,
+                                      onTap: () => _onNameTapped(
+                                        shuffledNames[1]["name"]!,
+                                        1,
+                                      ),
+                                      isSelected: selectedNameIndex == 1,
+                                    ),
                                   ),
                               ],
                             ),
@@ -283,16 +423,32 @@ class _ListCardSoundsState extends State<ListCardSounds> {
                                     MainAxisAlignment.spaceEvenly,
                                 children: [
                                   if (shuffledNames.length > 2)
-                                    NameContainer(
-                                      cardNames: cardNames,
-                                      name: shuffledNames[2]["name"]!,
-                                      index: 2,
+                                    KeyedSubtree(
+                                      key: _nameKeys[2],
+                                      child: NameContainer(
+                                        cardNames: cardNames,
+                                        name: shuffledNames[2]["name"]!,
+                                        index: 2,
+                                        onTap: () => _onNameTapped(
+                                          shuffledNames[2]["name"]!,
+                                          2,
+                                        ),
+                                        isSelected: selectedNameIndex == 2,
+                                      ),
                                     ),
                                   if (shuffledNames.length > 3)
-                                    NameContainer(
-                                      cardNames: cardNames,
-                                      name: shuffledNames[3]["name"]!,
-                                      index: 3,
+                                    KeyedSubtree(
+                                      key: _nameKeys[3],
+                                      child: NameContainer(
+                                        cardNames: cardNames,
+                                        name: shuffledNames[3]["name"]!,
+                                        index: 3,
+                                        onTap: () => _onNameTapped(
+                                          shuffledNames[3]["name"]!,
+                                          3,
+                                        ),
+                                        isSelected: selectedNameIndex == 3,
+                                      ),
                                     ),
                                 ],
                               ),
@@ -340,12 +496,16 @@ class _ListCardSoundsState extends State<ListCardSounds> {
         await _checkAllCardsMatched();
       },
       builder: (context, candidateData, rejectedData) {
-        return CardSound(
-          colorKey: 0,
-          image: assets[index]["image"]!,
-          name: cardNames[index] ?? '',
-          sound: assets[index]["sound"]!,
-          isActive: activeCardIndex == index,
+        return KeyedSubtree(
+          key: _cardKeys[index],
+          child: CardSound(
+            colorKey: 0,
+            image: assets[index]["image"]!,
+            name: cardNames[index] ?? '',
+            sound: assets[index]["sound"]!,
+            isActive: activeCardIndex == index,
+            onTap: () => _onCardTapped(index),
+          ),
         );
       },
       onLeave: (data) {
