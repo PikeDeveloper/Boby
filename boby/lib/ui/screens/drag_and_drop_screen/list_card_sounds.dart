@@ -173,13 +173,24 @@ class _ListCardSoundsState extends State<ListCardSounds> {
       final nameBox = nameContext.findRenderObject() as RenderBox;
       final cardBox = cardContext.findRenderObject() as RenderBox;
 
+      final nameSize = nameBox.size;
+      final cardSize = cardBox.size;
+
       final namePos = nameBox.localToGlobal(Offset.zero);
       final cardPos = cardBox.localToGlobal(Offset.zero);
+
+      // Calculate target position to center the name at the bottom of the card
+      final double targetX = cardPos.dx + (cardSize.width - nameSize.width) / 2;
+      final double targetY =
+          cardPos.dy +
+          cardSize.height -
+          nameSize.height -
+          10; // 10 padding from bottom
 
       final overlayEntry = OverlayEntry(
         builder: (context) {
           return TweenAnimationBuilder<Offset>(
-            tween: Tween(begin: namePos, end: cardPos),
+            tween: Tween(begin: namePos, end: Offset(targetX, targetY)),
             duration: const Duration(milliseconds: 500),
             curve: Curves.easeInOut,
             builder: (context, offset, child) {
