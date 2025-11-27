@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:just_audio/just_audio.dart';
+import 'package:animate_do/animate_do.dart';
 
 class MemoryCard extends StatefulWidget {
   final int id;
@@ -29,7 +30,8 @@ class MemoryCard extends StatefulWidget {
   State<MemoryCard> createState() => _MemoryCardState();
 }
 
-class _MemoryCardState extends State<MemoryCard> with SingleTickerProviderStateMixin {
+class _MemoryCardState extends State<MemoryCard>
+    with SingleTickerProviderStateMixin {
   late AnimationController _flipController;
   late Animation<double> _flipAnimation;
   final AudioPlayer _audioPlayer = AudioPlayer();
@@ -41,15 +43,16 @@ class _MemoryCardState extends State<MemoryCard> with SingleTickerProviderStateM
       vsync: this,
       duration: const Duration(milliseconds: 300),
     );
-    _flipAnimation = Tween<double>(begin: 0, end: 1).animate(CurvedAnimation(
-      parent: _flipController,
-      curve: Curves.easeInOut,
-    ));
+    _flipAnimation = Tween<double>(begin: 0, end: 1).animate(
+      CurvedAnimation(parent: _flipController, curve: Curves.easeInOut),
+    );
 
     if (widget.isFlipped) {
       _flipController.value = 1.0;
     }
   }
+
+  AnimationController? _pulseController;
 
   @override
   void didUpdateWidget(MemoryCard oldWidget) {
@@ -61,6 +64,10 @@ class _MemoryCardState extends State<MemoryCard> with SingleTickerProviderStateM
         _flipController.reverse();
       }
     }
+
+    if (widget.isMatched && !oldWidget.isMatched) {
+      _pulseController?.forward();
+    }
   }
 
   @override
@@ -70,37 +77,43 @@ class _MemoryCardState extends State<MemoryCard> with SingleTickerProviderStateM
     super.dispose();
   }
 
- 
-
   @override
   Widget build(BuildContext context) {
     return GestureDetector(
       onTap: () {
         if (!widget.isFlipped && !widget.isMatched) {
           widget.onTap?.call();
-        
         }
       },
-      child: AnimatedBuilder(
-        animation: _flipAnimation,
-        builder: (context, child) {
-          final angle = _flipAnimation.value * 3.14159; // Convert to radians
-          final transform = Matrix4.identity()
-            ..setEntry(3, 2, 0.001) // Perspective
-            ..rotateY(angle);
-
-          return Transform(
-            transform: transform,
-            alignment: Alignment.center,
-            child: _flipAnimation.value <= 0.5
-                ? _buildCardBack()
-                : Transform(
-                    transform: Matrix4.identity()..rotateY(3.14159),
-                    alignment: Alignment.center,
-                    child: _buildCardFront(),
-                  ),
-          );
+      child: Pulse(
+        manualTrigger: true,
+        controller: (controller) {
+          _pulseController = controller;
+          if (widget.isMatched) {
+            controller.forward();
+          }
         },
+        child: AnimatedBuilder(
+          animation: _flipAnimation,
+          builder: (context, child) {
+            final angle = _flipAnimation.value * 3.14159; // Convert to radians
+            final transform = Matrix4.identity()
+              ..setEntry(3, 2, 0.001) // Perspective
+              ..rotateY(angle);
+
+            return Transform(
+              transform: transform,
+              alignment: Alignment.center,
+              child: _flipAnimation.value <= 0.5
+                  ? _buildCardBack()
+                  : Transform(
+                      transform: Matrix4.identity()..rotateY(3.14159),
+                      alignment: Alignment.center,
+                      child: _buildCardFront(),
+                    ),
+            );
+          },
+        ),
       ),
     );
   }
@@ -120,20 +133,12 @@ class _MemoryCardState extends State<MemoryCard> with SingleTickerProviderStateM
       ),
       child: ClipRRect(
         borderRadius: BorderRadius.circular(12),
-        child: Image.asset(
-          widget.image,
-          fit: BoxFit.cover,
-        ),
+        child: Image.asset(widget.image, fit: BoxFit.cover),
       ),
     );
   }
 
   Widget _buildCardBack() {
-    return Center(
-        child: Image.asset(
-          "assets/card.png",
-          fit: BoxFit.cover,
-        ),
-      );
+    return Center(child: Image.asset("assets/card.png", fit: BoxFit.cover));
   }
 }

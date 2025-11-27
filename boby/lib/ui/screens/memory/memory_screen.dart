@@ -6,6 +6,8 @@ import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:boby/services/storage_service.dart';
 import 'package:boby/ui/screens/memory/widgets/memory_card.dart';
+import 'package:animate_do/animate_do.dart';
+import 'package:confetti/confetti.dart';
 
 class MemoryScreen extends StatefulWidget {
   const MemoryScreen({super.key});
@@ -28,6 +30,7 @@ class _MemoryScreenState extends State<MemoryScreen>
   final String soundPathWinner = "assets/sounds/winner-game.wav";
 
   late AnimationController _flipController;
+  late ConfettiController _confettiController;
   int _targetPairs = 0;
   int _rows = 3;
   int _cols = 3;
@@ -39,6 +42,9 @@ class _MemoryScreenState extends State<MemoryScreen>
       duration: const Duration(milliseconds: 600),
       vsync: this,
     );
+    _confettiController = ConfettiController(
+      duration: const Duration(seconds: 3),
+    );
 
     _initializeGame();
   }
@@ -46,6 +52,7 @@ class _MemoryScreenState extends State<MemoryScreen>
   @override
   void dispose() {
     _flipController.dispose();
+    _confettiController.dispose();
     super.dispose();
   }
 
@@ -223,6 +230,7 @@ class _MemoryScreenState extends State<MemoryScreen>
           setState(() {
             isGameWon = true;
           });
+          _confettiController.play();
         }
       } else {
         // No coinciden, voltear de vuelta después de un delay
@@ -305,7 +313,11 @@ class _MemoryScreenState extends State<MemoryScreen>
                         ),
                         itemCount: totalSlots,
                         itemBuilder: (context, index) {
-                          return _buildCard(index);
+                          return FadeInUp(
+                            delay: Duration(milliseconds: index * 50),
+                            duration: const Duration(milliseconds: 500),
+                            child: _buildCard(index),
+                          );
                         },
                       );
                     },
@@ -322,6 +334,21 @@ class _MemoryScreenState extends State<MemoryScreen>
               setState(() {});
             },
           ),
+        Align(
+          alignment: Alignment.topCenter,
+          child: ConfettiWidget(
+            confettiController: _confettiController,
+            blastDirectionality: BlastDirectionality.explosive,
+            shouldLoop: false,
+            colors: const [
+              Colors.green,
+              Colors.blue,
+              Colors.pink,
+              Colors.orange,
+              Colors.purple,
+            ],
+          ),
+        ),
       ],
     );
   }
