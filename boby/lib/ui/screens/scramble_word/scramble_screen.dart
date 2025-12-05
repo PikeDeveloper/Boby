@@ -27,6 +27,10 @@ class _ScrambleScreenState extends State<ScrambleScreen> {
   bool clueMode = false; // Track if clue mode is enabled
   final StorageService _storageService = StorageService.instance;
 
+  // Sound paths
+  final String soundPathIncorrectAnswer = "assets/sounds/bubble-pop.wav";
+  final String soundPathCorrectAnswer = "assets/sounds/game-bonus.wav";
+
   @override
   void initState() {
     super.initState();
@@ -84,17 +88,22 @@ class _ScrambleScreenState extends State<ScrambleScreen> {
       showFeedback = true;
     });
 
-    // Update persistent storage
+    // Update persistent storage and play sounds
+    final appController = Get.find<AppController>();
     if (correct) {
       _storageService.incScrambleWordCorrect();
+      appController.playMenuSound(soundPathCorrectAnswer);
     } else {
       _storageService.incScrambleWordWrong();
+      appController.playMenuSound(soundPathIncorrectAnswer);
     }
 
     if (correct) {
-      Future.delayed(const Duration(seconds: 2), () {
+      Future.delayed(const Duration(seconds: 1), () async {
         // Navigate to MatchItScreen when user wins
-        Get.to(() => const MatchItScreen());
+        await Get.to(() => const MatchItScreen());
+        // When user returns from MatchItScreen, load a new sentence
+        _loadNewSentence();
       });
     } else {
       // Auto-reset after 1 second on incorrect answer

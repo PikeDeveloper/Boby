@@ -2,6 +2,7 @@ import 'dart:async';
 import 'package:boby/controllers/app_controller.dart';
 import 'package:boby/services/storage_service.dart';
 import 'package:boby/ui/screens/bonus_sreen/match_it/widgets/color_options.dart';
+import 'package:boby/ui/screens/bonus_sreen/match_it/widgets/figure_grid_option.dart';
 import 'package:boby/ui/screens/bonus_sreen/match_it/widgets/number_options_grid.dart';
 import 'package:boby/ui/shared/score.dart';
 import 'package:boby/ui/shared/word_of_images.dart';
@@ -31,131 +32,6 @@ class _FigureTarget extends StatelessWidget {
         child: ClipRRect(
           borderRadius: BorderRadius.circular(50),
           child: Image.asset(imagePath),
-        ),
-      ),
-    );
-  }
-}
-
-class _FigureOptionsGrid extends StatelessWidget {
-  final List<String> options;
-  final List<Map<String, String>> assets;
-  final void Function(String) onTap;
-  final bool Function(String) isWrong;
-  final bool Function(String) isCorrect;
-
-  const _FigureOptionsGrid({
-    required this.options,
-    required this.assets,
-    required this.onTap,
-    required this.isWrong,
-    required this.isCorrect,
-  });
-
-  @override
-  Widget build(BuildContext context) {
-    final screenSize = MediaQuery.of(context).size;
-    final isLandscape = screenSize.width > screenSize.height;
-    bool istablet = screenSize.width > Constants.tabletSize;
-
-    // Color choices with human-readable names
-    final List<Color> colors = const [
-      (Colors.blue),
-      (Colors.yellow),
-      (Colors.purple),
-      (Colors.orange),
-    ];
-
-    return GridView.builder(
-      shrinkWrap: true,
-      physics: const NeverScrollableScrollPhysics(),
-      gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
-        crossAxisCount: isLandscape || istablet ? 4 : 2,
-        mainAxisSpacing: 12,
-        crossAxisSpacing: 12,
-        childAspectRatio: 1, // Make it square for images
-      ),
-      itemCount: options.length,
-      itemBuilder: (context, index) {
-        final label = options[index];
-        final asset = assets.firstWhere(
-          (a) => a['name'] == label,
-          orElse: () => {'image': '', 'name': label},
-        );
-        final wrong = isWrong(label);
-        final correct = isCorrect(label);
-
-        return GestureDetector(
-          onTap: () => onTap(label),
-          child: Container(
-            decoration: BoxDecoration(
-              borderRadius: BorderRadius.circular(16),
-              border: Border.all(
-                color: wrong
-                    ? Colors.red
-                    : correct
-                    ? Colors.green
-                    : colors[index],
-                width: 4,
-              ),
-              boxShadow: [
-                BoxShadow(
-                  color: Colors.black.withOpacity(0.1),
-                  blurRadius: 8,
-                  offset: const Offset(0, 4),
-                ),
-              ],
-            ),
-            child: ClipRRect(
-              borderRadius: BorderRadius.circular(12),
-              child: Stack(
-                fit: StackFit.expand,
-                children: [
-                  // Image
-                  if (asset['image']?.isNotEmpty ?? false)
-                    Image.asset(
-                      asset['image']!,
-                      fit: BoxFit.cover,
-                      errorBuilder: (context, error, stackTrace) =>
-                          _buildFallbackContent(label),
-                    )
-                  else
-                    _buildFallbackContent(label),
-
-                  // Overlay for wrong/correct state
-                  if (wrong || correct)
-                    Container(
-                      color: (wrong ? Colors.red : Colors.green).withOpacity(
-                        0.3,
-                      ),
-                      child: Center(
-                        child: Icon(
-                          wrong ? Icons.close : Icons.check,
-                          color: Colors.white,
-                          size: 48,
-                        ),
-                      ),
-                    ),
-                ],
-              ),
-            ),
-          ),
-        );
-      },
-    );
-  }
-
-  Widget _buildFallbackContent(String label) {
-    return Container(
-      color: Colors.grey[200],
-      child: Center(
-        child: Text(
-          label,
-          style: const TextStyle(
-            fontSize: 18,
-            fontWeight: FontWeight.bold,
-            color: Colors.black54,
-          ),
         ),
       ),
     );
@@ -245,7 +121,7 @@ class _MatchItScreenState extends State<MatchItScreen> {
 
   // Timer state
   Timer? _gameTimer;
-  final Duration _gameDuration = const Duration(seconds: 20);
+  final Duration _gameDuration = const Duration(seconds: 10);
   Duration _elapsedTime = Duration.zero;
 
   @override
@@ -269,6 +145,11 @@ class _MatchItScreenState extends State<MatchItScreen> {
 
   void _startTimer() {
     _gameTimer = Timer.periodic(const Duration(milliseconds: 100), (timer) {
+      if (!mounted) {
+        timer.cancel();
+        return;
+      }
+
       setState(() {
         _elapsedTime += const Duration(milliseconds: 100);
         if (_elapsedTime >= _gameDuration) {
@@ -416,7 +297,7 @@ class _MatchItScreenState extends State<MatchItScreen> {
     if (_isLocked) return;
     if (picked == _targetColor) {
       _app.playMenuSound(soundPathCorrectAnswer);
-      StorageService.instance.incMatchItCorrect();
+      StorageService.instance.incScrambleWordCorrect();
       setState(() {
         _isLocked = true;
         _showCorrectOverlay = true;
@@ -439,7 +320,7 @@ class _MatchItScreenState extends State<MatchItScreen> {
     if (_isLocked) return;
     if (picked == _targetNumber) {
       _app.playMenuSound(soundPathCorrectAnswer);
-      StorageService.instance.incMatchItCorrect();
+      StorageService.instance.incScrambleWordCorrect();
       setState(() {
         _isLocked = true;
         _showCorrectOverlay = true;
@@ -451,7 +332,7 @@ class _MatchItScreenState extends State<MatchItScreen> {
       });
     } else {
       _app.playMenuSound(soundPathIncorrectAnswer);
-      StorageService.instance.incMatchItWrong();
+      StorageService.instance.incScrambleWordWrong();
       setState(() {
         _wrongNumberValues.add(picked);
       });
@@ -462,7 +343,7 @@ class _MatchItScreenState extends State<MatchItScreen> {
     if (_isLocked) return;
     if (_targetFigure != null && picked == _targetFigure!["name"]) {
       _app.playMenuSound(soundPathCorrectAnswer);
-      StorageService.instance.incMatchItCorrect();
+      StorageService.instance.incScrambleWordCorrect();
       setState(() {
         _isLocked = true;
         _showCorrectOverlay = true;
@@ -518,7 +399,8 @@ class _MatchItScreenState extends State<MatchItScreen> {
             padding: const EdgeInsets.all(16.0),
             child: Column(
               children: [
-                Score(game: "MatchIt"),
+                Score(game: "ScrambleWord"),
+
                 Container(
                   height: 20,
                   width: MediaQuery.of(context).size.width * 0.8,
@@ -579,7 +461,7 @@ class _MatchItScreenState extends State<MatchItScreen> {
                         _isLocked,
                   ),
                 ] else ...[
-                  _FigureOptionsGrid(
+                  FigureOptionsGrid(
                     options: _figureOptions,
                     assets: _figureAssets,
                     onTap: _onFigureTap,
