@@ -1,10 +1,11 @@
 import 'package:boby/controllers/app_controller.dart';
-import 'package:boby/ui/screens/bonus_sreen/match_it/match_it.dart';
+
 import 'package:boby/ui/screens/complete_sentence/complete_sentence.dart';
 import 'package:boby/ui/screens/drag_and_drop_screen/list_card_sounds.dart';
 import 'package:boby/ui/screens/letters_soup/letters_soup.dart';
 import 'package:boby/ui/screens/main_screen/widgets/background.dart';
 import 'package:boby/ui/screens/drag_and_drop_screen/widgets/name_screen.dart';
+import 'package:boby/ui/screens/memory_screen/memory_screen.dart';
 import 'package:boby/ui/screens/scramble_word/scramble_screen.dart';
 import 'package:boby/ui/screens/word_guess/word_guess_screen.dart';
 import 'package:flutter/material.dart';
@@ -20,12 +21,13 @@ class MainScreen extends StatelessWidget {
 
   final List<Widget> screens = [
     ListCardSounds(),
-    ScrambleScreen(),
-    //MemoryScreen(),
+
+    MemoryScreen(),
     LettersSoup(),
     CompleteSentence(),
     WordGuessScreen(),
-    MatchItScreen(),
+    // MatchItScreen(),
+    ScrambleScreen(),
     SettingScreen(),
     NameScreen(),
   ];

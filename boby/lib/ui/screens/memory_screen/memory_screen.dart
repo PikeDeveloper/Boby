@@ -1,7 +1,7 @@
 import 'dart:math';
 import 'package:boby/controllers/app_controller.dart';
-import 'package:boby/ui/screens/bonus_sreen/memory_bobnus_screen/widgets/memory_card.dart';
-import 'package:boby/ui/screens/bonus_sreen/memory_bobnus_screen/widgets/new_game_button.dart';
+import 'package:boby/ui/screens/memory_screen/widgets/memory_card.dart';
+import 'package:boby/ui/screens/memory_screen/widgets/new_game_button.dart';
 import 'package:boby/ui/shared/winner_screen.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
