@@ -1,6 +1,7 @@
 import 'dart:math';
 
 import 'package:boby/controllers/app_controller.dart';
+import 'package:boby/services/storage_service.dart';
 import 'package:boby/ui/screens/scramble_word/widgets/draggable_word.dart';
 import 'package:boby/ui/shared/score.dart';
 import 'package:boby/ui/shared/word_of_images.dart';
@@ -20,10 +21,10 @@ class _ScrambleScreenState extends State<ScrambleScreen> {
   late List<String> correctWords;
   late List<String> scrambledWords;
   List<String?> droppedWords = [];
-  int score = 0;
   bool showFeedback = false;
   bool isCorrect = false;
   bool clueMode = false; // Track if clue mode is enabled
+  final StorageService _storageService = StorageService.instance;
 
   @override
   void initState() {
@@ -80,10 +81,14 @@ class _ScrambleScreenState extends State<ScrambleScreen> {
     setState(() {
       isCorrect = correct;
       showFeedback = true;
-      if (correct) {
-        score += 10;
-      }
     });
+
+    // Update persistent storage
+    if (correct) {
+      _storageService.incScrambleWordCorrect();
+    } else {
+      _storageService.incScrambleWordWrong();
+    }
 
     if (correct) {
       Future.delayed(const Duration(seconds: 2), () {
@@ -147,6 +152,16 @@ class _ScrambleScreenState extends State<ScrambleScreen> {
                     mainAxisAlignment: MainAxisAlignment.center,
                     children: [
                       // Drop zone area with multi-line support
+                      showFeedback
+                          ? Text(
+                              isCorrect ? "Correct!" : "Try again!",
+                              style: TextStyle(
+                                fontSize: 22,
+                                fontWeight: FontWeight.bold,
+                                color: isCorrect ? Colors.green : Colors.red,
+                              ),
+                            )
+                          : const SizedBox(height: 20),
                       Expanded(
                         child: Padding(
                           padding: const EdgeInsets.all(16.0),

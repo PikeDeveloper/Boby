@@ -1,3 +1,4 @@
+import 'package:boby/ui/screens/bonus_sreen/match_it/match_it.dart';
 import 'package:get/get.dart';
 
 import '../ui/screens/bonus_sreen/float_words/bonus_screen.dart';
@@ -10,5 +11,6 @@ class Routes {
       name: BonusScreenFloatWords.route,
       page: () => const BonusScreenFloatWords(),
     ),
+    GetPage(name: MatchItScreen.route, page: () => const MatchItScreen()),
   ];
 }

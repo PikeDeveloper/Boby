@@ -1,5 +1,6 @@
 import 'package:boby/controllers/app_controller.dart';
 import 'package:boby/services/storage_service.dart';
+import 'package:boby/ui/screens/bonus_sreen/match_it/widgets/color_options.dart';
 import 'package:boby/ui/screens/bonus_sreen/match_it/widgets/number_options_grid.dart';
 import 'package:boby/ui/shared/score.dart';
 import 'package:boby/ui/shared/word_of_images.dart';
@@ -9,6 +10,7 @@ import 'dart:math';
 import 'package:boby/utils/constants.dart';
 
 class MatchItScreen extends StatefulWidget {
+  static const String route = '/match_it';
   const MatchItScreen({super.key});
 
   @override
@@ -472,159 +474,68 @@ class _MatchItScreenState extends State<MatchItScreen> {
     final isLandscape = screenSize.width > screenSize.height;
     bool istablet = screenSize.width > Constants.tabletSize;
 
-    return Padding(
-      padding: const EdgeInsets.all(16.0),
-      child: Column(
-        children: [
-          Score(game: "MatchIt"),
+    return Scaffold(
+      appBar: AppBar(title: const Text("Match It")),
+      body: Padding(
+        padding: const EdgeInsets.all(16.0),
+        child: Column(
+          children: [
+            Score(game: "MatchIt"),
 
-          Spacer(),
+            Spacer(),
 
-          WordOfImages(
-            letters: _currentTargetWord.toUpperCase(),
-            letterSize: isLandscape || istablet ? 90 : 40,
-          ),
-          Spacer(),
-
-          // Main content area (now empty since we show the word at the top)
-          const Spacer(),
-
-          // Show the options at the bottom
-          if (_roundType == _RoundType.shape) ...[
-            _ColorOptionsGrid(
-              options: _colorOptions,
-              shapes: _shapes,
-              onTap: _onColorTap,
-              isWrong: (label) => _wrongColorLabels.contains(label),
-              isCorrect: (label) =>
-                  _targetColor != null &&
-                  label == _targetColor!.$1 &&
-                  _isLocked,
+            WordOfImages(
+              letters: _currentTargetWord.toUpperCase(),
+              letterSize: isLandscape || istablet ? 90 : 40,
             ),
-          ] else if (_roundType == _RoundType.number) ...[
-            NumberOptionsGrid(
-              options: _numberOptions,
-              onTap: _onNumberTap,
-              isWrong: (value) => _wrongNumberValues.contains(value),
-              isCorrect: (value) =>
-                  _targetNumber != null && value == _targetNumber && _isLocked,
-            ),
-          ] else ...[
-            _FigureOptionsGrid(
-              options: _figureOptions,
-              assets: _figureAssets,
-              onTap: _onFigureTap,
-              isWrong: (label) => _wrongFigureLabels.contains(label),
-              isCorrect: (label) =>
-                  _targetFigure != null &&
-                  label == _targetFigure!["name"] &&
-                  _isLocked,
-            ),
+            Spacer(),
+
+            // Main content area (now empty since we show the word at the top)
+            const Spacer(),
+
+            // Show the options at the bottom
+            if (_roundType == _RoundType.shape) ...[
+              ColorOptionsGrid(
+                options: _colorOptions,
+                shapes: _shapes,
+                onTap: _onColorTap,
+                isWrong: (label) => _wrongColorLabels.contains(label),
+                isCorrect: (label) =>
+                    _targetColor != null &&
+                    label == _targetColor!.$1 &&
+                    _isLocked,
+              ),
+            ] else if (_roundType == _RoundType.number) ...[
+              NumberOptionsGrid(
+                options: _numberOptions,
+                onTap: _onNumberTap,
+                isWrong: (value) => _wrongNumberValues.contains(value),
+                isCorrect: (value) =>
+                    _targetNumber != null &&
+                    value == _targetNumber &&
+                    _isLocked,
+              ),
+            ] else ...[
+              _FigureOptionsGrid(
+                options: _figureOptions,
+                assets: _figureAssets,
+                onTap: _onFigureTap,
+                isWrong: (label) => _wrongFigureLabels.contains(label),
+                isCorrect: (label) =>
+                    _targetFigure != null &&
+                    label == _targetFigure!["name"] &&
+                    _isLocked,
+              ),
+            ],
+            Spacer(),
+            // Options are now shown above in the main content area
           ],
-          Spacer(),
-          // Options are now shown above in the main content area
-        ],
+        ),
       ),
     );
   }
 }
 
-class _ColorOptionsGrid extends StatelessWidget {
-  final List<(String, Color)> options;
-  final List<String> shapes;
-  final void Function((String, Color)) onTap;
-  final bool Function(String) isWrong;
-  final bool Function(String) isCorrect;
-
-  const _ColorOptionsGrid({
-    required this.options,
-    required this.shapes,
-    required this.onTap,
-    required this.isWrong,
-    required this.isCorrect,
-  });
-
-  @override
-  Widget build(BuildContext context) {
-    final screenSize = MediaQuery.of(context).size;
-    final isLandscape = screenSize.width > screenSize.height;
-    bool istablet = screenSize.width > Constants.tabletSize;
-
-    // Use the first shape for all color options
-    final shapePath = shapes.isNotEmpty
-        ? shapes[0]
-        : 'assets/shapes/shape_1.png';
-
-    return GridView.builder(
-      shrinkWrap: true,
-      physics: const NeverScrollableScrollPhysics(),
-      gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
-        crossAxisCount: isLandscape || istablet ? 4 : 2,
-        mainAxisSpacing: 16,
-        crossAxisSpacing: 16,
-        childAspectRatio: 1, // Square aspect ratio for shapes
-      ),
-      itemCount: options.length,
-      itemBuilder: (context, index) {
-        if (index >= options.length) return const SizedBox.shrink();
-
-        final opt = options[index];
-        final wrong = isWrong(opt.$1);
-        final correct = isCorrect(opt.$1);
-
-        return GestureDetector(
-          onTap: () => onTap(opt),
-          child: Container(
-            decoration: BoxDecoration(
-              borderRadius: BorderRadius.circular(16),
-              border: Border.all(
-                color: wrong
-                    ? Colors.red
-                    : correct
-                    ? Colors.green
-                    : Colors.transparent,
-                width: 4,
-              ),
-            ),
-            child: ClipRRect(
-              borderRadius: BorderRadius.circular(12),
-              child: Stack(
-                fit: StackFit.expand,
-                children: [
-                  // Colored shape - same shape for all options
-                  ColorFiltered(
-                    colorFilter: ColorFilter.mode(opt.$2, BlendMode.srcIn),
-                    child: Image.asset(
-                      shapePath,
-                      fit: BoxFit.contain,
-                      width: double.infinity,
-                      height: double.infinity,
-                    ),
-                  ),
-
-                  // Overlay for wrong/correct state
-                  if (wrong || correct)
-                    Container(
-                      color: (wrong ? Colors.red : Colors.green).withOpacity(
-                        0.3,
-                      ),
-                      child: Center(
-                        child: Icon(
-                          wrong ? Icons.close : Icons.check,
-                          color: Colors.white,
-                          size: 48,
-                        ),
-                      ),
-                    ),
-                ],
-              ),
-            ),
-          ),
-        );
-      },
-    );
-  }
-}
 // Removed _ColorOptionButton as it's no longer needed
 
 // _WordPng removed: options now render direct Text labels
