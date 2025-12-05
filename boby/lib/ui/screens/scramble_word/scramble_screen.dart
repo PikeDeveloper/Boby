@@ -121,7 +121,6 @@ class _ScrambleScreenState extends State<ScrambleScreen> {
           Expanded(
             flex: 2,
             child: Container(
-              padding: const EdgeInsets.all(16),
               decoration: BoxDecoration(
                 color: showFeedback
                     ? (isCorrect ? Colors.green.shade100 : Colors.red.shade100)
@@ -160,108 +159,109 @@ class _ScrambleScreenState extends State<ScrambleScreen> {
                         ],
                       ),
                     ),
-                  // Single long line for dropping words
-                  Padding(
-                    padding: const EdgeInsets.symmetric(horizontal: 8.0),
-                    child: DragTarget<String>(
-                      onWillAcceptWithDetails: (details) => !showFeedback,
-                      onAcceptWithDetails: (details) {
-                        setState(() {
-                          // Find the first empty slot
-                          final emptyIndex = droppedWords.indexOf(null);
-                          if (emptyIndex != -1) {
-                            droppedWords[emptyIndex] = details.data;
-                          }
-                        });
-
-                        // Auto-check when all words are placed
-                        if (droppedWords.every((word) => word != null)) {
-                          Future.delayed(const Duration(milliseconds: 300), () {
-                            _checkAnswer();
+                  // Drop zone area with multi-line support
+                  Expanded(
+                    child: Padding(
+                      padding: const EdgeInsets.all(16.0),
+                      child: DragTarget<String>(
+                        onWillAcceptWithDetails: (details) => !showFeedback,
+                        onAcceptWithDetails: (details) {
+                          setState(() {
+                            // Find the first empty slot
+                            final emptyIndex = droppedWords.indexOf(null);
+                            if (emptyIndex != -1) {
+                              droppedWords[emptyIndex] = details.data;
+                            }
                           });
-                        }
-                      },
-                      builder: (context, candidateData, rejectedData) {
-                        bool isHighlighted = candidateData.isNotEmpty;
 
-                        return Container(
-                          alignment: Alignment.bottomLeft,
-                          width: double.infinity,
-                          height: 80,
-                          padding: const EdgeInsets.only(bottom: 6),
+                          // Auto-check when all words are placed
+                          if (droppedWords.every((word) => word != null)) {
+                            Future.delayed(
+                              const Duration(milliseconds: 300),
+                              () {
+                                _checkAnswer();
+                              },
+                            );
+                          }
+                        },
+                        builder: (context, candidateData, rejectedData) {
+                          bool isHighlighted = candidateData.isNotEmpty;
 
-                          decoration: BoxDecoration(
-                            color: isHighlighted
-                                ? Colors.blue.shade100
-                                : Colors.white,
-                            borderRadius: BorderRadius.circular(12),
-                            // solo borede abajo
-                            border: Border(
-                              bottom: BorderSide(
+                          return Container(
+                            width: double.infinity,
+                            padding: const EdgeInsets.all(12),
+                            decoration: BoxDecoration(
+                              color: isHighlighted
+                                  ? Colors.blue.shade100
+                                  : Colors.white,
+                              borderRadius: BorderRadius.circular(12),
+                              border: Border.all(
                                 color: isHighlighted
                                     ? Colors.blue.shade400
                                     : Colors.grey.shade400,
                                 width: 3,
                               ),
                             ),
-                          ),
-                          child: SingleChildScrollView(
-                            scrollDirection: Axis.horizontal,
-                            child: Wrap(
-                              spacing: 8,
-                              runSpacing: 8,
-                              crossAxisAlignment: WrapCrossAlignment.center,
-                              children: droppedWords.asMap().entries.map((
-                                entry,
-                              ) {
-                                final index = entry.key;
-                                final word = entry.value;
+                            child: Center(
+                              child: Wrap(
+                                spacing: 8,
+                                runSpacing: 8,
+                                alignment: WrapAlignment.center,
+                                crossAxisAlignment: WrapCrossAlignment.center,
+                                children: droppedWords.asMap().entries.map((
+                                  entry,
+                                ) {
+                                  final index = entry.key;
+                                  final word = entry.value;
 
-                                if (word != null) {
-                                  return GestureDetector(
-                                    onTap: () {
-                                      if (!showFeedback) {
-                                        setState(() {
-                                          droppedWords[index] = null;
-                                        });
-                                      }
-                                    },
-                                    child: Container(
-                                      padding: const EdgeInsets.symmetric(
-                                        horizontal: 16,
-                                        vertical: 12,
-                                      ),
-                                      decoration: BoxDecoration(
-                                        color: Colors.blue.shade400,
-                                        borderRadius: BorderRadius.circular(8),
-                                        boxShadow: [
-                                          BoxShadow(
-                                            color: Colors.black.withOpacity(
-                                              0.1,
-                                            ),
-                                            blurRadius: 4,
-                                            offset: const Offset(0, 2),
+                                  if (word != null) {
+                                    return GestureDetector(
+                                      onTap: () {
+                                        if (!showFeedback) {
+                                          setState(() {
+                                            droppedWords[index] = null;
+                                          });
+                                        }
+                                      },
+                                      child: Container(
+                                        padding: const EdgeInsets.symmetric(
+                                          horizontal: 16,
+                                          vertical: 12,
+                                        ),
+                                        decoration: BoxDecoration(
+                                          color: Colors.blue.shade400,
+                                          borderRadius: BorderRadius.circular(
+                                            8,
                                           ),
-                                        ],
-                                      ),
-                                      child: Text(
-                                        word,
-                                        style: const TextStyle(
-                                          fontSize: 18,
-                                          fontWeight: FontWeight.bold,
-                                          color: Colors.white,
+                                          boxShadow: [
+                                            BoxShadow(
+                                              color: Colors.black.withOpacity(
+                                                0.1,
+                                              ),
+                                              blurRadius: 4,
+                                              offset: const Offset(0, 2),
+                                            ),
+                                          ],
+                                        ),
+                                        child: Text(
+                                          word,
+                                          style: const TextStyle(
+                                            fontSize: 18,
+                                            fontWeight: FontWeight.bold,
+                                            color: Colors.white,
+                                          ),
                                         ),
                                       ),
-                                    ),
-                                  );
-                                } else {
-                                  return const SizedBox.shrink();
-                                }
-                              }).toList(),
+                                    );
+                                  } else {
+                                    return const SizedBox.shrink();
+                                  }
+                                }).toList(),
+                              ),
                             ),
-                          ),
-                        );
-                      },
+                          );
+                        },
+                      ),
                     ),
                   ),
                 ],

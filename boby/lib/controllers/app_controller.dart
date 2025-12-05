@@ -120,5 +120,5 @@ class AppController extends GetxController {
   }
 
   //scrable settings
-  var scrableLevel = "easy".obs;
+  var scrableLevel = "hard".obs;
 }
