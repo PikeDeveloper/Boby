@@ -2,7 +2,7 @@ import 'dart:math';
 
 import 'package:boby/controllers/app_controller.dart';
 import 'package:boby/services/storage_service.dart';
-import 'package:boby/ui/screens/bonus_sreen/bonus_screen.dart';
+import 'package:boby/ui/screens/bonus_sreen/float_words/bonus_screen.dart';
 import 'package:boby/ui/screens/complete_sentence/widgets/colored_button.dart';
 import 'package:boby/ui/screens/complete_sentence/widgets/sentense_container.dart';
 import 'package:boby/ui/shared/score.dart';
@@ -57,7 +57,7 @@ class _CompleteSentenceState extends State<CompleteSentence> {
           consecutiveCorrectAnswers = 0;
           // Navigate to Bonus Screen
           Future.delayed(const Duration(milliseconds: 500), () {
-            Get.toNamed(BonusScreen.route);
+            Get.toNamed(BonusScreenFloatWords.route);
           });
         }
       }

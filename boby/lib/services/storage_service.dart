@@ -43,6 +43,8 @@ class StorageService extends GetxService {
     // Initialize reactive variables
     completeSentenceCorrect.value = getCompleteSentenceCorrect();
     completeSentenceWrong.value = getCompleteSentenceWrong();
+    scrambleWordCorrect.value = getScrambleWordCorrect();
+    scrambleWordWrong.value = getScrambleWordWrong();
   }
 
   String? getBackground() => _box.get(_kBackground) as String?;
@@ -151,6 +153,34 @@ class StorageService extends GetxService {
       _box.put('word_guess_wrong', getWordGuessWrong() + by);
   Future<void> setWordGuessWrong(int value) =>
       _box.put('word_guess_wrong', value);
+
+  // Scramble Word game scores
+  int getScrambleWordCorrect() =>
+      (_box.get('scramble_word_correct') as int?) ?? 0;
+  final scrambleWordCorrect = 0.obs;
+  Future<void> incScrambleWordCorrect([int by = 1]) async {
+    final newValue = getScrambleWordCorrect() + by;
+    await _box.put('scramble_word_correct', newValue);
+    scrambleWordCorrect.value = newValue;
+  }
+
+  Future<void> setScrambleWordCorrect(int value) async {
+    await _box.put('scramble_word_correct', value);
+    scrambleWordCorrect.value = value;
+  }
+
+  int getScrambleWordWrong() => (_box.get('scramble_word_wrong') as int?) ?? 0;
+  final scrambleWordWrong = 0.obs;
+  Future<void> incScrambleWordWrong([int by = 1]) async {
+    final newValue = getScrambleWordWrong() + by;
+    await _box.put('scramble_word_wrong', newValue);
+    scrambleWordWrong.value = newValue;
+  }
+
+  Future<void> setScrambleWordWrong(int value) async {
+    await _box.put('scramble_word_wrong', value);
+    scrambleWordWrong.value = value;
+  }
 
   double getMathAverage() {
     final total = getMathTotalAttempts();

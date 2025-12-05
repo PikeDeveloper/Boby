@@ -1,11 +1,11 @@
 import 'dart:math';
 import 'package:boby/controllers/app_controller.dart';
-import 'package:boby/ui/screens/memory/widgets/new_game_button.dart';
+import 'package:boby/ui/screens/bonus_sreen/memory_bobnus_screen/widgets/memory_card.dart';
+import 'package:boby/ui/screens/bonus_sreen/memory_bobnus_screen/widgets/new_game_button.dart';
 import 'package:boby/ui/shared/winner_screen.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:boby/services/storage_service.dart';
-import 'package:boby/ui/screens/memory/widgets/memory_card.dart';
 import 'package:animate_do/animate_do.dart';
 import 'package:confetti/confetti.dart';
 

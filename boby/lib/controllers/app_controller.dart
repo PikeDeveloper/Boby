@@ -7,13 +7,12 @@ import 'package:boby/services/storage_service.dart';
 
 class AppController extends GetxController {
   //------------General------------------------------
- 
+
   var backGroundImage = "".obs;
   var currentPage = 4.obs;
   var cardSelected = "".obs;
   var menuOpen = false.obs;
   var celebrationVisible = false.obs; // controls celebration overlay visibility
-
 
   //---------noShow------------------------------
   var noShow = "no".obs;
@@ -27,7 +26,7 @@ class AppController extends GetxController {
   //------------Audio Players------------------------------
   final AudioPlayer _menuAudioPlayer = AudioPlayer();
   final AudioPlayer _gameAudioPlayer = AudioPlayer();
-  
+
   // Sound paths
   final String winSound = "assets/sounds/winner-game.wav";
   final String bubblePopSound = "assets/sounds/bubble-pop.wav";
@@ -67,8 +66,9 @@ class AppController extends GetxController {
     }
   }
 
-  Future<void> showCelebration(
-      {Duration duration = const Duration(seconds: 1)}) async {
+  Future<void> showCelebration({
+    Duration duration = const Duration(seconds: 1),
+  }) async {
     try {
       celebrationVisible.value = true;
       await Future.delayed(duration);
@@ -76,7 +76,7 @@ class AppController extends GetxController {
       celebrationVisible.value = false;
     }
   }
-  
+
   // Play game sound effects
   Future<void> playGameSound(String soundPath) async {
     try {
@@ -84,39 +84,41 @@ class AppController extends GetxController {
         debugPrint('Audio disabled on Linux');
         return;
       }
-      
+
       await _gameAudioPlayer.stop();
       await _gameAudioPlayer.setAsset(soundPath);
       await _gameAudioPlayer.setVolume(1.0);
       await _gameAudioPlayer.play();
-      
     } catch (e) {
       debugPrint('Error playing game sound: $e');
     }
   }
-  
+
   // Play card tap sound
   Future<void> playCardTap(String soundPath) async {
     await playGameSound(soundPath);
   }
-  
+
   // Play win sound
   Future<void> playWinSound() async {
     await playGameSound(winSound);
   }
-  
+
   // Play bubble pop sound
   Future<void> playBubblePop() async {
     await playGameSound(bubblePopSound);
   }
-  
+
   // Play game bonus sound
   Future<void> playGameBonus() async {
     await playGameSound(gameBonusSound);
   }
-  
+
   // Play game over sound
   Future<void> playGameOver() async {
     await playGameSound(gameOverSound);
   }
+
+  //scrable settings
+  var scrableLevel = "easy".obs;
 }

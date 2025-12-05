@@ -9,15 +9,15 @@ import 'package:flutter/scheduler.dart';
 import 'package:get/get.dart';
 import 'widgets/bonus_words.dart';
 
-class BonusScreen extends StatefulWidget {
+class BonusScreenFloatWords extends StatefulWidget {
   static const route = '/bonus_screen';
-  const BonusScreen({super.key});
+  const BonusScreenFloatWords({super.key});
 
   @override
-  State<BonusScreen> createState() => _BonusScreenState();
+  State<BonusScreenFloatWords> createState() => _BonusScreenFloatWordsState();
 }
 
-class _BonusScreenState extends State<BonusScreen>
+class _BonusScreenFloatWordsState extends State<BonusScreenFloatWords>
     with SingleTickerProviderStateMixin {
   late Ticker _ticker;
   final Random _random = Random();

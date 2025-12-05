@@ -1,12 +1,12 @@
 import 'package:boby/controllers/app_controller.dart';
 import 'package:boby/services/storage_service.dart';
+import 'package:boby/ui/screens/bonus_sreen/match_it/widgets/number_options_grid.dart';
 import 'package:boby/ui/shared/score.dart';
 import 'package:boby/ui/shared/word_of_images.dart';
 import 'package:get/get.dart';
 import 'package:flutter/material.dart';
 import 'dart:math';
 import 'package:boby/utils/constants.dart';
-import 'package:boby/ui/screens/match_it/widgets/number_options_grid.dart';
 
 class MatchItScreen extends StatefulWidget {
   const MatchItScreen({super.key});

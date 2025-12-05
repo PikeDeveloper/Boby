@@ -51,6 +51,8 @@ class Score extends StatelessWidget {
         return StorageService.instance.getMatchItCorrect().toString();
       case "CompleteSentence":
         return StorageService.instance.completeSentenceCorrect.value.toString();
+      case "ScrambleWord":
+        return StorageService.instance.scrambleWordCorrect.value.toString();
       default:
         return "0";
     }
@@ -68,6 +70,8 @@ class Score extends StatelessWidget {
         return StorageService.instance.getMatchItWrong().toString();
       case "CompleteSentence":
         return StorageService.instance.completeSentenceWrong.value.toString();
+      case "ScrambleWord":
+        return StorageService.instance.scrambleWordWrong.value.toString();
       default:
         return "0";
     }
@@ -275,6 +279,10 @@ class Score extends StatelessWidget {
       case "CompleteSentence":
         StorageService.instance.setCompleteSentenceCorrect(0);
         StorageService.instance.setCompleteSentenceWrong(0);
+        break;
+      case "ScrambleWord":
+        StorageService.instance.setScrambleWordCorrect(0);
+        StorageService.instance.setScrambleWordWrong(0);
         break;
     }
     appController.noShow.value == "no"
