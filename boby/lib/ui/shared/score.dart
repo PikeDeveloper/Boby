@@ -100,7 +100,7 @@ class Score extends StatelessWidget {
         ),
         child: Obx(
           () => Row(
-            mainAxisAlignment: MainAxisAlignment.spaceBetween,
+            mainAxisAlignment: MainAxisAlignment.center,
             children: [
               // Level Badge
               Container(
@@ -124,31 +124,34 @@ class Score extends StatelessWidget {
                 ),
               ),
 
-              // Stats
-              Row(
-                mainAxisSize: MainAxisSize.min,
-                children: [
-                  _buildScoreItem(
-                    Icons.check_circle_rounded,
-                    _getCorrectValue(),
-                    Colors.green,
-                    isLandscape,
-                    istablet,
-                  ),
-                  Container(
-                    height: 24,
-                    width: 2,
-                    margin: const EdgeInsets.symmetric(horizontal: 12),
-                    color: Colors.grey.shade300,
-                  ),
-                  _buildScoreItem(
-                    Icons.cancel_rounded,
-                    _getWrongValue(),
-                    Colors.red,
-                    isLandscape,
-                    istablet,
-                  ),
-                ],
+              // Stats - Centered with Expanded
+              Expanded(
+                child: Row(
+                  mainAxisAlignment: MainAxisAlignment.center,
+                  mainAxisSize: MainAxisSize.min,
+                  children: [
+                    _buildScoreItem(
+                      Icons.check_circle_rounded,
+                      _getCorrectValue(),
+                      Colors.green,
+                      isLandscape,
+                      istablet,
+                    ),
+                    Container(
+                      height: 24,
+                      width: 2,
+                      margin: const EdgeInsets.symmetric(horizontal: 12),
+                      color: Colors.grey.shade300,
+                    ),
+                    _buildScoreItem(
+                      Icons.cancel_rounded,
+                      _getWrongValue(),
+                      Colors.red,
+                      isLandscape,
+                      istablet,
+                    ),
+                  ],
+                ),
               ),
 
               // Hidden trigger for reactivity (kept but minimized)

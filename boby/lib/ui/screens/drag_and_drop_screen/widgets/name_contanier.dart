@@ -18,6 +18,8 @@ class NameContainer extends StatelessWidget {
     this.isSelected = false,
   });
 
+  final Color borderColor = const Color.fromARGB(90, 130, 130, 130);
+
   @override
   Widget build(BuildContext context) {
     // Don't show the name if it's already on a card
@@ -42,7 +44,7 @@ class NameContainer extends StatelessWidget {
             child: DottedBorder(
               options: RoundedRectDottedBorderOptions(
                 radius: const Radius.circular(20),
-                color: Colors.transparent,
+                color: borderColor,
                 strokeWidth: 2,
                 dashPattern: const [6, 4],
               ),
@@ -80,7 +82,7 @@ class NameContainer extends StatelessWidget {
           //     padding: const EdgeInsets.symmetric(vertical: 8, horizontal: 12),
           child: DottedBorder(
             options: RoundedRectDottedBorderOptions(
-              color: Colors.transparent,
+              color: borderColor,
               strokeWidth: 2,
               dashPattern: const [6, 4],
               radius: const Radius.circular(20),
@@ -110,8 +112,8 @@ class NameContainer extends StatelessWidget {
           padding: const EdgeInsets.symmetric(vertical: 8, horizontal: 12),
           child: DottedBorder(
             options: RoundedRectDottedBorderOptions(
-              color: isSelected ? Colors.blue : Colors.transparent,
-              strokeWidth: isSelected ? 3 : 2,
+              color: isSelected ? Colors.blue : borderColor,
+              strokeWidth: 2,
               dashPattern: const [6, 4],
               radius: const Radius.circular(20),
             ),
@@ -120,9 +122,12 @@ class NameContainer extends StatelessWidget {
               padding: const EdgeInsets.symmetric(vertical: 8, horizontal: 12),
               decoration: BoxDecoration(
                 borderRadius: BorderRadius.circular(20),
-                color: isSelected
-                    ? Colors.blue.withOpacity(0.1)
-                    : const Color.fromARGB(232, 242, 242, 242).withOpacity(0.8),
+                color: const Color.fromARGB(
+                  232,
+                  242,
+                  242,
+                  242,
+                ).withOpacity(0.8),
                 border: isSelected
                     ? Border.all(color: Colors.blue, width: 2)
                     : null,

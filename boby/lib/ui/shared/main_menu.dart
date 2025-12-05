@@ -1,5 +1,4 @@
 import 'dart:math';
-
 import 'package:boby/controllers/app_controller.dart';
 import 'package:boby/ui/shared/word_menu.dart';
 import 'package:boby/utils/colors.dart';
@@ -73,7 +72,7 @@ class MainMenu extends StatelessWidget {
             height: minSide * 1.2,
             decoration: BoxDecoration(
               image: DecorationImage(
-                image: AssetImage("assets/backgrounds/soft.png"),
+                image: AssetImage("assets/backgrounds/soft.jpg"),
                 fit: BoxFit.cover,
               ),
               borderRadius: BorderRadius.circular(20),

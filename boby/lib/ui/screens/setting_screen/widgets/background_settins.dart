@@ -11,8 +11,6 @@ class BackgroundSettings extends StatelessWidget {
     "assets/backgrounds/farm.jpg",
     "assets/backgrounds/grass.jpg",
     "assets/backgrounds/oceano.png",
-    "assets/backgrounds/oso.jpg",
-    "assets/backgrounds/soft.png",
   ];
 
   @override
