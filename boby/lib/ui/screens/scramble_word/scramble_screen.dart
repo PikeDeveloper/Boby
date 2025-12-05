@@ -1,6 +1,7 @@
 import 'dart:math';
 
 import 'package:boby/controllers/app_controller.dart';
+import 'package:boby/ui/screens/scramble_word/widgets/draggable_word.dart';
 import 'package:boby/ui/shared/score.dart';
 import 'package:boby/ui/shared/word_of_images.dart';
 import 'package:flutter/material.dart';
@@ -45,6 +46,25 @@ class _ScrambleScreenState extends State<ScrambleScreen> {
       showFeedback = false;
       isCorrect = false;
     });
+  }
+
+  void _addWordToDropZone(String word) {
+    if (showFeedback) return; // Don't allow adding words during feedback
+
+    setState(() {
+      // Find the first empty slot
+      final emptyIndex = droppedWords.indexOf(null);
+      if (emptyIndex != -1) {
+        droppedWords[emptyIndex] = word;
+      }
+    });
+
+    // Auto-check when all words are placed
+    if (droppedWords.every((word) => word != null)) {
+      Future.delayed(const Duration(milliseconds: 300), () {
+        _checkAnswer();
+      });
+    }
   }
 
   void _checkAnswer() {
@@ -140,18 +160,108 @@ class _ScrambleScreenState extends State<ScrambleScreen> {
                         ],
                       ),
                     ),
-                  // Single line sentence display
+                  // Single long line for dropping words
                   Padding(
                     padding: const EdgeInsets.symmetric(horizontal: 8.0),
-                    child: Wrap(
-                      spacing: 4,
-                      runSpacing: 8,
-                      alignment: WrapAlignment.center,
-                      crossAxisAlignment: WrapCrossAlignment.center,
-                      children: List.generate(
-                        correctWords.length,
-                        (index) => _buildDropTarget(index),
-                      ),
+                    child: DragTarget<String>(
+                      onWillAcceptWithDetails: (details) => !showFeedback,
+                      onAcceptWithDetails: (details) {
+                        setState(() {
+                          // Find the first empty slot
+                          final emptyIndex = droppedWords.indexOf(null);
+                          if (emptyIndex != -1) {
+                            droppedWords[emptyIndex] = details.data;
+                          }
+                        });
+
+                        // Auto-check when all words are placed
+                        if (droppedWords.every((word) => word != null)) {
+                          Future.delayed(const Duration(milliseconds: 300), () {
+                            _checkAnswer();
+                          });
+                        }
+                      },
+                      builder: (context, candidateData, rejectedData) {
+                        bool isHighlighted = candidateData.isNotEmpty;
+
+                        return Container(
+                          alignment: Alignment.bottomLeft,
+                          width: double.infinity,
+                          height: 80,
+                          padding: const EdgeInsets.only(bottom: 6),
+
+                          decoration: BoxDecoration(
+                            color: isHighlighted
+                                ? Colors.blue.shade100
+                                : Colors.white,
+                            borderRadius: BorderRadius.circular(12),
+                            // solo borede abajo
+                            border: Border(
+                              bottom: BorderSide(
+                                color: isHighlighted
+                                    ? Colors.blue.shade400
+                                    : Colors.grey.shade400,
+                                width: 3,
+                              ),
+                            ),
+                          ),
+                          child: SingleChildScrollView(
+                            scrollDirection: Axis.horizontal,
+                            child: Wrap(
+                              spacing: 8,
+                              runSpacing: 8,
+                              crossAxisAlignment: WrapCrossAlignment.center,
+                              children: droppedWords.asMap().entries.map((
+                                entry,
+                              ) {
+                                final index = entry.key;
+                                final word = entry.value;
+
+                                if (word != null) {
+                                  return GestureDetector(
+                                    onTap: () {
+                                      if (!showFeedback) {
+                                        setState(() {
+                                          droppedWords[index] = null;
+                                        });
+                                      }
+                                    },
+                                    child: Container(
+                                      padding: const EdgeInsets.symmetric(
+                                        horizontal: 16,
+                                        vertical: 12,
+                                      ),
+                                      decoration: BoxDecoration(
+                                        color: Colors.blue.shade400,
+                                        borderRadius: BorderRadius.circular(8),
+                                        boxShadow: [
+                                          BoxShadow(
+                                            color: Colors.black.withOpacity(
+                                              0.1,
+                                            ),
+                                            blurRadius: 4,
+                                            offset: const Offset(0, 2),
+                                          ),
+                                        ],
+                                      ),
+                                      child: Text(
+                                        word,
+                                        style: const TextStyle(
+                                          fontSize: 18,
+                                          fontWeight: FontWeight.bold,
+                                          color: Colors.white,
+                                        ),
+                                      ),
+                                    ),
+                                  );
+                                } else {
+                                  return const SizedBox.shrink();
+                                }
+                              }).toList(),
+                            ),
+                          ),
+                        );
+                      },
                     ),
                   ),
                 ],
@@ -174,7 +284,11 @@ class _ScrambleScreenState extends State<ScrambleScreen> {
                     alignment: WrapAlignment.center,
                     children: scrambledWords.map((word) {
                       bool isUsed = droppedWords.contains(word);
-                      return _buildDraggableWord(word, isUsed);
+                      return DraggableWord(
+                        word: word,
+                        isUsed: isUsed,
+                        onTap: () => _addWordToDropZone(word),
+                      );
                     }).toList(),
                   ),
                 ),
@@ -182,152 +296,6 @@ class _ScrambleScreenState extends State<ScrambleScreen> {
             ),
           ),
         ],
-      ),
-    );
-  }
-
-  Widget _buildDropTarget(int index) {
-    return DragTarget<String>(
-      onWillAcceptWithDetails: (details) =>
-          droppedWords[index] == null && !showFeedback,
-      onAcceptWithDetails: (details) {
-        setState(() {
-          droppedWords[index] = details.data;
-        });
-
-        // Auto-check when all words are placed
-        if (droppedWords.every((word) => word != null)) {
-          Future.delayed(const Duration(milliseconds: 300), () {
-            _checkAnswer();
-          });
-        }
-      },
-      builder: (context, candidateData, rejectedData) {
-        bool isHighlighted = candidateData.isNotEmpty;
-
-        return GestureDetector(
-          onTap: () {
-            if (!showFeedback && droppedWords[index] != null) {
-              setState(() {
-                droppedWords[index] = null;
-              });
-            }
-          },
-          child: Container(
-            padding: const EdgeInsets.symmetric(horizontal: 4, vertical: 4),
-            decoration: BoxDecoration(
-              color: isHighlighted
-                  ? Colors.blue.shade100.withOpacity(0.5)
-                  : Colors.transparent,
-              borderRadius: BorderRadius.circular(4),
-            ),
-            child: Text(
-              droppedWords[index] ?? '_____',
-              style: TextStyle(
-                fontSize: 24,
-                fontWeight: FontWeight.bold,
-                color: droppedWords[index] != null
-                    ? Colors.black
-                    : Colors.grey.shade400,
-                decoration: droppedWords[index] == null
-                    ? TextDecoration.underline
-                    : null,
-              ),
-            ),
-          ),
-        );
-      },
-    );
-  }
-
-  Widget _buildDraggableWord(String word, bool isUsed) {
-    if (isUsed) {
-      return Opacity(
-        opacity: 0.3,
-        child: Container(
-          padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 12),
-          decoration: BoxDecoration(
-            color: Colors.grey.shade300,
-            borderRadius: BorderRadius.circular(8),
-          ),
-          child: Text(
-            word,
-            style: const TextStyle(
-              fontSize: 18,
-              fontWeight: FontWeight.bold,
-              color: Colors.grey,
-            ),
-          ),
-        ),
-      );
-    }
-
-    return Draggable<String>(
-      data: word,
-      feedback: Material(
-        color: Colors.transparent,
-        child: Container(
-          padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 12),
-          decoration: BoxDecoration(
-            color: Colors.blue.shade400,
-            borderRadius: BorderRadius.circular(8),
-            boxShadow: [
-              BoxShadow(
-                color: Colors.black.withOpacity(0.3),
-                blurRadius: 8,
-                offset: const Offset(0, 4),
-              ),
-            ],
-          ),
-          child: Text(
-            word,
-            style: const TextStyle(
-              fontSize: 18,
-              fontWeight: FontWeight.bold,
-              color: Colors.white,
-            ),
-          ),
-        ),
-      ),
-      childWhenDragging: Opacity(
-        opacity: 0.3,
-        child: Container(
-          padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 12),
-          decoration: BoxDecoration(
-            color: Colors.grey.shade300,
-            borderRadius: BorderRadius.circular(8),
-          ),
-          child: Text(
-            word,
-            style: const TextStyle(
-              fontSize: 18,
-              fontWeight: FontWeight.bold,
-              color: Colors.grey,
-            ),
-          ),
-        ),
-      ),
-      child: Container(
-        padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 12),
-        decoration: BoxDecoration(
-          color: Colors.blue.shade400,
-          borderRadius: BorderRadius.circular(8),
-          boxShadow: [
-            BoxShadow(
-              color: Colors.black.withOpacity(0.1),
-              blurRadius: 4,
-              offset: const Offset(0, 2),
-            ),
-          ],
-        ),
-        child: Text(
-          word,
-          style: const TextStyle(
-            fontSize: 18,
-            fontWeight: FontWeight.bold,
-            color: Colors.white,
-          ),
-        ),
       ),
     );
   }
