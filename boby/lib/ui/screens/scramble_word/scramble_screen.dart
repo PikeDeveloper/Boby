@@ -2,6 +2,7 @@ import 'dart:math';
 
 import 'package:boby/controllers/app_controller.dart';
 import 'package:boby/services/storage_service.dart';
+import 'package:boby/ui/screens/bonus_sreen/match_it/match_it.dart';
 import 'package:boby/ui/screens/scramble_word/widgets/draggable_word.dart';
 import 'package:boby/ui/shared/score.dart';
 import 'package:boby/ui/shared/word_of_images.dart';
@@ -92,7 +93,8 @@ class _ScrambleScreenState extends State<ScrambleScreen> {
 
     if (correct) {
       Future.delayed(const Duration(seconds: 2), () {
-        _loadNewSentence();
+        // Navigate to MatchItScreen when user wins
+        Get.to(() => const MatchItScreen());
       });
     } else {
       // Auto-reset after 1 second on incorrect answer

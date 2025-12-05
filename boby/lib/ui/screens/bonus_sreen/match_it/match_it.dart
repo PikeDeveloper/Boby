@@ -1,3 +1,4 @@
+import 'dart:async';
 import 'package:boby/controllers/app_controller.dart';
 import 'package:boby/services/storage_service.dart';
 import 'package:boby/ui/screens/bonus_sreen/match_it/widgets/color_options.dart';
@@ -242,6 +243,11 @@ class _MatchItScreenState extends State<MatchItScreen> {
   bool _isLocked = false; // prevents taps during feedback
   bool _showCorrectOverlay = false; // show green check over the target
 
+  // Timer state
+  Timer? _gameTimer;
+  final Duration _gameDuration = const Duration(seconds: 20);
+  Duration _elapsedTime = Duration.zero;
+
   @override
   void initState() {
     super.initState();
@@ -252,6 +258,26 @@ class _MatchItScreenState extends State<MatchItScreen> {
       _app = Get.put(AppController());
     }
     _nextRound();
+    _startTimer();
+  }
+
+  @override
+  void dispose() {
+    _gameTimer?.cancel();
+    super.dispose();
+  }
+
+  void _startTimer() {
+    _gameTimer = Timer.periodic(const Duration(milliseconds: 100), (timer) {
+      setState(() {
+        _elapsedTime += const Duration(milliseconds: 100);
+        if (_elapsedTime >= _gameDuration) {
+          _gameTimer?.cancel();
+          // Return to previous screen (ScrambleScreen)
+          Get.back();
+        }
+      });
+    });
   }
 
   void _nextRound() {
@@ -476,61 +502,100 @@ class _MatchItScreenState extends State<MatchItScreen> {
 
     return Scaffold(
       appBar: AppBar(title: const Text("Match It")),
-      body: Padding(
-        padding: const EdgeInsets.all(16.0),
-        child: Column(
-          children: [
-            Score(game: "MatchIt"),
-
-            Spacer(),
-
-            WordOfImages(
-              letters: _currentTargetWord.toUpperCase(),
-              letterSize: isLandscape || istablet ? 90 : 40,
+      body: Stack(
+        children: [
+          Container(
+            height: double.infinity,
+            width: double.infinity,
+            decoration: const BoxDecoration(
+              image: DecorationImage(
+                image: AssetImage('assets/backgrounds/oceano.png'),
+                fit: BoxFit.cover,
+              ),
             ),
-            Spacer(),
+          ),
+          Padding(
+            padding: const EdgeInsets.all(16.0),
+            child: Column(
+              children: [
+                Score(game: "MatchIt"),
+                Container(
+                  height: 20,
+                  width: MediaQuery.of(context).size.width * 0.8,
+                  margin: const EdgeInsets.symmetric(horizontal: 20),
+                  decoration: BoxDecoration(
+                    color: Colors.grey[200],
+                    borderRadius: BorderRadius.circular(10),
+                  ),
+                  child: Align(
+                    alignment: Alignment.centerLeft,
+                    child: Container(
+                      height: 20,
+                      width:
+                          (MediaQuery.of(context).size.width * 0.8) *
+                          (1.0 -
+                              (_elapsedTime.inMilliseconds /
+                                      _gameDuration.inMilliseconds)
+                                  .clamp(0.0, 1.0)),
+                      decoration: BoxDecoration(
+                        color: Colors.blue,
+                        borderRadius: BorderRadius.circular(10),
+                      ),
+                    ),
+                  ),
+                ),
 
-            // Main content area (now empty since we show the word at the top)
-            const Spacer(),
+                Spacer(),
 
-            // Show the options at the bottom
-            if (_roundType == _RoundType.shape) ...[
-              ColorOptionsGrid(
-                options: _colorOptions,
-                shapes: _shapes,
-                onTap: _onColorTap,
-                isWrong: (label) => _wrongColorLabels.contains(label),
-                isCorrect: (label) =>
-                    _targetColor != null &&
-                    label == _targetColor!.$1 &&
-                    _isLocked,
-              ),
-            ] else if (_roundType == _RoundType.number) ...[
-              NumberOptionsGrid(
-                options: _numberOptions,
-                onTap: _onNumberTap,
-                isWrong: (value) => _wrongNumberValues.contains(value),
-                isCorrect: (value) =>
-                    _targetNumber != null &&
-                    value == _targetNumber &&
-                    _isLocked,
-              ),
-            ] else ...[
-              _FigureOptionsGrid(
-                options: _figureOptions,
-                assets: _figureAssets,
-                onTap: _onFigureTap,
-                isWrong: (label) => _wrongFigureLabels.contains(label),
-                isCorrect: (label) =>
-                    _targetFigure != null &&
-                    label == _targetFigure!["name"] &&
-                    _isLocked,
-              ),
-            ],
-            Spacer(),
-            // Options are now shown above in the main content area
-          ],
-        ),
+                WordOfImages(
+                  letters: _currentTargetWord.toUpperCase(),
+                  letterSize: isLandscape || istablet ? 90 : 40,
+                ),
+                Spacer(),
+
+                // Main content area (now empty since we show the word at the top)
+                const Spacer(),
+
+                // Show the options at the bottom
+                if (_roundType == _RoundType.shape) ...[
+                  ColorOptionsGrid(
+                    options: _colorOptions,
+                    shapes: _shapes,
+                    onTap: _onColorTap,
+                    isWrong: (label) => _wrongColorLabels.contains(label),
+                    isCorrect: (label) =>
+                        _targetColor != null &&
+                        label == _targetColor!.$1 &&
+                        _isLocked,
+                  ),
+                ] else if (_roundType == _RoundType.number) ...[
+                  NumberOptionsGrid(
+                    options: _numberOptions,
+                    onTap: _onNumberTap,
+                    isWrong: (value) => _wrongNumberValues.contains(value),
+                    isCorrect: (value) =>
+                        _targetNumber != null &&
+                        value == _targetNumber &&
+                        _isLocked,
+                  ),
+                ] else ...[
+                  _FigureOptionsGrid(
+                    options: _figureOptions,
+                    assets: _figureAssets,
+                    onTap: _onFigureTap,
+                    isWrong: (label) => _wrongFigureLabels.contains(label),
+                    isCorrect: (label) =>
+                        _targetFigure != null &&
+                        label == _targetFigure!["name"] &&
+                        _isLocked,
+                  ),
+                ],
+                Spacer(),
+                // Options are now shown above in the main content area
+              ],
+            ),
+          ),
+        ],
       ),
     );
   }
