@@ -11,6 +11,7 @@ import 'widgets/card_sound.dart';
 import 'package:boby/controllers/app_controller.dart';
 import 'package:just_audio/just_audio.dart';
 import 'package:boby/services/storage_service.dart';
+import 'package:boby/ui/screens/bonus_sreen/to_be_bonus_screen/to_be_bonus_screen.dart';
 
 class ListCardSounds extends StatefulWidget {
   const ListCardSounds({super.key});
@@ -24,6 +25,7 @@ class _ListCardSoundsState extends State<ListCardSounds> {
   final List<String?> cardNames = List.filled(4, null);
   int? activeCardIndex;
   final AppController app = Get.find<AppController>();
+  int _consecutiveWins = 0;
 
   final String _winSound = "assets/sounds/winner-game.wav";
   final String _wrongMatchSound = "assets/sounds/bubble-pop.wav";
@@ -96,17 +98,25 @@ class _ListCardSoundsState extends State<ListCardSounds> {
 
       if (currentCorrect == assets.length) {
         // All correct - win
+        _consecutiveWins++;
         await _playSound(_winSound);
         app.celebrationVisible.value = true;
 
         // Hide celebration and load new cards after 1 second
         await Future.delayed(const Duration(seconds: 1));
         app.celebrationVisible.value = false;
+
+        if (_consecutiveWins >= 1) {
+          _consecutiveWins = 0;
+          await Get.to(() => ToBeBonusScreen());
+        }
+
         setState(() {
           _loadRandomCards();
         });
       } else {
         // Some wrong - game over
+        _consecutiveWins = 0;
         await _playSound(_gameOverSound);
 
         // Clear all cards after a short delay
