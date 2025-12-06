@@ -1,10 +1,19 @@
 import 'dart:math';
-import 'package:boby/ui/screens/bonus_sreen/to_bo_bonus_screen./to_be_sentences.dart';
+import 'package:boby/ui/screens/bonus_sreen/to_be_bonus_screen/widgest/colored_button.dart';
+import 'package:boby/ui/screens/bonus_sreen/to_be_bonus_screen/widgest/to_be_sentences.dart';
+import 'package:boby/utils/colors.dart';
 import 'package:flutter/material.dart';
 
 class ToBeBonusScreen extends StatefulWidget {
   static const String routeName = '/to-be-bonus-screen';
-  const ToBeBonusScreen({super.key});
+  ToBeBonusScreen({super.key});
+
+  final List<Color> colors = [
+    MyColors.purple,
+    MyColors.blue,
+    MyColors.darkBlue,
+    MyColors.yellow,
+  ];
 
   @override
   State<ToBeBonusScreen> createState() => _ToBeBonusScreenState();
@@ -67,9 +76,9 @@ class _ToBeBonusScreenState extends State<ToBeBonusScreen> {
     });
   }
 
-  Color _getOptionColor(String option) {
+  Color _getOptionColor(String option, int index) {
     if (selectedAnswer == null) {
-      return Colors.blue.shade100;
+      return widget.colors[index % widget.colors.length];
     }
 
     String correctAnswer = currentQuestion['verb'];
@@ -120,32 +129,25 @@ class _ToBeBonusScreenState extends State<ToBeBonusScreen> {
             const SizedBox(height: 40),
 
             // Answer options
-            ...options.map(
-              (option) => Padding(
-                padding: const EdgeInsets.only(bottom: 12),
-                child: ElevatedButton(
-                  onPressed: selectedAnswer == null
-                      ? () => _onAnswerSelected(option)
-                      : null,
-                  style: ElevatedButton.styleFrom(
-                    backgroundColor: _getOptionColor(option),
-                    foregroundColor: Colors.black87,
-                    padding: const EdgeInsets.symmetric(vertical: 16),
-                    shape: RoundedRectangleBorder(
-                      borderRadius: BorderRadius.circular(12),
-                    ),
-                    elevation: 2,
-                  ),
-                  child: Text(
-                    option,
-                    style: const TextStyle(
-                      fontSize: 18,
-                      fontWeight: FontWeight.w600,
-                    ),
-                  ),
-                ),
-              ),
-            ),
+            ...options.asMap().entries.map((entry) {
+              final int index = entry.key;
+              final String option = entry.value;
+              final String letter = String.fromCharCode(
+                65 + index,
+              ); // A, B, C, D
+
+              return ToBeOptionButton(
+                letter: letter,
+                text: option,
+                color: _getOptionColor(option, index),
+                onTap: selectedAnswer == null
+                    ? () => _onAnswerSelected(option)
+                    : () {},
+                isSelected: option == selectedAnswer,
+                isCorrect: option == currentQuestion['verb'],
+                showResult: selectedAnswer != null,
+              );
+            }),
           ],
         ),
       ),
