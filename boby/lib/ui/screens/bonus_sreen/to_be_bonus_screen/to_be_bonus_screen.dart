@@ -24,7 +24,8 @@ class _ToBeBonusScreenState extends State<ToBeBonusScreen> {
   late int currentQuestionIndex;
   late Map currentQuestion;
   late List<String> options;
-  String? selectedAnswer;
+  String? correctSelection;
+  final Set<String> wrongSelections = {};
   final Random random = Random();
 
   @override
@@ -50,7 +51,8 @@ class _ToBeBonusScreenState extends State<ToBeBonusScreen> {
     options = [correctAnswer, ...selectedWrong];
     options.shuffle();
 
-    selectedAnswer = null;
+    correctSelection = null;
+    wrongSelections.clear();
   }
 
   String _getSentenceWithBlank() {
@@ -62,36 +64,36 @@ class _ToBeBonusScreenState extends State<ToBeBonusScreen> {
   }
 
   void _onAnswerSelected(String answer) {
-    setState(() {
-      selectedAnswer = answer;
-    });
+    if (correctSelection != null) return; // Prevent interaction if already won
 
-    // Wait 0.5 seconds before loading next question
-    Future.delayed(const Duration(milliseconds: 500), () {
-      if (mounted) {
-        setState(() {
-          _loadQuestion();
+    String correctAnswer = currentQuestion['verb'];
+
+    setState(() {
+      if (answer == correctAnswer) {
+        correctSelection = answer;
+
+        // Wait 0.5 seconds before loading next question ONLY if correct
+        Future.delayed(const Duration(milliseconds: 500), () {
+          if (mounted) {
+            setState(() {
+              _loadQuestion();
+            });
+          }
         });
+      } else {
+        wrongSelections.add(answer);
       }
     });
   }
 
   Color _getOptionColor(String option, int index) {
-    if (selectedAnswer == null) {
-      return widget.colors[index % widget.colors.length];
+    if (option == correctSelection) {
+      return Colors.green;
     }
-
-    String correctAnswer = currentQuestion['verb'];
-
-    if (option == selectedAnswer) {
-      // If this option was selected
-      return option == correctAnswer ? Colors.green : Colors.red;
-    } else if (option == correctAnswer && selectedAnswer != null) {
-      // Show the correct answer in green if user selected wrong
-      return Colors.green.shade200;
+    if (wrongSelections.contains(option)) {
+      return Colors.red;
     }
-
-    return Colors.grey.shade300;
+    return widget.colors[index % widget.colors.length];
   }
 
   @override
@@ -136,16 +138,24 @@ class _ToBeBonusScreenState extends State<ToBeBonusScreen> {
                 65 + index,
               ); // A, B, C, D
 
+              bool isSelected =
+                  option == correctSelection ||
+                  wrongSelections.contains(option);
+              bool isCorrect = option == currentQuestion['verb'];
+
               return ToBeOptionButton(
                 letter: letter,
                 text: option,
                 color: _getOptionColor(option, index),
-                onTap: selectedAnswer == null
-                    ? () => _onAnswerSelected(option)
-                    : () {},
-                isSelected: option == selectedAnswer,
-                isCorrect: option == currentQuestion['verb'],
-                showResult: selectedAnswer != null,
+                onTap:
+                    (correctSelection != null ||
+                        wrongSelections.contains(option))
+                    ? () {}
+                    : () => _onAnswerSelected(option),
+                isSelected: isSelected,
+                isCorrect: isCorrect,
+                showResult:
+                    isSelected, // Show result icon if selected (either correct or wrong)
               );
             }),
           ],
