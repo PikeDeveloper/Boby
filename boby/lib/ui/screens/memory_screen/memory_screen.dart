@@ -2,6 +2,7 @@ import 'dart:math';
 import 'package:boby/controllers/app_controller.dart';
 import 'package:boby/ui/screens/memory_screen/widgets/memory_card.dart';
 import 'package:boby/ui/screens/memory_screen/widgets/new_game_button.dart';
+import 'package:boby/ui/screens/memory_screen/widgets/timer.dart';
 import 'package:boby/ui/shared/winner_screen.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
@@ -262,6 +263,15 @@ class _MemoryScreenState extends State<MemoryScreen>
                 mainAxisAlignment: MainAxisAlignment.end,
                 mainAxisSize: MainAxisSize.max,
                 children: [
+                  TimerWidget(
+                    maxDuration: const Duration(minutes: 20),
+                    onTimerEnd: () {
+                      setState(() {
+                        _initializeGame();
+                      });
+                    },
+                  ),
+                  const Spacer(),
                   NewGameButton(
                     onTap: () {
                       _initializeGame();

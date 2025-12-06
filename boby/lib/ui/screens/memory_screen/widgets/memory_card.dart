@@ -1,3 +1,4 @@
+import 'package:boby/utils/colors.dart';
 import 'package:flutter/material.dart';
 import 'package:just_audio/just_audio.dart';
 import 'package:animate_do/animate_do.dart';
@@ -131,9 +132,21 @@ class _MemoryCardState extends State<MemoryCard>
         ],
         color: Colors.white,
       ),
-      child: ClipRRect(
-        borderRadius: BorderRadius.circular(12),
-        child: Image.asset(widget.image, fit: BoxFit.cover),
+      child: Stack(
+        alignment: Alignment.bottomCenter,
+        children: [
+          Center(
+            child: ClipRRect(
+              borderRadius: BorderRadius.circular(12),
+              child: Image.asset(widget.image, fit: BoxFit.cover),
+            ),
+          ),
+
+          Text(
+            widget.name,
+            style: TextStyle(color: MyColors.darkBlue, fontSize: 16),
+          ),
+        ],
       ),
     );
   }
