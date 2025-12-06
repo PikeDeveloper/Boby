@@ -118,9 +118,14 @@ class _ScrambleScreenState extends State<ScrambleScreen> {
 
   @override
   Widget build(BuildContext context) {
+    final screenSize = MediaQuery.of(context).size;
+    final width = screenSize.width;
+    final height = screenSize.height;
+    final bool isLargeScreen = width > 600;
+
     return Stack(
       children: [
-        clueButton(),
+        clueButton(isLargeScreen),
         Padding(
           padding: const EdgeInsets.all(16.0),
           child: Column(
@@ -130,9 +135,18 @@ class _ScrambleScreenState extends State<ScrambleScreen> {
               Row(
                 mainAxisAlignment: MainAxisAlignment.center,
                 children: [
-                  WordOfImages(letters: "ORDER", letterSize: 18),
-                  WordOfImages(letters: "THE", letterSize: 18),
-                  WordOfImages(letters: "WORDS", letterSize: 18),
+                  WordOfImages(
+                    letters: "ORDER",
+                    letterSize: isLargeScreen ? 30 : 18,
+                  ),
+                  WordOfImages(
+                    letters: "THE",
+                    letterSize: isLargeScreen ? 30 : 18,
+                  ),
+                  WordOfImages(
+                    letters: "WORDS",
+                    letterSize: isLargeScreen ? 30 : 18,
+                  ),
                 ],
               ),
 
@@ -167,7 +181,7 @@ class _ScrambleScreenState extends State<ScrambleScreen> {
                           ? Text(
                               isCorrect ? "Correct!" : "Try again!",
                               style: TextStyle(
-                                fontSize: 22,
+                                fontSize: isLargeScreen ? 26 : 22,
                                 fontWeight: FontWeight.bold,
                                 color: isCorrect ? Colors.green : Colors.red,
                               ),
@@ -276,8 +290,10 @@ class _ScrambleScreenState extends State<ScrambleScreen> {
                                             ),
                                             child: Text(
                                               word,
-                                              style: const TextStyle(
-                                                fontSize: 18,
+                                              style: TextStyle(
+                                                fontSize: isLargeScreen
+                                                    ? 25
+                                                    : 18,
                                                 fontWeight: FontWeight.bold,
                                                 color: Colors.white,
                                               ),
@@ -333,7 +349,7 @@ class _ScrambleScreenState extends State<ScrambleScreen> {
     );
   }
 
-  Positioned clueButton() {
+  Positioned clueButton(bool isLargeScreen) {
     return Positioned(
       bottom: 16,
       right: 16,
@@ -370,7 +386,7 @@ class _ScrambleScreenState extends State<ScrambleScreen> {
               Text(
                 clueMode ? 'Clue ON' : 'Clue OFF',
                 style: TextStyle(
-                  fontSize: 14,
+                  fontSize: isLargeScreen ? 16 : 14,
                   fontWeight: FontWeight.bold,
                   color: clueMode
                       ? Colors.amber.shade900

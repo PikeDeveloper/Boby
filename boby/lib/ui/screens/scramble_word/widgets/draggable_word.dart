@@ -14,9 +14,14 @@ class DraggableWord extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final screenSize = MediaQuery.of(context).size;
+    final width = screenSize.width;
+    final height = screenSize.height;
+    final bool isLargeScreen = width > 600;
+
     if (isUsed) {
       return Opacity(
-        opacity: 0.3,
+        opacity: 0.7,
         child: Container(
           padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 12),
           decoration: BoxDecoration(
@@ -25,8 +30,8 @@ class DraggableWord extends StatelessWidget {
           ),
           child: Text(
             word,
-            style: const TextStyle(
-              fontSize: 18,
+            style: TextStyle(
+              fontSize: isLargeScreen ? 30 : 16,
               fontWeight: FontWeight.bold,
               color: Colors.grey,
             ),
@@ -56,8 +61,8 @@ class DraggableWord extends StatelessWidget {
             ),
             child: Text(
               word,
-              style: const TextStyle(
-                fontSize: 18,
+              style: TextStyle(
+                fontSize: isLargeScreen ? 30 : 16,
                 fontWeight: FontWeight.bold,
                 color: Colors.white,
               ),
@@ -74,8 +79,8 @@ class DraggableWord extends StatelessWidget {
             ),
             child: Text(
               word,
-              style: const TextStyle(
-                fontSize: 18,
+              style: TextStyle(
+                fontSize: isLargeScreen ? 30 : 16,
                 fontWeight: FontWeight.bold,
                 color: Colors.grey,
               ),
@@ -97,8 +102,8 @@ class DraggableWord extends StatelessWidget {
           ),
           child: Text(
             word,
-            style: const TextStyle(
-              fontSize: 18,
+            style: TextStyle(
+              fontSize: isLargeScreen ? 30 : 16,
               fontWeight: FontWeight.bold,
               color: Colors.white,
             ),

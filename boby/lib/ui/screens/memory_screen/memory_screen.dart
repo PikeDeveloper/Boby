@@ -264,6 +264,7 @@ class _MemoryScreenState extends State<MemoryScreen>
                 mainAxisSize: MainAxisSize.max,
                 children: [
                   TimerWidget(
+                    key: ValueKey('timer_$_gameVersion'),
                     maxDuration: const Duration(minutes: 20),
                     onTimerEnd: () {
                       setState(() {

@@ -80,6 +80,11 @@ class _MemoryCardState extends State<MemoryCard>
 
   @override
   Widget build(BuildContext context) {
+    final screenSize = MediaQuery.of(context).size;
+    final width = screenSize.width;
+    final height = screenSize.height;
+    final bool isLargeScreen = width > 600;
+
     return GestureDetector(
       onTap: () {
         if (!widget.isFlipped && !widget.isMatched) {
@@ -110,7 +115,7 @@ class _MemoryCardState extends State<MemoryCard>
                   : Transform(
                       transform: Matrix4.identity()..rotateY(3.14159),
                       alignment: Alignment.center,
-                      child: _buildCardFront(),
+                      child: _buildCardFront(isLargeScreen: isLargeScreen),
                     ),
             );
           },
@@ -119,7 +124,7 @@ class _MemoryCardState extends State<MemoryCard>
     );
   }
 
-  Widget _buildCardFront() {
+  Widget _buildCardFront({required bool isLargeScreen}) {
     return Container(
       decoration: BoxDecoration(
         borderRadius: BorderRadius.circular(12),
@@ -144,7 +149,11 @@ class _MemoryCardState extends State<MemoryCard>
 
           Text(
             widget.name,
-            style: TextStyle(color: MyColors.darkBlue, fontSize: 16),
+            style: TextStyle(
+              color: MyColors.darkBlue,
+              fontSize: isLargeScreen ? 25 : 16,
+              fontWeight: FontWeight.bold,
+            ),
           ),
         ],
       ),
