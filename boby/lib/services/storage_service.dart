@@ -25,6 +25,8 @@ class StorageService extends GetxService {
   static const String _kMathOpMul = 'math_op_mul';
   static const String _kMathOpDiv = 'math_op_div';
   static const String _kMemoryGrid = 'memory_grid'; // values: '3x3', '3x4'
+  static const String _kScrambleLevel =
+      'scramble_level'; // values: 'easy', 'medium', 'hard'
 
   late Box _box;
 
@@ -38,6 +40,7 @@ class StorageService extends GetxService {
       if (_box.get(_kMathOpMul) == null) _kMathOpMul: false,
       if (_box.get(_kMathOpDiv) == null) _kMathOpDiv: false,
       if (_box.get(_kMemoryGrid) == null) _kMemoryGrid: '3x3',
+      if (_box.get(_kScrambleLevel) == null) _kScrambleLevel: 'easy',
     });
 
     // Initialize reactive variables
@@ -230,4 +233,10 @@ class StorageService extends GetxService {
 
   String getMemoryGrid() => (_box.get(_kMemoryGrid) as String?) ?? '3x3';
   Future<void> setMemoryGrid(String value) => _box.put(_kMemoryGrid, value);
+
+  String getScrambleLevel() =>
+      (_box.get(_kScrambleLevel) as String?) ?? 'medium';
+  Future<void> setScrambleLevel(String value) =>
+      _box.put(_kScrambleLevel, value);
+  static String get scrambleLevelKey => _kScrambleLevel;
 }

@@ -41,6 +41,8 @@ class AppController extends GetxController {
     if (saved != null && saved.isNotEmpty) {
       backGroundImage.value = saved;
     }
+    // Cargar scramble level persistido
+    scrableLevel.value = StorageService.instance.getScrambleLevel();
   }
 
   @override
@@ -120,5 +122,5 @@ class AppController extends GetxController {
   }
 
   //scrable settings
-  var scrableLevel = "easy".obs;
+  var scrableLevel = "medium".obs;
 }

@@ -121,7 +121,7 @@ class _MatchItScreenState extends State<MatchItScreen> {
 
   // Timer state
   Timer? _gameTimer;
-  final Duration _gameDuration = const Duration(seconds: 10);
+  final Duration _gameDuration = const Duration(seconds: 7);
   Duration _elapsedTime = Duration.zero;
 
   @override
@@ -309,7 +309,7 @@ class _MatchItScreenState extends State<MatchItScreen> {
       });
     } else {
       _app.playMenuSound(soundPathIncorrectAnswer);
-      StorageService.instance.incMatchItWrong();
+      StorageService.instance.incScrambleWordWrong();
       setState(() {
         _wrongColorLabels.add(picked.$1);
       });
@@ -355,7 +355,7 @@ class _MatchItScreenState extends State<MatchItScreen> {
       });
     } else {
       _app.playMenuSound(soundPathIncorrectAnswer);
-      StorageService.instance.incMatchItWrong();
+      StorageService.instance.incScrambleWordWrong();
       setState(() {
         _wrongFigureLabels.add(picked);
       });
