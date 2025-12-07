@@ -4,6 +4,7 @@ import 'package:boby/services/storage_service.dart';
 import 'package:boby/ui/screens/bonus_sreen/to_be_bonus_screen/widgest/colored_button.dart';
 import 'package:boby/ui/screens/bonus_sreen/to_be_bonus_screen/widgest/to_be_sentences.dart';
 import 'package:boby/ui/shared/score.dart';
+import 'package:boby/ui/shared/word_of_images.dart';
 import 'package:boby/utils/colors.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
@@ -35,7 +36,7 @@ class _ToBeBonusScreenState extends State<ToBeBonusScreen> {
   // Timer state
   Timer? _gameTimer;
   final Duration _gameDuration = const Duration(
-    seconds: 15,
+    seconds: 20,
   ); // Bonus usually gives more time? or less? Matching MatchIt 7s seems low for sentences. Let's start with 20s or check MatchIt again. MatchIt had 7s.
   // User didn't specify duration, I'll use 20s for reading sentences.
   Duration _elapsedTime = Duration.zero;
@@ -169,10 +170,7 @@ class _ToBeBonusScreenState extends State<ToBeBonusScreen> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: AppBar(
-        title: const Text('To Be Quiz'),
-        backgroundColor: Colors.purple.shade400,
-      ),
+      appBar: AppBar(title: WordOfImages(letters: 'BONUS', letterSize: 30)),
       body: Stack(
         children: [
           Container(
@@ -238,9 +236,12 @@ class _ToBeBonusScreenState extends State<ToBeBonusScreen> {
                 Container(
                   padding: const EdgeInsets.all(20),
                   decoration: BoxDecoration(
-                    color: Colors.purple.shade50,
+                    color: const Color.fromARGB(255, 228, 253, 224),
                     borderRadius: BorderRadius.circular(16),
-                    border: Border.all(color: Colors.purple.shade200, width: 2),
+                    border: Border.all(
+                      color: const Color.fromARGB(255, 173, 252, 158),
+                      width: 2,
+                    ),
                   ),
                   child: Text.rich(
                     _buildSentence(),

@@ -1,5 +1,4 @@
 import 'package:boby/controllers/app_controller.dart';
-import 'package:boby/ui/screens/bonus_sreen/to_be_bonus_screen/to_be_bonus_screen.dart';
 import 'package:boby/ui/screens/main_screen/main_screen.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';

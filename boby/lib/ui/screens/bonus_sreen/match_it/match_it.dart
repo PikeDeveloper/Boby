@@ -382,7 +382,7 @@ class _MatchItScreenState extends State<MatchItScreen> {
     bool istablet = screenSize.width > Constants.tabletSize;
 
     return Scaffold(
-      appBar: AppBar(title: const Text("Match It")),
+      appBar: AppBar(title: WordOfImages(letters: 'BONUS', letterSize: 30)),
       body: Stack(
         children: [
           Container(
