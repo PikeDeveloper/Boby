@@ -1,5 +1,4 @@
 import 'dart:math';
-
 import 'package:boby/controllers/app_controller.dart';
 import 'package:boby/services/storage_service.dart';
 import 'package:boby/ui/screens/bonus_sreen/float_words/bonus_screen.dart';
@@ -26,6 +25,7 @@ class _CompleteSentenceState extends State<CompleteSentence> {
   bool showCorrect = false;
   List<int> usedQuestionIndices = [];
   Set<int> selectedAnswerIndices = {};
+  Random _rng = Random();
   int? selectedAnswerIndex;
   bool isCorrect = false;
   int?
@@ -53,11 +53,13 @@ class _CompleteSentenceState extends State<CompleteSentence> {
         selectedAnswerIndices.clear();
         consecutiveCorrectAnswers++;
 
-        if (consecutiveCorrectAnswers == 5) {
+        if (consecutiveCorrectAnswers >= 2) {
           consecutiveCorrectAnswers = 0;
           // Navigate to Bonus Screen
-          Future.delayed(const Duration(milliseconds: 500), () {
-            Get.toNamed(BonusScreenFloatWords.route);
+          Future.delayed(const Duration(milliseconds: 500), () async {
+            if (_rng.nextInt(3) == 0) {
+              await Get.to(() => BonusScreenFloatWords());
+            }
           });
         }
       }

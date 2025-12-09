@@ -1,7 +1,7 @@
 import 'package:boby/controllers/app_controller.dart';
 
 import 'package:boby/ui/screens/complete_sentence/complete_sentence.dart';
-import 'package:boby/ui/screens/drag_and_drop_screen/list_card_sounds.dart';
+import 'package:boby/ui/screens/drag_and_drop_screen/drag_and_drop_screen.dart';
 import 'package:boby/ui/screens/letters_soup/letters_soup.dart';
 import 'package:boby/ui/screens/main_screen/widgets/background.dart';
 import 'package:boby/ui/screens/drag_and_drop_screen/widgets/name_screen.dart';

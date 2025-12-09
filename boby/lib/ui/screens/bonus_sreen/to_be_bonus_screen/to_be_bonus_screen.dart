@@ -36,7 +36,7 @@ class _ToBeBonusScreenState extends State<ToBeBonusScreen> {
   // Timer state
   Timer? _gameTimer;
   final Duration _gameDuration = const Duration(
-    seconds: 20,
+    seconds: 15,
   ); // Bonus usually gives more time? or less? Matching MatchIt 7s seems low for sentences. Let's start with 20s or check MatchIt again. MatchIt had 7s.
   // User didn't specify duration, I'll use 20s for reading sentences.
   Duration _elapsedTime = Duration.zero;
@@ -191,7 +191,7 @@ class _ToBeBonusScreenState extends State<ToBeBonusScreen> {
                 width: MediaQuery.of(context).size.width * 0.8,
                 margin: const EdgeInsets.symmetric(
                   horizontal: 20,
-                  vertical: 60,
+                  vertical: 10,
                 ), // Added vertical margin to clear score/appbar
                 decoration: BoxDecoration(
                   color: Colors.grey[200],
@@ -222,65 +222,63 @@ class _ToBeBonusScreenState extends State<ToBeBonusScreen> {
                   ),
                 ),
               ),
-            ],
-          ),
-
-          // Timer
-          Padding(
-            padding: const EdgeInsets.all(24.0),
-            child: Column(
-              mainAxisAlignment: MainAxisAlignment.center,
-              crossAxisAlignment: CrossAxisAlignment.stretch,
-              children: [
-                // Sentence with blank
-                Container(
-                  padding: const EdgeInsets.all(20),
-                  decoration: BoxDecoration(
-                    color: const Color.fromARGB(255, 228, 253, 224),
-                    borderRadius: BorderRadius.circular(16),
-                    border: Border.all(
-                      color: const Color.fromARGB(255, 173, 252, 158),
-                      width: 2,
+              Padding(
+                padding: const EdgeInsets.symmetric(horizontal: 24.0),
+                child: Column(
+                  mainAxisAlignment: MainAxisAlignment.center,
+                  crossAxisAlignment: CrossAxisAlignment.stretch,
+                  children: [
+                    // Sentence with blank
+                    Container(
+                      padding: const EdgeInsets.all(20),
+                      decoration: BoxDecoration(
+                        color: const Color.fromARGB(255, 228, 253, 224),
+                        borderRadius: BorderRadius.circular(16),
+                        border: Border.all(
+                          color: const Color.fromARGB(255, 173, 252, 158),
+                          width: 2,
+                        ),
+                      ),
+                      child: Text.rich(
+                        _buildSentence(),
+                        textAlign: TextAlign.center,
+                      ),
                     ),
-                  ),
-                  child: Text.rich(
-                    _buildSentence(),
-                    textAlign: TextAlign.center,
-                  ),
+
+                    const SizedBox(height: 40),
+
+                    // Answer options
+                    ...options.asMap().entries.map((entry) {
+                      final int index = entry.key;
+                      final String option = entry.value;
+                      final String letter = String.fromCharCode(
+                        65 + index,
+                      ); // A, B, C, D
+
+                      bool isSelected =
+                          option == correctSelection ||
+                          wrongSelections.contains(option);
+                      bool isCorrect = option == currentQuestion['verb'];
+
+                      return ToBeOptionButton(
+                        letter: letter,
+                        text: option,
+                        color: _getOptionColor(option, index),
+                        onTap:
+                            (correctSelection != null ||
+                                wrongSelections.contains(option))
+                            ? () {}
+                            : () => _onAnswerSelected(option),
+                        isSelected: isSelected,
+                        isCorrect: isCorrect,
+                        showResult:
+                            isSelected, // Show result icon if selected (either correct or wrong)
+                      );
+                    }),
+                  ],
                 ),
-
-                const SizedBox(height: 40),
-
-                // Answer options
-                ...options.asMap().entries.map((entry) {
-                  final int index = entry.key;
-                  final String option = entry.value;
-                  final String letter = String.fromCharCode(
-                    65 + index,
-                  ); // A, B, C, D
-
-                  bool isSelected =
-                      option == correctSelection ||
-                      wrongSelections.contains(option);
-                  bool isCorrect = option == currentQuestion['verb'];
-
-                  return ToBeOptionButton(
-                    letter: letter,
-                    text: option,
-                    color: _getOptionColor(option, index),
-                    onTap:
-                        (correctSelection != null ||
-                            wrongSelections.contains(option))
-                        ? () {}
-                        : () => _onAnswerSelected(option),
-                    isSelected: isSelected,
-                    isCorrect: isCorrect,
-                    showResult:
-                        isSelected, // Show result icon if selected (either correct or wrong)
-                  );
-                }),
-              ],
-            ),
+              ),
+            ],
           ),
         ],
       ),

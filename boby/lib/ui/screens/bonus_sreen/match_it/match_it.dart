@@ -183,7 +183,7 @@ class _MatchItScreenState extends State<MatchItScreen> {
     } else {
       _generateFigureRound();
     }
-    setState(() {});
+    if (mounted) setState(() {});
   }
 
   void _generateShapeRound() {
@@ -303,6 +303,7 @@ class _MatchItScreenState extends State<MatchItScreen> {
         _showCorrectOverlay = true;
       });
       Future.delayed(const Duration(milliseconds: 500), () {
+        if (!mounted) return;
         _isLocked = false;
         _showCorrectOverlay = false;
         _nextRound();
@@ -326,6 +327,7 @@ class _MatchItScreenState extends State<MatchItScreen> {
         _showCorrectOverlay = true;
       });
       Future.delayed(const Duration(milliseconds: 500), () {
+        if (!mounted) return;
         _isLocked = false;
         _showCorrectOverlay = false;
         _nextRound();
@@ -349,6 +351,7 @@ class _MatchItScreenState extends State<MatchItScreen> {
         _showCorrectOverlay = true;
       });
       Future.delayed(const Duration(milliseconds: 1000), () {
+        if (!mounted) return;
         _isLocked = false;
         _showCorrectOverlay = false;
         _nextRound();

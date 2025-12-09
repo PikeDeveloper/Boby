@@ -13,6 +13,8 @@ import 'package:just_audio/just_audio.dart';
 import 'package:boby/services/storage_service.dart';
 import 'package:boby/ui/screens/bonus_sreen/to_be_bonus_screen/to_be_bonus_screen.dart';
 
+import 'dart:math'; // Added import
+
 class ListCardSounds extends StatefulWidget {
   const ListCardSounds({super.key});
 
@@ -26,6 +28,7 @@ class _ListCardSoundsState extends State<ListCardSounds> {
   int? activeCardIndex;
   final AppController app = Get.find<AppController>();
   int _consecutiveWins = 0;
+  final Random _rng = Random(); // Added Random instance
 
   final String _winSound = "assets/sounds/winner-game.wav";
   final String _wrongMatchSound = "assets/sounds/bubble-pop.wav";
@@ -108,7 +111,10 @@ class _ListCardSoundsState extends State<ListCardSounds> {
 
         if (_consecutiveWins >= 1) {
           _consecutiveWins = 0;
-          await Get.to(() => ToBeBonusScreen());
+          // 1 in 3 chance to go to bonus screen
+          if (_rng.nextInt(3) == 0) {
+            Get.to(() => ToBeBonusScreen());
+          }
         }
 
         setState(() {
@@ -333,12 +339,12 @@ class _ListCardSoundsState extends State<ListCardSounds> {
                               mainAxisAlignment: MainAxisAlignment.spaceEvenly,
                               children: [
                                 if (assets.isNotEmpty) _buildCardTarget(0),
-                                SizedBox(width: 40),
+                                SizedBox(width: shortHeight ? 10 : 40),
                                 if (assets.length > 1) _buildCardTarget(1),
-                                SizedBox(width: 60),
+                                SizedBox(width: shortHeight ? 10 : 60),
 
                                 if (assets.length > 2) _buildCardTarget(2),
-                                SizedBox(width: 40),
+                                SizedBox(width: shortHeight ? 10 : 40),
                                 if (assets.length > 3) _buildCardTarget(3),
                               ],
                             ),
