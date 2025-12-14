@@ -1,6 +1,7 @@
 import 'package:boby/ui/screens/drag_and_drop_screen/widgets/card_sound.dart';
 import 'package:boby/utils/colors.dart';
 import 'package:boby/utils/constants.dart';
+import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 
 class NameScreen extends StatelessWidget {
@@ -32,6 +33,8 @@ class NameScreen extends StatelessWidget {
               textAlign: TextAlign.center,
             ),
           ),
+          //switchbutton stilo apple
+          CupertinoSwitch(value: false, onChanged: (value) {}),
           const SizedBox(height: 20),
           Expanded(
             child: GridView.builder(
