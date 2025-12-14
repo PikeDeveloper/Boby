@@ -1,5 +1,6 @@
 import 'dart:math';
 
+import 'package:boby/ui/screens/tells_scrren/widgets/image_tale.dart';
 import 'package:boby/ui/screens/tells_scrren/widgets/tales.dart';
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
@@ -16,6 +17,7 @@ class _TalesScreenState extends State<TalesScreen> {
   int _currentTaleIndex = 0;
   List<String> _currentAnswers = [];
   String? _correctAnswer;
+  String? _selectedAnswer; // Track the user's choice
   bool _answered = false;
   bool _isCorrect = false;
 
@@ -51,18 +53,23 @@ class _TalesScreenState extends State<TalesScreen> {
     setState(() {
       _answered = false;
       _isCorrect = false;
+      _selectedAnswer = null; // Reset selection
     });
   }
 
   void _checkAnswer(String selectedAnswer) {
-    if (_answered && _isCorrect) return; // Already passed
+    if (_answered) return; // Ignore if already answered logic handling
+
+    bool isCorrect = selectedAnswer == _correctAnswer;
 
     setState(() {
       _answered = true;
-      _isCorrect = selectedAnswer == _correctAnswer;
+      _isCorrect = isCorrect;
+      _selectedAnswer = selectedAnswer;
     });
 
-    if (_isCorrect) {
+    if (isCorrect) {
+      // Play sound? (Optional future step)
       Future.delayed(const Duration(seconds: 2), () {
         if (mounted) {
           setState(() {
@@ -71,161 +78,217 @@ class _TalesScreenState extends State<TalesScreen> {
           _loadTale();
         }
       });
+    } else {
+      // Allow retrying checking logic?
+      // Requirement: "si acierta se pasa" -> implies if wrong, perhaps stay?
+      // Existing logic implies we just show "Try again" and maybe let them click again?
+      // But if we set _answered = true, buttons are disabled in my previous code.
+      // Let's change behavior: if wrong, reset _answered after a short delay so they can try again,
+      // OR just show the error on the clicked button and let them click another.
+
+      // Better UX for kids: If wrong, shake/red, then let them try again.
+      Future.delayed(const Duration(seconds: 1), () {
+        if (mounted) {
+          setState(() {
+            _answered = false; // Allow trying again
+            _selectedAnswer =
+                null; // Reset selection so buttons go back to normal
+          });
+        }
+      });
     }
   }
 
   @override
   Widget build(BuildContext context) {
-    if (_currentTaleIndex >= Tales.tales.length) {
-      return Scaffold(
-        body: Center(
-          child: Column(
-            mainAxisAlignment: MainAxisAlignment.center,
-            children: [
-              Text(
-                "All stories completed!",
-                style: GoogleFonts.comicNeue(
-                  fontSize: 28,
-                  fontWeight: FontWeight.bold,
-                ),
-              ),
-              const SizedBox(height: 20),
-              ElevatedButton(
-                onPressed: () {
-                  setState(() {
-                    _currentTaleIndex = 0;
-                    _loadTale();
-                  });
-                },
-                child: const Text("Read Again"),
-              ),
-            ],
-          ),
-        ),
-      );
-    }
-
     final taleData = Tales.tales[_currentTaleIndex];
 
     return Scaffold(
-      appBar: AppBar(
-        title: Text("Tale ${_currentTaleIndex + 1}"),
-        centerTitle: true,
-      ),
-      body: SingleChildScrollView(
-        padding: const EdgeInsets.all(16.0),
-        child: Column(
-          children: [
-            if (taleData['image'] != null)
-              ClipRRect(
-                borderRadius: BorderRadius.circular(16),
-                child: Image.asset(
-                  taleData['image']!,
-                  height: 250,
-                  width: double.infinity,
-                  fit: BoxFit.cover,
-                  errorBuilder: (context, error, stackTrace) =>
-                      const Icon(Icons.image_not_supported, size: 100),
-                ),
-              ),
-            const SizedBox(height: 20),
-            Text(
-              taleData['tale'] ?? '',
-              style: GoogleFonts.comicNeue(fontSize: 24, height: 1.5),
-              textAlign: TextAlign.justify,
-            ),
-            const SizedBox(height: 30),
-            Container(
-              padding: const EdgeInsets.all(16),
-              decoration: BoxDecoration(
-                color: Colors.amber.withOpacity(0.1),
-                borderRadius: BorderRadius.circular(12),
-                border: Border.all(color: Colors.amber),
-              ),
-              child: Column(
-                children: [
-                  Text(
-                    taleData['question'] ?? 'Question',
-                    style: GoogleFonts.comicNeue(
-                      fontSize: 22,
-                      fontWeight: FontWeight.bold,
-                      color: Colors.black87,
-                    ),
-                    textAlign: TextAlign.center,
+      // Gradient background for a fun look
+      body: Container(
+        decoration: const BoxDecoration(
+          gradient: LinearGradient(
+            colors: [Color(0xFFE0F7FA), Color(0xFFE1F5FE)],
+            begin: Alignment.topCenter,
+            end: Alignment.bottomCenter,
+          ),
+        ),
+        child: SafeArea(
+          child: Column(
+            children: [
+              Expanded(
+                child: SingleChildScrollView(
+                  padding: const EdgeInsets.symmetric(
+                    horizontal: 20,
+                    vertical: 10,
                   ),
-                  const SizedBox(height: 20),
-                  ..._currentAnswers.map((answer) {
-                    Color btnColor = Colors.blue.shade50;
-                    Color txtColor = Colors.blue.shade900;
-
-                    if (_answered) {
-                      if (answer == _correctAnswer) {
-                        btnColor = Colors.green.shade100;
-                        txtColor = Colors.green.shade900;
-                      } else {
-                        // If we want to show red for wrong selection, we need to track selected answer.
-                        // For now, let's just highlight the correct one if they guessed.
-                        // Actually, requirement says "si acierta se pasa".
-                        // It implies if they miss, they stay.
-                      }
-                    }
-
-                    return Padding(
-                      padding: const EdgeInsets.symmetric(vertical: 8.0),
-                      child: SizedBox(
-                        width: double.infinity,
-                        child: ElevatedButton(
-                          style: ElevatedButton.styleFrom(
-                            backgroundColor: btnColor,
-                            padding: const EdgeInsets.symmetric(vertical: 16),
-                            shape: RoundedRectangleBorder(
-                              borderRadius: BorderRadius.circular(12),
+                  child: Column(
+                    crossAxisAlignment: CrossAxisAlignment.stretch,
+                    children: [
+                      // Story Text Card
+                      Container(
+                        padding: const EdgeInsets.all(24),
+                        decoration: BoxDecoration(
+                          color: Colors.white,
+                          borderRadius: BorderRadius.circular(24),
+                          boxShadow: [
+                            BoxShadow(
+                              color: Colors.orange.withOpacity(0.05),
+                              blurRadius: 15,
+                              offset: const Offset(0, 4),
                             ),
-                            elevation: 0,
-                          ),
-                          onPressed: _answered && _isCorrect
-                              ? null
-                              : () => _checkAnswer(answer),
-                          child: Text(
-                            answer,
-                            style: GoogleFonts.comicNeue(
-                              fontSize: 20,
-                              fontWeight: FontWeight.bold,
-                              color: txtColor,
+                          ],
+                          border: Border.all(color: Colors.white, width: 2),
+                        ),
+                        child: Column(
+                          children: [
+                            // Image Card
+                            if (taleData['image'] != null)
+                              ImageTale(image: taleData['image']!),
+                            Text(
+                              taleData['tale'] ?? '',
+                              style: GoogleFonts.comicNeue(
+                                fontSize: 22,
+                                height: 1.4,
+                                color: const Color(0xFF424242),
+                                fontWeight: FontWeight.w500,
+                              ),
+                              textAlign: TextAlign.justify,
                             ),
-                          ),
+                          ],
                         ),
                       ),
-                    );
-                  }).toList(),
-                ],
-              ),
-            ),
-            if (_answered && !_isCorrect)
-              Padding(
-                padding: const EdgeInsets.only(top: 20.0),
-                child: Text(
-                  "Try again!",
-                  style: GoogleFonts.comicNeue(
-                    fontSize: 20,
-                    fontWeight: FontWeight.bold,
-                    color: Colors.red,
+
+                      const SizedBox(height: 30),
+
+                      // Question Section
+                      Container(
+                        padding: const EdgeInsets.all(20),
+                        decoration: BoxDecoration(
+                          color: const Color(0xFFFFF8E1), // Light amber
+                          borderRadius: BorderRadius.circular(24),
+                          border: Border.all(
+                            color: const Color(0xFFFFECB3),
+                            width: 2,
+                          ),
+                        ),
+                        child: Column(
+                          children: [
+                            Row(
+                              crossAxisAlignment: CrossAxisAlignment.start,
+                              children: [
+                                const Icon(
+                                  Icons.help_outline_rounded,
+                                  color: Colors.orange,
+                                  size: 30,
+                                ),
+                                const SizedBox(width: 12),
+                                Expanded(
+                                  child: Text(
+                                    taleData['question'] ?? 'Question',
+                                    style: GoogleFonts.comicNeue(
+                                      fontSize: 22,
+                                      fontWeight: FontWeight.bold,
+                                      color: Colors.brown.shade800,
+                                    ),
+                                  ),
+                                ),
+                              ],
+                            ),
+                            const SizedBox(height: 20),
+                            ..._currentAnswers.map((answer) {
+                              bool isSelected = answer == _selectedAnswer;
+                              bool isCorrectAnswer = answer == _correctAnswer;
+
+                              // Check visual state
+                              Color bgColor = Colors.white;
+                              Color textColor = Colors.blueGrey;
+                              Color borderColor = Colors.transparent;
+
+                              if (_answered) {
+                                if (isSelected) {
+                                  if (isCorrectAnswer) {
+                                    bgColor = Colors.green.shade100;
+                                    textColor = Colors.green.shade800;
+                                    borderColor = Colors.green;
+                                  } else {
+                                    bgColor = Colors.red.shade100;
+                                    textColor = Colors.red.shade800;
+                                    borderColor = Colors.red;
+                                  }
+                                } else if (isCorrectAnswer && _isCorrect) {
+                                  // Optional: Show correct answer if user got it right?
+                                  // Or just leave as is. User clicked correct, so it's handled above.
+                                }
+                              } else {
+                                // Default state
+                                bgColor = Colors.white;
+                                textColor = const Color(0xFF5D4037);
+                                borderColor = Colors.transparent;
+                              }
+
+                              return Padding(
+                                padding: const EdgeInsets.symmetric(
+                                  vertical: 6.0,
+                                ),
+                                child: AnimatedContainer(
+                                  duration: const Duration(milliseconds: 300),
+                                  width: double.infinity,
+                                  child: ElevatedButton(
+                                    style: ElevatedButton.styleFrom(
+                                      backgroundColor: bgColor,
+                                      foregroundColor: textColor,
+                                      elevation: isSelected ? 2 : 4,
+                                      shadowColor: Colors.black12,
+                                      padding: const EdgeInsets.symmetric(
+                                        vertical: 16,
+                                        horizontal: 20,
+                                      ),
+                                      shape: RoundedRectangleBorder(
+                                        borderRadius: BorderRadius.circular(16),
+                                        side: BorderSide(
+                                          color: borderColor,
+                                          width: isSelected ? 2 : 0,
+                                        ),
+                                      ),
+                                    ),
+                                    onPressed: _answered
+                                        ? null // Block interaction while processing
+                                        : () => _checkAnswer(answer),
+                                    child: Row(
+                                      children: [
+                                        Expanded(
+                                          child: Text(
+                                            answer,
+                                            style: GoogleFonts.comicNeue(
+                                              fontSize: 20,
+                                              fontWeight: FontWeight.bold,
+                                            ),
+                                          ),
+                                        ),
+                                        if (_answered && isSelected)
+                                          Icon(
+                                            isCorrectAnswer
+                                                ? Icons.check_circle_rounded
+                                                : Icons.cancel_rounded,
+                                            color: textColor,
+                                          ),
+                                      ],
+                                    ),
+                                  ),
+                                ),
+                              );
+                            }).toList(),
+                          ],
+                        ),
+                      ),
+                      const SizedBox(height: 40),
+                    ],
                   ),
                 ),
               ),
-            if (_answered && _isCorrect)
-              Padding(
-                padding: const EdgeInsets.only(top: 20.0),
-                child: Text(
-                  "Correct! Next story coming...",
-                  style: GoogleFonts.comicNeue(
-                    fontSize: 20,
-                    fontWeight: FontWeight.bold,
-                    color: Colors.green,
-                  ),
-                ),
-              ),
-          ],
+            ],
+          ),
         ),
       ),
     );
