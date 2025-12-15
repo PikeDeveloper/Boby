@@ -3,6 +3,7 @@ import 'dart:math';
 import 'package:boby/controllers/app_controller.dart';
 import 'package:boby/services/storage_service.dart';
 import 'package:boby/ui/screens/tales_scrren/widgets/image_tale.dart';
+import 'package:boby/ui/screens/bonus_sreen/complete_sentence/complete_sentence.dart';
 import 'package:boby/ui/screens/tales_scrren/widgets/tales.dart';
 import 'package:boby/ui/shared/score.dart';
 import 'package:flutter/material.dart';
@@ -47,13 +48,6 @@ class _TalesScreenState extends State<TalesScreen> {
   Future<void> _loadTale() async {
     // Stop any currently playing audio when loading a new tale
     await _audioPlayer.stop();
-
-    if (_currentTaleIndex >= Tales.tales.length) {
-      // Game Over or Restart
-      setState(() {
-        _currentTaleIndex = 0;
-      });
-    }
 
     final taleData = Tales.tales[_currentTaleIndex];
     final allAnswers = (taleData['answers'] ?? '')
@@ -106,13 +100,13 @@ class _TalesScreenState extends State<TalesScreen> {
         } catch (e) {
           debugPrint("Error scrolling to top: $e");
         }
+        // load next tale
+        _currentTaleIndex++;
+        _loadTale();
         // Transition after delay
         Future.delayed(const Duration(milliseconds: 400), () {
           if (mounted) {
-            setState(() {
-              _currentTaleIndex++;
-            });
-            _loadTale();
+            Get.toNamed(CompleteSentence.route);
           }
         });
       } else {

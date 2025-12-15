@@ -1,3 +1,4 @@
+import 'package:boby/ui/screens/bonus_sreen/complete_sentence/complete_sentence.dart';
 import 'package:boby/ui/screens/bonus_sreen/match_it/match_it.dart';
 import 'package:boby/ui/screens/bonus_sreen/to_be_bonus_screen/to_be_bonus_screen.dart';
 import 'package:boby/ui/screens/tales_scrren/tales.dart';
@@ -14,7 +15,7 @@ class Routes {
       page: () => const BonusScreenFloatWords(),
     ),
     GetPage(name: MatchItScreen.route, page: () => const MatchItScreen()),
-    GetPage(name: TalesScreen.routeName, page: () => const TalesScreen()),
+    GetPage(name: CompleteSentence.route, page: () => const CompleteSentence()),
     GetPage(name: ToBeBonusScreen.routeName, page: () => ToBeBonusScreen()),
   ];
 }

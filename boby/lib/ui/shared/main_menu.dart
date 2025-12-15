@@ -18,7 +18,7 @@ class MainMenu extends StatelessWidget {
       "route": "2",
       "image": "assets/letters_soup_icon.png",
     },
-    {"name": "Settings", "route": "3", "image": "assets/math_icon.png"},
+    {"name": "Settings", "route": "3", "image": "assets/tales_icon.png"},
     {"name": "Word Guess", "route": "4", "image": "assets/word_guess_icon.png"},
     {"name": "Scramble", "route": "5", "image": "assets/scramble_icon.png"},
     {"name": "Names", "route": "6", "image": "assets/match_it_icon.png"},

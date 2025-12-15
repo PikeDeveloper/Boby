@@ -1,17 +1,22 @@
+import 'dart:async';
 import 'dart:math';
 import 'package:boby/controllers/app_controller.dart';
 import 'package:boby/services/storage_service.dart';
 import 'package:boby/ui/screens/bonus_sreen/float_words/bonus_screen.dart';
 import 'package:boby/ui/screens/bonus_sreen/complete_sentence/widgets/colored_button.dart';
 import 'package:boby/ui/screens/bonus_sreen/complete_sentence/widgets/sentense_container.dart';
+import 'package:boby/ui/screens/tales_scrren/tales.dart';
 import 'package:boby/ui/shared/score.dart';
 import 'package:boby/utils/colors.dart';
 import 'package:boby/utils/constants.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
+import 'package:boby/ui/screens/main_screen/widgets/background.dart';
+import 'package:boby/ui/shared/word_of_images.dart';
 import 'widgets/sentences.dart';
 
 class CompleteSentence extends StatefulWidget {
+  static const String route = '/complete_sentence';
   const CompleteSentence({super.key});
 
   @override
@@ -33,6 +38,23 @@ class _CompleteSentenceState extends State<CompleteSentence> {
   int consecutiveCorrectAnswers = 0; // Track consecutive correct answers
   List<String> shuffledAnswers =
       []; // Store shuffled answers for current question
+
+  Timer? _timer;
+  final Duration _gameDuration = const Duration(seconds: 10);
+  Duration _elapsedTime = Duration.zero;
+
+  void _startTimer() {
+    _timer = Timer.periodic(const Duration(milliseconds: 100), (timer) {
+      setState(() {
+        _elapsedTime += const Duration(milliseconds: 100);
+        if (_elapsedTime >= _gameDuration) {
+          _timer?.cancel();
+          // Navigate back to TalesScreen
+          Get.back();
+        }
+      });
+    });
+  }
 
   void checkAnswer(int answerIndex) {
     final isCorrectAnswer = answerIndex == correctAnswerIndex;
@@ -120,6 +142,7 @@ class _CompleteSentenceState extends State<CompleteSentence> {
   @override
   void initState() {
     super.initState();
+    _startTimer();
     // Initialize scores
     storage.setTalesCorrect(storage.getTalesCorrect());
     storage.setTalesWrong(storage.getTalesWrong());
@@ -129,6 +152,12 @@ class _CompleteSentenceState extends State<CompleteSentence> {
     usedQuestionIndices.add(currentQuestionIndex);
     // Shuffle answers for the first question
     _shuffleAnswers();
+  }
+
+  @override
+  void dispose() {
+    _timer?.cancel();
+    super.dispose();
   }
 
   @override
@@ -148,90 +177,138 @@ class _CompleteSentenceState extends State<CompleteSentence> {
       MyColors.yellow,
     ];
 
-    return SafeArea(
-      child: Column(
+    return Scaffold(
+      backgroundColor: Colors.transparent,
+      appBar: AppBar(title: WordOfImages(letters: 'BONUS', letterSize: 30)),
+      body: Stack(
         children: [
-          // Header with Score
-          Padding(
-            padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
-            child: Score(game: "Tales"),
+          SizedBox(
+            width: double.infinity,
+            height: double.infinity,
+            child: Image.asset(
+              "assets/backgrounds/oceano.png",
+              fit: BoxFit.cover,
+            ),
           ),
+          SafeArea(
+            child: Column(
+              children: [
+                // Header with Score
+                Padding(
+                  padding: const EdgeInsets.symmetric(
+                    horizontal: 16,
+                    vertical: 8,
+                  ),
+                  child: Score(game: "Tales"),
+                ),
 
-          Expanded(
-            child: SizedBox(
-              width: min(screenWidth * 0.9, 600),
-              child: Column(
-                mainAxisAlignment: MainAxisAlignment.center,
-                children: [
-                  // Question Card
-                  Container(
-                    padding: const EdgeInsets.all(20),
-                    decoration: BoxDecoration(
-                      color: Colors.white,
-                      borderRadius: BorderRadius.circular(25),
-                      boxShadow: [
-                        BoxShadow(
-                          color: Colors.orange.withOpacity(0.2),
-                          blurRadius: 15,
-                          offset: const Offset(0, 8),
-                        ),
-                      ],
-                      border: Border.all(
-                        color: Colors.orange.shade200,
-                        width: 2,
+                //barra progresiva aqui
+                Container(
+                  height: 20,
+                  width: MediaQuery.of(context).size.width * 0.8,
+                  margin: const EdgeInsets.symmetric(horizontal: 20),
+                  decoration: BoxDecoration(
+                    color: Colors.grey[200],
+                    borderRadius: BorderRadius.circular(10),
+                  ),
+                  child: Align(
+                    alignment: Alignment.centerLeft,
+                    child: Container(
+                      height: 20,
+                      width:
+                          (MediaQuery.of(context).size.width * 0.8) *
+                          (1.0 -
+                              (_elapsedTime.inMilliseconds /
+                                      _gameDuration.inMilliseconds)
+                                  .clamp(0.0, 1.0)),
+                      decoration: BoxDecoration(
+                        color: Colors.blue,
+                        borderRadius: BorderRadius.circular(10),
                       ),
                     ),
+                  ),
+                ),
+                SizedBox(height: 10),
+
+                Expanded(
+                  child: SizedBox(
+                    width: min(screenWidth * 0.9, 600),
                     child: Column(
+                      mainAxisAlignment: MainAxisAlignment.center,
                       children: [
-                        const Text(
-                          "Complete the sentence:",
-                          style: TextStyle(
-                            fontSize: 18,
-                            color: Colors.orange,
-                            fontWeight: FontWeight.bold,
+                        // Question Card
+                        Container(
+                          padding: const EdgeInsets.all(20),
+                          decoration: BoxDecoration(
+                            color: Colors.white,
+                            borderRadius: BorderRadius.circular(25),
+                            boxShadow: [
+                              BoxShadow(
+                                color: Colors.orange.withOpacity(0.2),
+                                blurRadius: 15,
+                                offset: const Offset(0, 8),
+                              ),
+                            ],
+                            border: Border.all(
+                              color: Colors.orange.shade200,
+                              width: 2,
+                            ),
+                          ),
+                          child: Column(
+                            children: [
+                              const Text(
+                                "Complete the sentence:",
+                                style: TextStyle(
+                                  fontSize: 18,
+                                  color: Colors.orange,
+                                  fontWeight: FontWeight.bold,
+                                ),
+                              ),
+                              const SizedBox(height: 10),
+
+                              SentenceContainer(sentence: sentence),
+                            ],
                           ),
                         ),
                         const SizedBox(height: 10),
+                        // Answer Options
+                        Expanded(
+                          child: ListView.separated(
+                            itemCount: shuffledAnswers.length,
+                            separatorBuilder: (context, index) =>
+                                const SizedBox(height: 12),
+                            itemBuilder: (context, index) {
+                              bool isSelected =
+                                  selectedAnswerIndex == index ||
+                                  selectedAnswerIndices.contains(index);
+                              bool isCorrectAnswer =
+                                  index == correctAnswerIndex;
 
-                        SentenceContainer(sentence: sentence),
+                              return AnimatedScale(
+                                scale: isSelected ? 1.02 : 1.0,
+                                duration: const Duration(milliseconds: 200),
+                                child: OptionButton(
+                                  letter: String.fromCharCode(65 + index),
+                                  text: shuffledAnswers[index],
+                                  color: isCorrectAnswer && isSelected
+                                      ? Colors.green
+                                      : (isSelected && !isCorrectAnswer
+                                            ? Colors.red
+                                            : colors[index % colors.length]),
+                                  onTap: () => checkAnswer(index),
+                                  isSelected: isSelected,
+                                  isCorrect: isCorrectAnswer,
+                                  showResult: showCorrect,
+                                ),
+                              );
+                            },
+                          ),
+                        ),
                       ],
                     ),
                   ),
-                  const SizedBox(height: 10),
-                  // Answer Options
-                  Expanded(
-                    child: ListView.separated(
-                      itemCount: shuffledAnswers.length,
-                      separatorBuilder: (context, index) =>
-                          const SizedBox(height: 12),
-                      itemBuilder: (context, index) {
-                        bool isSelected =
-                            selectedAnswerIndex == index ||
-                            selectedAnswerIndices.contains(index);
-                        bool isCorrectAnswer = index == correctAnswerIndex;
-
-                        return AnimatedScale(
-                          scale: isSelected ? 1.02 : 1.0,
-                          duration: const Duration(milliseconds: 200),
-                          child: OptionButton(
-                            letter: String.fromCharCode(65 + index),
-                            text: shuffledAnswers[index],
-                            color: isCorrectAnswer && isSelected
-                                ? Colors.green
-                                : (isSelected && !isCorrectAnswer
-                                      ? Colors.red
-                                      : colors[index % colors.length]),
-                            onTap: () => checkAnswer(index),
-                            isSelected: isSelected,
-                            isCorrect: isCorrectAnswer,
-                            showResult: showCorrect,
-                          ),
-                        );
-                      },
-                    ),
-                  ),
-                ],
-              ),
+                ),
+              ],
             ),
           ),
         ],
