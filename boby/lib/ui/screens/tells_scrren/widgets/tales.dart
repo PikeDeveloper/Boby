@@ -7,6 +7,7 @@ class Tales {
       "answers":
           "To get a new chair for his office, To play with toys, To paint the walls",
       "image": "assets/images/tales/workshop.jpg",
+      "audio": "assets/tales/workshop.mp3",
     },
     {
       "tale":
@@ -14,6 +15,7 @@ class Tales {
       "question": "What is the name of Boby's friend?",
       "answers": "Kiki, Tom, Boby",
       "image": "assets/images/tales/red_ball.jpg",
+      "audio": "assets/tales/red_ball.mp3",
     },
     {
       "tale":
@@ -21,6 +23,7 @@ class Tales {
       "question": "What did Dr. Ana tell Boby to do?",
       "answers": "To rest, To play with toys, To eat candies",
       "image": "assets/images/tales/doctor.jpg",
+      "audio": "assets/tales/doctor.mp3",
     },
     {
       "tale":
@@ -28,6 +31,7 @@ class Tales {
       "question": "What job does Boby's friend Max have?",
       "answers": "He is a mechanic, He is a teacher, He is a pilot",
       "image": "assets/images/tales/mechanic.jpg",
+      "audio": "assets/tales/mechanic.mp3",
     },
     {
       "tale":
@@ -35,6 +39,7 @@ class Tales {
       "question": "What did Boby make for lunch?",
       "answers": "A big sandwich, A soup, A cake",
       "image": "assets/images/tales/sandwich.jpg",
+      "audio": "assets/tales/sandwich.mp3",
     },
     {
       "tale":
@@ -42,6 +47,7 @@ class Tales {
       "question": "What color was Boby's backpack?",
       "answers": "Blue, Green, Yellow",
       "image": "assets/images/tales/school.jpg",
+      "audio": "assets/tales/school.mp3",
     },
     {
       "tale":
@@ -49,6 +55,7 @@ class Tales {
       "question": "What did Boby buy to eat at the cinema?",
       "answers": "Popcorn, An apple, A big pizza",
       "image": "assets/images/tales/cinema.jpg",
+      "audio": "assets/tales/cinema.mp3",
     },
     {
       "tale":
@@ -56,6 +63,7 @@ class Tales {
       "question": "What did Boby bake for his grandmother?",
       "answers": "A cake, Bread, Cookies",
       "image": "assets/images/tales/cake.jpg",
+      "audio": "assets/tales/cake.mp3",
     },
     {
       "tale":
@@ -63,6 +71,7 @@ class Tales {
       "question": "What did Boby put the postcard into?",
       "answers": "The red mailbox, A box of toys, The fridge",
       "image": "assets/images/tales/postcard.jpg",
+      "audio": "assets/tales/postcard.mp3",
     },
     {
       "tale":
@@ -70,6 +79,7 @@ class Tales {
       "question": "What two colors of wool did Boby choose?",
       "answers": "Purple and orange, Blue and white, Red and green",
       "image": "assets/images/tales/scarf.jpg",
+      "audio": "assets/tales/scarf.mp3",
     },
   ];
 }

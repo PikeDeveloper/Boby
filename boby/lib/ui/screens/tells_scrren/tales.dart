@@ -4,6 +4,7 @@ import 'package:boby/ui/screens/tells_scrren/widgets/image_tale.dart';
 import 'package:boby/ui/screens/tells_scrren/widgets/tales.dart';
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
+import 'package:just_audio/just_audio.dart';
 
 class TalesScreen extends StatefulWidget {
   static const String routeName = '/tales';
@@ -17,17 +18,27 @@ class _TalesScreenState extends State<TalesScreen> {
   int _currentTaleIndex = 0;
   List<String> _currentAnswers = [];
   String? _correctAnswer;
-  String? _selectedAnswer; // Track the user's choice
-  bool _answered = false;
-  bool _isCorrect = false;
+  final Set<String> _incorrectSelections = {}; // Track incorrect choices
+  bool _answered = false; // "Level Completed" state
+  late AudioPlayer _audioPlayer;
 
   @override
   void initState() {
     super.initState();
+    _audioPlayer = AudioPlayer();
     _loadTale();
   }
 
-  void _loadTale() {
+  @override
+  void dispose() {
+    _audioPlayer.dispose();
+    super.dispose();
+  }
+
+  Future<void> _loadTale() async {
+    // Stop any currently playing audio when loading a new tale
+    await _audioPlayer.stop();
+
     if (_currentTaleIndex >= Tales.tales.length) {
       // Game Over or Restart
       setState(() {
@@ -50,58 +61,57 @@ class _TalesScreenState extends State<TalesScreen> {
       _currentAnswers = [];
     }
 
+    // Load audio
+    if (taleData['audio'] != null) {
+      try {
+        await _audioPlayer.setAsset(taleData['audio']!);
+      } catch (e) {
+        debugPrint("Error loading audio: $e");
+      }
+    }
+
     setState(() {
       _answered = false;
-      _isCorrect = false;
-      _selectedAnswer = null; // Reset selection
+      _incorrectSelections.clear();
     });
   }
 
   void _checkAnswer(String selectedAnswer) {
-    if (_answered) return; // Ignore if already answered logic handling
+    if (_answered) return; // Already completed this level
 
     bool isCorrect = selectedAnswer == _correctAnswer;
 
     setState(() {
-      _answered = true;
-      _isCorrect = isCorrect;
-      _selectedAnswer = selectedAnswer;
+      if (isCorrect) {
+        _answered = true; // Mark level as completed
+        // Transition after delay
+        Future.delayed(const Duration(seconds: 2), () {
+          if (mounted) {
+            setState(() {
+              _currentTaleIndex++;
+            });
+            _loadTale();
+          }
+        });
+      } else {
+        // Wrong answer: Mark it as incorrect so it stays red
+        _incorrectSelections.add(selectedAnswer);
+      }
     });
+  }
 
-    if (isCorrect) {
-      // Play sound? (Optional future step)
-      Future.delayed(const Duration(seconds: 2), () {
-        if (mounted) {
-          setState(() {
-            _currentTaleIndex++;
-          });
-          _loadTale();
-        }
-      });
+  void _toggleAudio() async {
+    if (_audioPlayer.playing) {
+      await _audioPlayer.pause();
     } else {
-      // Allow retrying checking logic?
-      // Requirement: "si acierta se pasa" -> implies if wrong, perhaps stay?
-      // Existing logic implies we just show "Try again" and maybe let them click again?
-      // But if we set _answered = true, buttons are disabled in my previous code.
-      // Let's change behavior: if wrong, reset _answered after a short delay so they can try again,
-      // OR just show the error on the clicked button and let them click another.
-
-      // Better UX for kids: If wrong, shake/red, then let them try again.
-      Future.delayed(const Duration(seconds: 1), () {
-        if (mounted) {
-          setState(() {
-            _answered = false; // Allow trying again
-            _selectedAnswer =
-                null; // Reset selection so buttons go back to normal
-          });
-        }
-      });
+      await _audioPlayer.play();
     }
   }
 
   @override
   Widget build(BuildContext context) {
     final taleData = Tales.tales[_currentTaleIndex];
+    final hasAudio = taleData['audio'] != null;
 
     return Scaffold(
       // Gradient background for a fun look
@@ -142,6 +152,38 @@ class _TalesScreenState extends State<TalesScreen> {
                         ),
                         child: Column(
                           children: [
+                            // Header with Audio Icon
+                            Row(
+                              mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                              children: [
+                                // Placeholder for alignment if needed, or title
+                                const SizedBox(width: 48),
+                                if (hasAudio)
+                                  StreamBuilder<bool>(
+                                    stream: _audioPlayer.playingStream,
+                                    builder: (context, snapshot) {
+                                      final playing = snapshot.data ?? false;
+                                      return IconButton(
+                                        onPressed: _toggleAudio,
+                                        icon: Icon(
+                                          playing
+                                              ? Icons
+                                                    .pause_circle_filled_rounded
+                                              : Icons.volume_up_rounded,
+                                          color: Colors.orange,
+                                          size: 40,
+                                        ),
+                                        tooltip: playing
+                                            ? 'Pause Audio'
+                                            : 'Play Audio',
+                                      );
+                                    },
+                                  )
+                                else
+                                  const SizedBox(width: 48), // Keep alignment
+                              ],
+                            ),
+                            const SizedBox(height: 10),
                             // Image Card
                             if (taleData['image'] != null)
                               ImageTale(image: taleData['image']!),
@@ -177,11 +219,6 @@ class _TalesScreenState extends State<TalesScreen> {
                             Row(
                               crossAxisAlignment: CrossAxisAlignment.start,
                               children: [
-                                const Icon(
-                                  Icons.help_outline_rounded,
-                                  color: Colors.orange,
-                                  size: 30,
-                                ),
                                 const SizedBox(width: 12),
                                 Expanded(
                                   child: Text(
@@ -197,29 +234,26 @@ class _TalesScreenState extends State<TalesScreen> {
                             ),
                             const SizedBox(height: 20),
                             ..._currentAnswers.map((answer) {
-                              bool isSelected = answer == _selectedAnswer;
                               bool isCorrectAnswer = answer == _correctAnswer;
+                              bool isIncorrectlySelected = _incorrectSelections
+                                  .contains(answer);
+                              bool isLevelCompleted = _answered;
 
                               // Check visual state
                               Color bgColor = Colors.white;
                               Color textColor = Colors.blueGrey;
                               Color borderColor = Colors.transparent;
 
-                              if (_answered) {
-                                if (isSelected) {
-                                  if (isCorrectAnswer) {
-                                    bgColor = Colors.green.shade100;
-                                    textColor = Colors.green.shade800;
-                                    borderColor = Colors.green;
-                                  } else {
-                                    bgColor = Colors.red.shade100;
-                                    textColor = Colors.red.shade800;
-                                    borderColor = Colors.red;
-                                  }
-                                } else if (isCorrectAnswer && _isCorrect) {
-                                  // Optional: Show correct answer if user got it right?
-                                  // Or just leave as is. User clicked correct, so it's handled above.
-                                }
+                              if (isLevelCompleted && isCorrectAnswer) {
+                                // Show green for the correct answer when done
+                                bgColor = Colors.green.shade100;
+                                textColor = Colors.green.shade800;
+                                borderColor = Colors.green;
+                              } else if (isIncorrectlySelected) {
+                                // Show red for wrong answers that were picked
+                                bgColor = Colors.red.shade100;
+                                textColor = Colors.red.shade800;
+                                borderColor = Colors.red;
                               } else {
                                 // Default state
                                 bgColor = Colors.white;
@@ -238,7 +272,7 @@ class _TalesScreenState extends State<TalesScreen> {
                                     style: ElevatedButton.styleFrom(
                                       backgroundColor: bgColor,
                                       foregroundColor: textColor,
-                                      elevation: isSelected ? 2 : 4,
+                                      elevation: 4,
                                       shadowColor: Colors.black12,
                                       padding: const EdgeInsets.symmetric(
                                         vertical: 16,
@@ -248,12 +282,19 @@ class _TalesScreenState extends State<TalesScreen> {
                                         borderRadius: BorderRadius.circular(16),
                                         side: BorderSide(
                                           color: borderColor,
-                                          width: isSelected ? 2 : 0,
+                                          width:
+                                              (isLevelCompleted &&
+                                                      isCorrectAnswer) ||
+                                                  isIncorrectlySelected
+                                              ? 2
+                                              : 0,
                                         ),
                                       ),
                                     ),
-                                    onPressed: _answered
-                                        ? null // Block interaction while processing
+                                    onPressed:
+                                        (isLevelCompleted ||
+                                            isIncorrectlySelected)
+                                        ? null // Block interaction if already handled
                                         : () => _checkAnswer(answer),
                                     child: Row(
                                       children: [
@@ -266,11 +307,14 @@ class _TalesScreenState extends State<TalesScreen> {
                                             ),
                                           ),
                                         ),
-                                        if (_answered && isSelected)
+                                        if (isLevelCompleted && isCorrectAnswer)
                                           Icon(
-                                            isCorrectAnswer
-                                                ? Icons.check_circle_rounded
-                                                : Icons.cancel_rounded,
+                                            Icons.check_circle_rounded,
+                                            color: textColor,
+                                          )
+                                        else if (isIncorrectlySelected)
+                                          Icon(
+                                            Icons.cancel_rounded,
                                             color: textColor,
                                           ),
                                       ],
