@@ -152,38 +152,73 @@ class _TalesScreenState extends State<TalesScreen> {
                         ),
                         child: Column(
                           children: [
-                            // Header with Audio Icon
-                            Row(
-                              mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                              children: [
-                                // Placeholder for alignment if needed, or title
-                                const SizedBox(width: 48),
-                                if (hasAudio)
-                                  StreamBuilder<bool>(
-                                    stream: _audioPlayer.playingStream,
-                                    builder: (context, snapshot) {
-                                      final playing = snapshot.data ?? false;
-                                      return IconButton(
-                                        onPressed: _toggleAudio,
-                                        icon: Icon(
-                                          playing
-                                              ? Icons
-                                                    .pause_circle_filled_rounded
-                                              : Icons.volume_up_rounded,
-                                          color: Colors.orange,
-                                          size: 40,
-                                        ),
-                                        tooltip: playing
-                                            ? 'Pause Audio'
-                                            : 'Play Audio',
-                                      );
-                                    },
-                                  )
-                                else
-                                  const SizedBox(width: 48), // Keep alignment
-                              ],
-                            ),
-                            const SizedBox(height: 10),
+                            // Header with Audio Icon and Slider
+                            if (hasAudio)
+                              Container(
+                                padding: const EdgeInsets.only(bottom: 10),
+                                child: Row(
+                                  children: [
+                                    StreamBuilder<bool>(
+                                      stream: _audioPlayer.playingStream,
+                                      builder: (context, snapshot) {
+                                        final playing = snapshot.data ?? false;
+                                        return IconButton(
+                                          onPressed: _toggleAudio,
+                                          icon: Icon(
+                                            playing
+                                                ? Icons
+                                                      .pause_circle_filled_rounded
+                                                : Icons.volume_up_rounded,
+                                            color: Colors.orange,
+                                            size: 40,
+                                          ),
+                                          tooltip: playing
+                                              ? 'Pause Audio'
+                                              : 'Play Audio',
+                                        );
+                                      },
+                                    ),
+                                    Expanded(
+                                      child: StreamBuilder<Duration?>(
+                                        stream: _audioPlayer.durationStream,
+                                        builder: (context, snapshot) {
+                                          final duration =
+                                              snapshot.data ?? Duration.zero;
+                                          return StreamBuilder<Duration>(
+                                            stream: _audioPlayer.positionStream,
+                                            builder: (context, snapshot) {
+                                              var position =
+                                                  snapshot.data ??
+                                                  Duration.zero;
+                                              if (position > duration) {
+                                                position = duration;
+                                              }
+                                              return Slider(
+                                                value: position.inMilliseconds
+                                                    .toDouble(),
+                                                max: duration.inMilliseconds
+                                                    .toDouble(),
+                                                activeColor: Colors.orange,
+                                                inactiveColor:
+                                                    Colors.orange.shade100,
+                                                onChanged: (value) {
+                                                  _audioPlayer.seek(
+                                                    Duration(
+                                                      milliseconds: value
+                                                          .toInt(),
+                                                    ),
+                                                  );
+                                                },
+                                              );
+                                            },
+                                          );
+                                        },
+                                      ),
+                                    ),
+                                  ],
+                                ),
+                              ),
+
                             // Image Card
                             if (taleData['image'] != null)
                               ImageTale(image: taleData['image']!),
@@ -219,6 +254,11 @@ class _TalesScreenState extends State<TalesScreen> {
                             Row(
                               crossAxisAlignment: CrossAxisAlignment.start,
                               children: [
+                                const Icon(
+                                  Icons.help_outline_rounded,
+                                  color: Colors.orange,
+                                  size: 30,
+                                ),
                                 const SizedBox(width: 12),
                                 Expanded(
                                   child: Text(
