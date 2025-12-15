@@ -107,7 +107,7 @@ class _TalesScreenState extends State<TalesScreen> {
           debugPrint("Error scrolling to top: $e");
         }
         // Transition after delay
-        Future.delayed(const Duration(seconds: 2), () {
+        Future.delayed(const Duration(milliseconds: 400), () {
           if (mounted) {
             setState(() {
               _currentTaleIndex++;
