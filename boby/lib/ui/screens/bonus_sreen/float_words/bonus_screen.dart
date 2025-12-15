@@ -164,13 +164,13 @@ class _BonusScreenFloatWordsState extends State<BonusScreenFloatWords>
         word.color = Colors.green;
         _addFeedback(word, "+2", Colors.green);
         Get.find<AppController>().playGameBonus();
-        storage.incCompleteSentenceCorrect();
-        storage.incCompleteSentenceCorrect();
+        storage.incTalesCorrect();
+        storage.incTalesCorrect();
       } else {
         word.color = Colors.red;
         _addFeedback(word, "1", Colors.red);
         Get.find<AppController>().playBubblePop();
-        storage.incCompleteSentenceWrong();
+        storage.incTalesWrong();
       }
     });
   }
@@ -211,7 +211,7 @@ class _BonusScreenFloatWordsState extends State<BonusScreenFloatWords>
             right: 0,
             child: Column(
               children: [
-                Score(game: "CompleteSentence"),
+                Score(game: "Tales"),
                 Container(
                   padding: const EdgeInsets.symmetric(
                     horizontal: 20,

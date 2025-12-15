@@ -49,8 +49,8 @@ class Score extends StatelessWidget {
         return StorageService.instance.getSoundCardsCorrect().toString();
       case "MatchIt":
         return StorageService.instance.getMatchItCorrect().toString();
-      case "CompleteSentence":
-        return StorageService.instance.completeSentenceCorrect.value.toString();
+      case "Tales":
+        return StorageService.instance.talesCorrect.value.toString();
       case "ScrambleWord":
         return StorageService.instance.scrambleWordCorrect.value.toString();
       default:
@@ -68,8 +68,8 @@ class Score extends StatelessWidget {
         return StorageService.instance.getSoundCardsWrong().toString();
       case "MatchIt":
         return StorageService.instance.getMatchItWrong().toString();
-      case "CompleteSentence":
-        return StorageService.instance.completeSentenceWrong.value.toString();
+      case "Tales":
+        return StorageService.instance.talesWrong.value.toString();
       case "ScrambleWord":
         return StorageService.instance.scrambleWordWrong.value.toString();
       default:
@@ -276,9 +276,9 @@ class Score extends StatelessWidget {
         StorageService.instance.setMatchItCorrect(0);
         StorageService.instance.setMatchItWrong(0);
         break;
-      case "CompleteSentence":
-        StorageService.instance.setCompleteSentenceCorrect(0);
-        StorageService.instance.setCompleteSentenceWrong(0);
+      case "Tales":
+        StorageService.instance.setTalesCorrect(0);
+        StorageService.instance.setTalesWrong(0);
         break;
       case "ScrambleWord":
         StorageService.instance.setScrambleWordCorrect(0);

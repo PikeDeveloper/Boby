@@ -1,5 +1,6 @@
 import 'package:boby/controllers/app_controller.dart';
-import 'package:boby/ui/screens/tells_scrren/tales.dart';
+import 'package:boby/ui/screens/main_screen/main_screen.dart';
+import 'package:boby/ui/screens/tales_scrren/tales.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:get/get.dart';
@@ -27,7 +28,7 @@ class MainApp extends StatelessWidget {
     return GetMaterialApp(
       debugShowCheckedModeBanner: false,
       title: 'Material App',
-      initialRoute: TalesScreen.routeName,
+      initialRoute: MainScreen.route,
       getPages: Routes.routes,
       theme: ThemeData(
         textTheme: GoogleFonts.comicNeueTextTheme(),

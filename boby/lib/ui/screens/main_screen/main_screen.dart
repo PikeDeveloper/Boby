@@ -1,12 +1,13 @@
 import 'package:boby/controllers/app_controller.dart';
 
-import 'package:boby/ui/screens/complete_sentence/complete_sentence.dart';
+import 'package:boby/ui/screens/bonus_sreen/complete_sentence/complete_sentence.dart';
 import 'package:boby/ui/screens/drag_and_drop_screen/drag_and_drop_screen.dart';
 import 'package:boby/ui/screens/letters_soup/letters_soup.dart';
 import 'package:boby/ui/screens/main_screen/widgets/background.dart';
 import 'package:boby/ui/screens/drag_and_drop_screen/widgets/name_screen.dart';
 import 'package:boby/ui/screens/memory_screen/memory_screen.dart';
 import 'package:boby/ui/screens/scramble_word/scramble_screen.dart';
+import 'package:boby/ui/screens/tales_scrren/tales.dart';
 import 'package:boby/ui/screens/word_guess/word_guess_screen.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
@@ -24,7 +25,8 @@ class MainScreen extends StatelessWidget {
 
     MemoryScreen(),
     LettersSoup(),
-    CompleteSentence(),
+    // CompleteSentence(),
+    TalesScreen(),
     WordGuessScreen(),
     // MatchItScreen(),
     ScrambleScreen(),

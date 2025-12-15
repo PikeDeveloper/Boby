@@ -44,8 +44,8 @@ class StorageService extends GetxService {
     });
 
     // Initialize reactive variables
-    completeSentenceCorrect.value = getCompleteSentenceCorrect();
-    completeSentenceWrong.value = getCompleteSentenceWrong();
+    talesCorrect.value = getTalesCorrect();
+    talesWrong.value = getTalesWrong();
     scrambleWordCorrect.value = getScrambleWordCorrect();
     scrambleWordWrong.value = getScrambleWordWrong();
   }
@@ -122,33 +122,31 @@ class StorageService extends GetxService {
   Future<void> setWordGuessCorrect(int value) =>
       _box.put('word_guess_correct', value);
 
-  // Complete Sentence game scores
-  int getCompleteSentenceCorrect() =>
-      (_box.get('complete_sentence_correct') as int?) ?? 0;
-  final completeSentenceCorrect = 0.obs;
-  Future<void> incCompleteSentenceCorrect([int by = 1]) async {
-    final newValue = getCompleteSentenceCorrect() + by;
-    await _box.put('complete_sentence_correct', newValue);
-    completeSentenceCorrect.value = newValue;
+  // Tales game scores
+  int getTalesCorrect() => (_box.get('tales_correct') as int?) ?? 0;
+  final talesCorrect = 0.obs;
+  Future<void> incTalesCorrect([int by = 1]) async {
+    final newValue = getTalesCorrect() + by;
+    await _box.put('tales_correct', newValue);
+    talesCorrect.value = newValue;
   }
 
-  Future<void> setCompleteSentenceCorrect(int value) async {
-    await _box.put('complete_sentence_correct', value);
-    completeSentenceCorrect.value = value;
+  Future<void> setTalesCorrect(int value) async {
+    await _box.put('tales_correct', value);
+    talesCorrect.value = value;
   }
 
-  int getCompleteSentenceWrong() =>
-      (_box.get('complete_sentence_wrong') as int?) ?? 0;
-  final completeSentenceWrong = 0.obs;
-  Future<void> incCompleteSentenceWrong([int by = 1]) async {
-    final newValue = getCompleteSentenceWrong() + by;
-    await _box.put('complete_sentence_wrong', newValue);
-    completeSentenceWrong.value = newValue;
+  int getTalesWrong() => (_box.get('tales_wrong') as int?) ?? 0;
+  final talesWrong = 0.obs;
+  Future<void> incTalesWrong([int by = 1]) async {
+    final newValue = getTalesWrong() + by;
+    await _box.put('tales_wrong', newValue);
+    talesWrong.value = newValue;
   }
 
-  Future<void> setCompleteSentenceWrong(int value) async {
-    await _box.put('complete_sentence_wrong', value);
-    completeSentenceWrong.value = value;
+  Future<void> setTalesWrong(int value) async {
+    await _box.put('tales_wrong', value);
+    talesWrong.value = value;
   }
 
   int getWordGuessWrong() => (_box.get('word_guess_wrong') as int?) ?? 0;

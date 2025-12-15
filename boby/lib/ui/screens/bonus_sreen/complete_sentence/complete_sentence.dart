@@ -2,8 +2,8 @@ import 'dart:math';
 import 'package:boby/controllers/app_controller.dart';
 import 'package:boby/services/storage_service.dart';
 import 'package:boby/ui/screens/bonus_sreen/float_words/bonus_screen.dart';
-import 'package:boby/ui/screens/complete_sentence/widgets/colored_button.dart';
-import 'package:boby/ui/screens/complete_sentence/widgets/sentense_container.dart';
+import 'package:boby/ui/screens/bonus_sreen/complete_sentence/widgets/colored_button.dart';
+import 'package:boby/ui/screens/bonus_sreen/complete_sentence/widgets/sentense_container.dart';
 import 'package:boby/ui/shared/score.dart';
 import 'package:boby/utils/colors.dart';
 import 'package:boby/utils/constants.dart';
@@ -68,11 +68,12 @@ class _CompleteSentenceState extends State<CompleteSentence> {
       isCorrect = isCorrectAnswer;
 
       // Update scores
+      // Update scores
       if (isCorrectAnswer) {
-        storage.incCompleteSentenceCorrect();
+        storage.incTalesCorrect();
       } else {
         // Increment wrong answers counter for incorrect selections
-        storage.incCompleteSentenceWrong();
+        storage.incTalesWrong();
       }
     });
 
@@ -120,8 +121,8 @@ class _CompleteSentenceState extends State<CompleteSentence> {
   void initState() {
     super.initState();
     // Initialize scores
-    storage.setCompleteSentenceCorrect(storage.getCompleteSentenceCorrect());
-    storage.setCompleteSentenceWrong(storage.getCompleteSentenceWrong());
+    storage.setTalesCorrect(storage.getTalesCorrect());
+    storage.setTalesWrong(storage.getTalesWrong());
 
     int numberOfSentences = Sentences.sentences.length;
     currentQuestionIndex = Random().nextInt(numberOfSentences);
@@ -153,7 +154,7 @@ class _CompleteSentenceState extends State<CompleteSentence> {
           // Header with Score
           Padding(
             padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
-            child: Score(game: "CompleteSentence"),
+            child: Score(game: "Tales"),
           ),
 
           Expanded(
