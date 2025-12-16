@@ -38,6 +38,7 @@ class _ExplanationDialog extends StatefulWidget {
 class _ExplanationDialogState extends State<_ExplanationDialog> {
   late AudioPlayer _player;
   bool _isPlaying = false;
+  bool _isCompleted = false;
 
   @override
   void initState() {
@@ -48,6 +49,7 @@ class _ExplanationDialogState extends State<_ExplanationDialog> {
       if (mounted) {
         setState(() {
           _isPlaying = state.playing;
+          _isCompleted = state.processingState == ProcessingState.completed;
         });
       }
     });
@@ -125,7 +127,11 @@ class _ExplanationDialogState extends State<_ExplanationDialog> {
                     }
                   },
                   child: Icon(
-                    _isPlaying ? Icons.pause_rounded : Icons.volume_up_rounded,
+                    _isCompleted
+                        ? Icons.replay_rounded
+                        : (_isPlaying
+                              ? Icons.pause_rounded
+                              : Icons.volume_up_rounded),
                     color: Colors.orange.shade800,
                     size: 40,
                   ),

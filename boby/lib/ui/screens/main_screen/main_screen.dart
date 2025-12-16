@@ -50,7 +50,7 @@ class MainScreen extends StatelessWidget {
           ],
         ),
         actions: [
-          getExplanationButton(appController.currentPage.value),
+          Obx(() => getExplanationButton(appController.currentPage.value)),
           IconButton(
             onPressed: () {
               appController.menuOpen.value = !appController.menuOpen.value;
