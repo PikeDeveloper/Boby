@@ -14,6 +14,9 @@ class AppController extends GetxController {
   var menuOpen = false.obs;
   var celebrationVisible = false.obs; // controls celebration overlay visibility
 
+  // Tales Randomization
+  final List<int> _availableTalesIndices = [];
+
   //---------noShow------------------------------
   var noShow = "no".obs;
 
@@ -123,4 +126,14 @@ class AppController extends GetxController {
 
   //scrable settings
   var scrableLevel = "medium".obs;
+
+  int getNextTaleIndex(int totalTales) {
+    if (_availableTalesIndices.isEmpty) {
+      _availableTalesIndices.addAll(
+        List.generate(totalTales, (index) => index),
+      );
+      _availableTalesIndices.shuffle();
+    }
+    return _availableTalesIndices.removeLast();
+  }
 }

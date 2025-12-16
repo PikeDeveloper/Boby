@@ -35,6 +35,10 @@ class _TalesScreenState extends State<TalesScreen> {
   void initState() {
     super.initState();
     _audioPlayer = AudioPlayer();
+    _audioPlayer = AudioPlayer();
+    // Initial load: get random index
+    // Note: We need to know total tales count. Tales.tales is accessible.
+    _currentTaleIndex = _appController.getNextTaleIndex(Tales.tales.length);
     _loadTale();
   }
 
@@ -101,7 +105,7 @@ class _TalesScreenState extends State<TalesScreen> {
           debugPrint("Error scrolling to top: $e");
         }
         // load next tale
-        _currentTaleIndex++;
+        _currentTaleIndex = _appController.getNextTaleIndex(Tales.tales.length);
         _loadTale();
         // Transition after delay
         Future.delayed(const Duration(milliseconds: 400), () {
