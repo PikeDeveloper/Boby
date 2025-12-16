@@ -9,6 +9,7 @@ import 'package:boby/ui/screens/memory_screen/memory_screen.dart';
 import 'package:boby/ui/screens/scramble_word/scramble_screen.dart';
 import 'package:boby/ui/screens/tales_scrren/tales.dart';
 import 'package:boby/ui/screens/word_guess/word_guess_screen.dart';
+import 'package:boby/ui/shared/explanation.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import '../../shared/main_menu.dart';
@@ -52,6 +53,10 @@ class MainScreen extends StatelessWidget {
           ],
         ),
         actions: [
+          Explanation(
+            text: "Explicación",
+            audioPath: "assets/audio/explanation.mp3",
+          ),
           IconButton(
             onPressed: () {
               appController.menuOpen.value = !appController.menuOpen.value;
