@@ -1,4 +1,6 @@
+import 'package:animate_do/animate_do.dart';
 import 'package:flutter/material.dart';
+import 'package:google_fonts/google_fonts.dart';
 import 'package:just_audio/just_audio.dart';
 
 class Explanation extends StatelessWidget {
@@ -10,14 +12,15 @@ class Explanation extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return IconButton(
-      icon: const Icon(Icons.info, color: Colors.orange, size: 40),
       onPressed: () {
         showDialog(
           context: context,
+          barrierDismissible: false,
           builder: (context) =>
               _ExplanationDialog(text: text, audioPath: audioPath),
         );
       },
+      icon: Image.asset("assets/explanation.png"),
     );
   }
 }
@@ -34,12 +37,20 @@ class _ExplanationDialog extends StatefulWidget {
 
 class _ExplanationDialogState extends State<_ExplanationDialog> {
   late AudioPlayer _player;
+  bool _isPlaying = false;
 
   @override
   void initState() {
     super.initState();
     _player = AudioPlayer();
     _initAudio();
+    _player.playerStateStream.listen((state) {
+      if (mounted) {
+        setState(() {
+          _isPlaying = state.playing;
+        });
+      }
+    });
   }
 
   Future<void> _initAudio() async {
@@ -62,49 +73,82 @@ class _ExplanationDialogState extends State<_ExplanationDialog> {
 
   @override
   Widget build(BuildContext context) {
-    return AlertDialog(
-      shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(20)),
-      content: Column(
-        mainAxisSize: MainAxisSize.min,
-        children: [
-          Text(
-            widget.text,
-            style: const TextStyle(fontSize: 20, fontWeight: FontWeight.bold),
-            textAlign: TextAlign.center,
-          ),
-          const SizedBox(height: 20),
-          IconButton(
-            icon: const Icon(
-              Icons.volume_up_rounded,
-              size: 50,
-              color: Colors.blueAccent,
-            ),
-            onPressed: () async {
-              await _player.seek(Duration.zero);
-              await _player.play();
-            },
-          ),
-          const Text("Reproducir audio", style: TextStyle(color: Colors.grey)),
-        ],
-      ),
-      actions: [
-        Center(
-          child: ElevatedButton(
-            style: ElevatedButton.styleFrom(
-              backgroundColor: Colors.blueAccent,
-              foregroundColor: Colors.white,
-              padding: const EdgeInsets.symmetric(horizontal: 40, vertical: 12),
-              shape: RoundedRectangleBorder(
-                borderRadius: BorderRadius.circular(10),
+    return ZoomIn(
+      duration: const Duration(milliseconds: 400),
+      child: Dialog(
+        backgroundColor: Colors.transparent,
+        child: Container(
+          width: double.infinity,
+          decoration: BoxDecoration(
+            color: Colors.white,
+            borderRadius: BorderRadius.circular(25),
+            border: Border.all(color: Colors.orange.shade200, width: 4),
+            boxShadow: [
+              BoxShadow(
+                color: Colors.black.withOpacity(0.1),
+                blurRadius: 20,
+                offset: const Offset(0, 10),
               ),
-            ),
-            onPressed: () {
-              Navigator.of(context).pop();
-            },
-            child: const Text("OK", style: TextStyle(fontSize: 18)),
+            ],
+          ),
+          child: Column(
+            mainAxisSize: MainAxisSize.min,
+            children: [
+              // Header
+              const SizedBox(height: 20),
+
+              // Text Content
+              Padding(
+                padding: const EdgeInsets.symmetric(horizontal: 20),
+                child: Text(
+                  widget.text,
+                  style: GoogleFonts.nunito(
+                    fontSize: 18,
+                    fontWeight: FontWeight.w600,
+                    color: Colors.grey.shade800,
+                    height: 1.5,
+                  ),
+                  textAlign: TextAlign.center,
+                ),
+              ),
+              const SizedBox(height: 25),
+
+              // Audio Player Control
+              Center(
+                child: GestureDetector(
+                  onTap: () async {
+                    if (_isPlaying) {
+                      await _player.pause();
+                    } else {
+                      await _player.seek(Duration.zero);
+                      await _player.play();
+                    }
+                  },
+                  child: Icon(
+                    _isPlaying ? Icons.pause_rounded : Icons.volume_up_rounded,
+                    color: Colors.orange.shade800,
+                    size: 40,
+                  ),
+                ),
+              ),
+              const SizedBox(height: 25),
+
+              // OK Button
+              IconButton(
+                onPressed: () => Navigator.pop(context),
+                icon: Text(
+                  "OK",
+                  style: TextStyle(
+                    color: Colors.orange.shade800,
+                    fontSize: 20,
+                    fontWeight: FontWeight.bold,
+                  ),
+                ),
+              ),
+            ],
           ),
         ),
-      ],
+      ),
     );
   }
 }

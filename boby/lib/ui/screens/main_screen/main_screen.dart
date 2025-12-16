@@ -23,13 +23,10 @@ class MainScreen extends StatelessWidget {
 
   final List<Widget> screens = [
     ListCardSounds(),
-
     MemoryScreen(),
     LettersSoup(),
-    // CompleteSentence(),
     TalesScreen(),
     WordGuessScreen(),
-    // MatchItScreen(),
     ScrambleScreen(),
     SettingScreen(),
     NameScreen(),
@@ -53,10 +50,7 @@ class MainScreen extends StatelessWidget {
           ],
         ),
         actions: [
-          Explanation(
-            text: "Explicación",
-            audioPath: "assets/audio/explanation.mp3",
-          ),
+          getExplanationButton(appController.currentPage.value),
           IconButton(
             onPressed: () {
               appController.menuOpen.value = !appController.menuOpen.value;
@@ -81,5 +75,43 @@ class MainScreen extends StatelessWidget {
         ),
       ),
     );
+  }
+
+  Widget getExplanationButton(int screen) {
+    switch (screen) {
+      case 0:
+        return Explanation(
+          text: "Drag names onto cards.",
+          audioPath: "assets/explanation/drag_name.mp3",
+        );
+      case 1:
+        return Explanation(
+          text: "Flip the cards to find the pairs.",
+          audioPath: "assets/explanation/flip_the_cards.mp3",
+        );
+      case 2:
+        return Explanation(
+          text: "Find the hidden words in the grid.",
+          audioPath: "assets/explanation/find_the_hidden_words.mp3",
+        );
+      case 3:
+        return Explanation(
+          text: "Read the story, then answer the question.",
+          audioPath: "assets/explanation/read_the_story.mp3",
+        );
+      case 4:
+        return Explanation(
+          text: "Guess the word by choosing letters.",
+          audioPath: "assets/explanation/guess_the_words.mp3",
+        );
+      case 5:
+        return Explanation(
+          text: "Arrange the words to make a sentence.",
+          audioPath: "assets/explanation/arrange_the_words.mp3",
+        );
+
+      default:
+        return SizedBox();
+    }
   }
 }
