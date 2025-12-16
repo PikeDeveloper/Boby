@@ -2,16 +2,13 @@ import 'dart:async';
 import 'dart:math';
 import 'package:boby/controllers/app_controller.dart';
 import 'package:boby/services/storage_service.dart';
-import 'package:boby/ui/screens/bonus_sreen/float_words/bonus_screen.dart';
 import 'package:boby/ui/screens/bonus_sreen/complete_sentence/widgets/colored_button.dart';
 import 'package:boby/ui/screens/bonus_sreen/complete_sentence/widgets/sentense_container.dart';
-import 'package:boby/ui/screens/tales_scrren/tales.dart';
 import 'package:boby/ui/shared/score.dart';
 import 'package:boby/utils/colors.dart';
 import 'package:boby/utils/constants.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
-import 'package:boby/ui/screens/main_screen/widgets/background.dart';
 import 'package:boby/ui/shared/word_of_images.dart';
 import 'widgets/sentences.dart';
 
@@ -30,12 +27,11 @@ class _CompleteSentenceState extends State<CompleteSentence> {
   bool showCorrect = false;
   List<int> usedQuestionIndices = [];
   Set<int> selectedAnswerIndices = {};
-  Random _rng = Random();
+
   int? selectedAnswerIndex;
   bool isCorrect = false;
   int?
   correctAnswerIndex; // Track the index of the correct answer after shuffling
-  int consecutiveCorrectAnswers = 0; // Track consecutive correct answers
   List<String> shuffledAnswers =
       []; // Store shuffled answers for current question
 
@@ -69,21 +65,9 @@ class _CompleteSentenceState extends State<CompleteSentence> {
     setState(() {
       if (!isCorrectAnswer) {
         selectedAnswerIndices.add(answerIndex);
-        consecutiveCorrectAnswers = 0; // Reset on wrong answer
       } else {
         // Clear all selections when correct answer is chosen
         selectedAnswerIndices.clear();
-        consecutiveCorrectAnswers++;
-
-        if (consecutiveCorrectAnswers >= 2) {
-          consecutiveCorrectAnswers = 0;
-          // Navigate to Bonus Screen
-          Future.delayed(const Duration(milliseconds: 500), () async {
-            if (_rng.nextInt(3) == 0) {
-              await Get.to(() => BonusScreenFloatWords());
-            }
-          });
-        }
       }
       selectedAnswerIndex = answerIndex;
       showCorrect = true;
@@ -179,7 +163,10 @@ class _CompleteSentenceState extends State<CompleteSentence> {
 
     return Scaffold(
       backgroundColor: Colors.transparent,
-      appBar: AppBar(title: WordOfImages(letters: 'BONUS', letterSize: 30)),
+      appBar: AppBar(
+        title: WordOfImages(letters: 'BONUS', letterSize: 30),
+        centerTitle: true,
+      ),
       body: Stack(
         children: [
           SizedBox(

@@ -15,7 +15,7 @@ class Explanation extends StatelessWidget {
       onPressed: () {
         showDialog(
           context: context,
-          barrierDismissible: false,
+          barrierDismissible: true,
           builder: (context) =>
               _ExplanationDialog(text: text, audioPath: audioPath),
         );
@@ -62,6 +62,7 @@ class _ExplanationDialogState extends State<_ExplanationDialog> {
       } else {
         await _player.setAsset(widget.audioPath);
       }
+      await _player.play();
     } catch (e) {
       debugPrint("Error loading audio: $e");
     }
