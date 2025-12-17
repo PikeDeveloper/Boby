@@ -1,9 +1,7 @@
 import 'dart:math';
-
 import 'package:boby/controllers/app_controller.dart';
 import 'package:boby/services/storage_service.dart';
 import 'package:boby/ui/screens/tales_scrren/widgets/image_tale.dart';
-import 'package:boby/ui/screens/bonus_sreen/complete_sentence/complete_sentence.dart';
 import 'package:boby/ui/screens/tales_scrren/widgets/tales.dart';
 import 'package:boby/ui/shared/score.dart';
 import 'package:flutter/material.dart';
@@ -110,7 +108,7 @@ class _TalesScreenState extends State<TalesScreen> {
         // Transition after delay
         Future.delayed(const Duration(milliseconds: 400), () {
           if (mounted) {
-            Get.toNamed(CompleteSentence.route);
+            _appController.setBonusScreen();
           }
         });
       } else {
@@ -141,6 +139,7 @@ class _TalesScreenState extends State<TalesScreen> {
   Widget build(BuildContext context) {
     final taleData = Tales.tales[_currentTaleIndex];
     final hasAudio = taleData['audio'] != null;
+    final appController = Get.find<AppController>();
 
     return Container(
       decoration: const BoxDecoration(
@@ -153,7 +152,7 @@ class _TalesScreenState extends State<TalesScreen> {
       child: SafeArea(
         child: Column(
           children: [
-            Score(game: "Tales"),
+            Score(game: appController.gameSelected.value),
             Expanded(
               child: SingleChildScrollView(
                 controller: _scrollController,

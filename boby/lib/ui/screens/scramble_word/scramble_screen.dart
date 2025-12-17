@@ -2,7 +2,6 @@ import 'dart:math';
 
 import 'package:boby/controllers/app_controller.dart';
 import 'package:boby/services/storage_service.dart';
-import 'package:boby/ui/screens/bonus_sreen/match_it/match_it.dart';
 import 'package:boby/ui/screens/scramble_word/widgets/draggable_word.dart';
 import 'package:boby/ui/shared/score.dart';
 import 'package:boby/ui/shared/word_of_images.dart';
@@ -100,9 +99,7 @@ class _ScrambleScreenState extends State<ScrambleScreen> {
 
     if (correct) {
       Future.delayed(const Duration(seconds: 1), () async {
-        // Navigate to MatchItScreen when user wins
-        await Get.to(() => const MatchItScreen());
-        // When user returns from MatchItScreen, load a new sentence
+        appController.setBonusScreen();
         _loadNewSentence();
       });
     } else {
@@ -121,6 +118,7 @@ class _ScrambleScreenState extends State<ScrambleScreen> {
     final screenSize = MediaQuery.of(context).size;
     final width = screenSize.width;
     final height = screenSize.height;
+    final appController = Get.find<AppController>();
     final bool isLargeScreen = width > 600;
 
     return Stack(
@@ -131,7 +129,7 @@ class _ScrambleScreenState extends State<ScrambleScreen> {
           child: Column(
             children: [
               // Score and Controls
-              Score(game: "ScrambleWord"),
+              Score(game: appController.gameSelected.value),
               Row(
                 mainAxisAlignment: MainAxisAlignment.center,
                 children: [

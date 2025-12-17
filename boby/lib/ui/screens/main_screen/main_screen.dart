@@ -1,6 +1,9 @@
 import 'package:boby/controllers/app_controller.dart';
 
 import 'package:boby/ui/screens/bonus_sreen/complete_sentence/complete_sentence.dart';
+import 'package:boby/ui/screens/bonus_sreen/float_words/bonus_screen.dart';
+import 'package:boby/ui/screens/bonus_sreen/match_it/match_it.dart';
+import 'package:boby/ui/screens/bonus_sreen/to_be_bonus_screen/to_be_bonus_screen.dart';
 import 'package:boby/ui/screens/drag_and_drop_screen/drag_and_drop_screen.dart';
 import 'package:boby/ui/screens/letters_soup/letters_soup.dart';
 import 'package:boby/ui/screens/main_screen/widgets/background.dart';
@@ -47,10 +50,18 @@ class MainScreen extends StatelessWidget {
               },
               icon: Image.asset("assets/settings_icon.png"),
             ),
+
+            Obx(
+              () => getBonusButton(
+                appController.bonusScreen.value,
+                appController.currentPage.value,
+              ),
+            ),
           ],
         ),
         actions: [
           Obx(() => getExplanationButton(appController.currentPage.value)),
+
           IconButton(
             onPressed: () {
               appController.menuOpen.value = !appController.menuOpen.value;
@@ -108,6 +119,46 @@ class MainScreen extends StatelessWidget {
         return Explanation(
           text: "Arrange the words to make a sentence.",
           audioPath: "assets/explanation/arrange_the_words.mp3",
+        );
+
+      default:
+        return SizedBox();
+    }
+  }
+
+  Widget getBonusButton(int bonusScreen, int currentPage) {
+    if (currentPage == 1 || currentPage == 2 || currentPage == 4) {
+      debugPrint("Bonus button hidden");
+      return SizedBox();
+    }
+    switch (bonusScreen) {
+      case 0:
+        return IconButton(
+          onPressed: () {
+            Get.toNamed(CompleteSentence.route);
+          },
+          icon: Image.asset("assets/bonus_purple.png"),
+        );
+      case 1:
+        return IconButton(
+          onPressed: () {
+            Get.toNamed(BonusScreenFloatWords.route);
+          },
+          icon: Image.asset("assets/bonus_blue.png"),
+        );
+      case 2:
+        return IconButton(
+          onPressed: () {
+            Get.toNamed(MatchItScreen.route);
+          },
+          icon: Image.asset("assets/bonus_yellow.png"),
+        );
+      case 3:
+        return IconButton(
+          onPressed: () {
+            Get.toNamed(ToBeBonusScreen.routeName);
+          },
+          icon: Image.asset("assets/bonus_green.png"),
         );
 
       default:

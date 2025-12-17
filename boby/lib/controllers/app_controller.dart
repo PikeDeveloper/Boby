@@ -4,6 +4,7 @@ import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:just_audio/just_audio.dart';
 import 'package:boby/services/storage_service.dart';
+import 'dart:math';
 
 class AppController extends GetxController {
   //------------General------------------------------
@@ -11,6 +12,8 @@ class AppController extends GetxController {
   var backGroundImage = "".obs;
   var currentPage = 4.obs;
   var cardSelected = "".obs;
+  var bonusScreen = 7.obs;
+  var gameSelected = "DragAndDrop".obs;
   var menuOpen = false.obs;
   var celebrationVisible = false.obs; // controls celebration overlay visibility
 
@@ -135,5 +138,16 @@ class AppController extends GetxController {
       _availableTalesIndices.shuffle();
     }
     return _availableTalesIndices.removeLast();
+  }
+
+  //functions for bonus screen
+  //esta funcion guarda en bonusScreen un numero aleatorio entre 0 y 6
+  void setBonusScreen() {
+    Random _rng = Random();
+    if (bonusScreen.value <= 3) {
+      bonusScreen.value = _rng.nextInt(4);
+    } else {
+      bonusScreen.value = _rng.nextInt(10);
+    }
   }
 }

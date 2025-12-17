@@ -24,7 +24,7 @@ class NameScreen extends StatelessWidget {
               borderRadius: BorderRadius.circular(10),
             ),
             child: Text(
-              "Listen to some names in English.",
+              "This screen is not a game. It is just to learn the names of some cards.",
               style: TextStyle(
                 fontSize: 22,
                 fontWeight: FontWeight.w600,
@@ -34,7 +34,7 @@ class NameScreen extends StatelessWidget {
             ),
           ),
           //switchbutton stilo apple
-          CupertinoSwitch(value: false, onChanged: (value) {}),
+          // CupertinoSwitch(value: false, onChanged: (value) {}),
           const SizedBox(height: 20),
           Expanded(
             child: GridView.builder(

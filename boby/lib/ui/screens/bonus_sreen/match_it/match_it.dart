@@ -155,6 +155,8 @@ class _MatchItScreenState extends State<MatchItScreen> {
         if (_elapsedTime >= _gameDuration) {
           _gameTimer?.cancel();
           // Return to previous screen (ScrambleScreen)
+          final appController = Get.find<AppController>();
+          appController.bonusScreen.value = 7;
           Get.back();
         }
       });
@@ -294,10 +296,11 @@ class _MatchItScreenState extends State<MatchItScreen> {
   }
 
   void _onColorTap((String, Color) picked) {
+    final appController = Get.find<AppController>();
     if (_isLocked) return;
     if (picked == _targetColor) {
       _app.playMenuSound(soundPathCorrectAnswer);
-      StorageService.instance.incScrambleWordCorrect();
+      StorageService.instance.incScoreCorrect(appController.gameSelected.value);
       setState(() {
         _isLocked = true;
         _showCorrectOverlay = true;
@@ -310,7 +313,7 @@ class _MatchItScreenState extends State<MatchItScreen> {
       });
     } else {
       _app.playMenuSound(soundPathIncorrectAnswer);
-      StorageService.instance.incScrambleWordWrong();
+      StorageService.instance.incScoreWrong(appController.gameSelected.value);
       setState(() {
         _wrongColorLabels.add(picked.$1);
       });
@@ -318,10 +321,11 @@ class _MatchItScreenState extends State<MatchItScreen> {
   }
 
   void _onNumberTap(int picked) {
+    final appController = Get.find<AppController>();
     if (_isLocked) return;
     if (picked == _targetNumber) {
       _app.playMenuSound(soundPathCorrectAnswer);
-      StorageService.instance.incScrambleWordCorrect();
+      StorageService.instance.incScoreCorrect(appController.gameSelected.value);
       setState(() {
         _isLocked = true;
         _showCorrectOverlay = true;
@@ -334,7 +338,7 @@ class _MatchItScreenState extends State<MatchItScreen> {
       });
     } else {
       _app.playMenuSound(soundPathIncorrectAnswer);
-      StorageService.instance.incScrambleWordWrong();
+      StorageService.instance.incScoreWrong(appController.gameSelected.value);
       setState(() {
         _wrongNumberValues.add(picked);
       });
@@ -342,10 +346,11 @@ class _MatchItScreenState extends State<MatchItScreen> {
   }
 
   void _onFigureTap(String picked) {
+    final appController = Get.find<AppController>();
     if (_isLocked) return;
     if (_targetFigure != null && picked == _targetFigure!["name"]) {
       _app.playMenuSound(soundPathCorrectAnswer);
-      StorageService.instance.incScrambleWordCorrect();
+      StorageService.instance.incScoreCorrect(appController.gameSelected.value);
       setState(() {
         _isLocked = true;
         _showCorrectOverlay = true;
@@ -358,7 +363,7 @@ class _MatchItScreenState extends State<MatchItScreen> {
       });
     } else {
       _app.playMenuSound(soundPathIncorrectAnswer);
-      StorageService.instance.incScrambleWordWrong();
+      StorageService.instance.incScoreWrong(appController.gameSelected.value);
       setState(() {
         _wrongFigureLabels.add(picked);
       });
@@ -380,6 +385,7 @@ class _MatchItScreenState extends State<MatchItScreen> {
 
   @override
   Widget build(BuildContext context) {
+    final appController = Get.find<AppController>();
     final screenSize = MediaQuery.of(context).size;
     final isLandscape = screenSize.width > screenSize.height;
     bool istablet = screenSize.width > Constants.tabletSize;
@@ -402,7 +408,7 @@ class _MatchItScreenState extends State<MatchItScreen> {
             padding: const EdgeInsets.all(16.0),
             child: Column(
               children: [
-                Score(game: "ScrambleWord"),
+                Score(game: appController.gameSelected.value),
 
                 Container(
                   height: 20,

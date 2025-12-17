@@ -114,7 +114,8 @@ class _BonusScreenFloatWordsState extends State<BonusScreenFloatWords>
   }
 
   void _handleGameOver() {
-    // Show game over dialog or navigate away
+    final appController = Get.find<AppController>();
+    appController.bonusScreen.value = 7;
     Get.back();
   }
 
@@ -156,7 +157,7 @@ class _BonusScreenFloatWordsState extends State<BonusScreenFloatWords>
     );
   }
 
-  void _handleTap(FloatingWord word) {
+  void _handleTap(FloatingWord word, String gameSelected) {
     if (word.color != null) return; // Already tapped
 
     setState(() {
@@ -164,13 +165,13 @@ class _BonusScreenFloatWordsState extends State<BonusScreenFloatWords>
         word.color = Colors.green;
         _addFeedback(word, "+2", Colors.green);
         Get.find<AppController>().playGameBonus();
-        storage.incTalesCorrect();
-        storage.incTalesCorrect();
+        storage.incScoreCorrect(gameSelected);
+        storage.incScoreCorrect(gameSelected);
       } else {
         word.color = Colors.red;
         _addFeedback(word, "1", Colors.red);
         Get.find<AppController>().playBubblePop();
-        storage.incTalesWrong();
+        storage.incScoreWrong(gameSelected);
       }
     });
   }
@@ -189,6 +190,7 @@ class _BonusScreenFloatWordsState extends State<BonusScreenFloatWords>
 
   @override
   Widget build(BuildContext context) {
+    final appController = Get.find<AppController>();
     return Scaffold(
       body: Stack(
         children: [
@@ -211,7 +213,7 @@ class _BonusScreenFloatWordsState extends State<BonusScreenFloatWords>
             right: 0,
             child: Column(
               children: [
-                Score(game: "Tales"),
+                Score(game: appController.gameSelected.value),
                 Container(
                   padding: const EdgeInsets.symmetric(
                     horizontal: 20,
@@ -284,7 +286,7 @@ class _BonusScreenFloatWordsState extends State<BonusScreenFloatWords>
               left: MediaQuery.of(context).size.width * word.x,
               top: MediaQuery.of(context).size.height * word.y,
               child: GestureDetector(
-                onTap: () => _handleTap(word),
+                onTap: () => _handleTap(word, appController.gameSelected.value),
                 child: Container(
                   padding: const EdgeInsets.symmetric(
                     horizontal: 16,

@@ -1,17 +1,16 @@
 import 'package:boby/ui/screens/drag_and_drop_screen/widgets/name_contanier.dart';
 import 'package:boby/ui/screens/word_guess/widgets/celebration_image.dart';
 import 'package:boby/ui/shared/score.dart';
-import 'package:boby/ui/shared/word_of_images.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:dotted_border/dotted_border.dart'
     show DottedBorder, RoundedRectDottedBorderOptions;
 import '../../../utils/constants.dart';
+import '../../shared/word_of_images.dart';
 import 'widgets/card_sound.dart';
 import 'package:boby/controllers/app_controller.dart';
 import 'package:just_audio/just_audio.dart';
 import 'package:boby/services/storage_service.dart';
-import 'package:boby/ui/screens/bonus_sreen/to_be_bonus_screen/to_be_bonus_screen.dart';
 
 import 'dart:math'; // Added import
 
@@ -27,8 +26,6 @@ class _ListCardSoundsState extends State<ListCardSounds> {
   final List<String?> cardNames = List.filled(4, null);
   int? activeCardIndex;
   final AppController app = Get.find<AppController>();
-  int _consecutiveWins = 0;
-  final Random _rng = Random(); // Added Random instance
 
   final String _winSound = "assets/sounds/winner-game.wav";
   final String _wrongMatchSound = "assets/sounds/bubble-pop.wav";
@@ -101,7 +98,7 @@ class _ListCardSoundsState extends State<ListCardSounds> {
 
       if (currentCorrect == assets.length) {
         // All correct - win
-        _consecutiveWins++;
+
         await _playSound(_winSound);
         app.celebrationVisible.value = true;
 
@@ -109,20 +106,13 @@ class _ListCardSoundsState extends State<ListCardSounds> {
         await Future.delayed(const Duration(seconds: 1));
         app.celebrationVisible.value = false;
 
-        if (_consecutiveWins >= 1) {
-          _consecutiveWins = 0;
-          // 1 in 3 chance to go to bonus screen
-          if (_rng.nextInt(3) == 0) {
-            Get.to(() => ToBeBonusScreen());
-          }
-        }
+        app.setBonusScreen();
 
         setState(() {
           _loadRandomCards();
         });
       } else {
-        // Some wrong - game over
-        _consecutiveWins = 0;
+        // Some wrong - game over        _consecutiveWins = 0;
         await _playSound(_gameOverSound);
 
         // Clear all cards after a short delay
@@ -313,7 +303,7 @@ class _ListCardSoundsState extends State<ListCardSounds> {
           child: Column(
             mainAxisAlignment: MainAxisAlignment.center,
             children: [
-              Score(game: "DragAndDrop"),
+              Score(game: appController.gameSelected.value),
 
               // Top half of screen - Cards
               isWide ? const Spacer() : const SizedBox(height: 10),
@@ -327,6 +317,7 @@ class _ListCardSoundsState extends State<ListCardSounds> {
                   WordOfImages(letters: "DROP", letterSize: isWide ? 50 : 25),
                 ],
               ),
+              SizedBox(height: 10),
               isWide ? const Spacer() : const SizedBox(height: 10),
               Stack(
                 alignment: Alignment.center,

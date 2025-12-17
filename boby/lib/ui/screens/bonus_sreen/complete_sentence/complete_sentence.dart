@@ -6,7 +6,6 @@ import 'package:boby/ui/screens/bonus_sreen/complete_sentence/widgets/colored_bu
 import 'package:boby/ui/screens/bonus_sreen/complete_sentence/widgets/sentense_container.dart';
 import 'package:boby/ui/shared/score.dart';
 import 'package:boby/utils/colors.dart';
-import 'package:boby/utils/constants.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:boby/ui/shared/word_of_images.dart';
@@ -45,7 +44,8 @@ class _CompleteSentenceState extends State<CompleteSentence> {
         _elapsedTime += const Duration(milliseconds: 100);
         if (_elapsedTime >= _gameDuration) {
           _timer?.cancel();
-          // Navigate back to TalesScreen
+          final appController = Get.find<AppController>();
+          appController.bonusScreen.value = 7;
           Get.back();
         }
       });
@@ -74,12 +74,10 @@ class _CompleteSentenceState extends State<CompleteSentence> {
       isCorrect = isCorrectAnswer;
 
       // Update scores
-      // Update scores
       if (isCorrectAnswer) {
-        storage.incTalesCorrect();
+        storage.incScoreCorrect(appController.gameSelected.value);
       } else {
-        // Increment wrong answers counter for incorrect selections
-        storage.incTalesWrong();
+        storage.incScoreWrong(appController.gameSelected.value);
       }
     });
 
@@ -150,9 +148,6 @@ class _CompleteSentenceState extends State<CompleteSentence> {
     final String sentence = currentQuestion['sentence'] as String;
     final screenSize = MediaQuery.of(context).size;
     final screenWidth = screenSize.width;
-    final screenHeight = screenSize.height;
-    final bool isTablet = screenWidth > Constants.tabletSize;
-    final bool iisLandscape = screenWidth > screenHeight;
 
     List<Color> colors = [
       MyColors.purple,
@@ -186,7 +181,7 @@ class _CompleteSentenceState extends State<CompleteSentence> {
                     horizontal: 16,
                     vertical: 8,
                   ),
-                  child: Score(game: "Tales"),
+                  child: Score(game: appController.gameSelected.value),
                 ),
 
                 //barra progresiva aqui

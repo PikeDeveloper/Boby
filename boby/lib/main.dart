@@ -1,6 +1,5 @@
 import 'package:boby/controllers/app_controller.dart';
 import 'package:boby/ui/screens/main_screen/main_screen.dart';
-import 'package:boby/ui/screens/tales_scrren/tales.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:get/get.dart';

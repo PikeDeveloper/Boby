@@ -237,4 +237,38 @@ class StorageService extends GetxService {
   Future<void> setScrambleLevel(String value) =>
       _box.put(_kScrambleLevel, value);
   static String get scrambleLevelKey => _kScrambleLevel;
+
+  //funcion que incrementa el contador correct
+  void incScoreCorrect(String gameSelected) {
+    switch (gameSelected) {
+      case 'DragAndDrop':
+        incSoundCardsCorrect();
+        break;
+      case 'ScrambleWord':
+        incScrambleWordCorrect();
+        break;
+      case 'Tales':
+        incTalesCorrect();
+        break;
+      default:
+        break;
+    }
+  }
+
+  //funcion que incrementa el contador incorrecto
+  void incScoreWrong(String gameSelected) {
+    switch (gameSelected) {
+      case 'DragAndDrop':
+        incSoundCardsWrong();
+        break;
+      case 'ScrambleWord':
+        incScrambleWordWrong();
+        break;
+      case 'Tales':
+        incTalesWrong();
+        break;
+      default:
+        break;
+    }
+  }
 }

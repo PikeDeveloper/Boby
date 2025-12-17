@@ -1,5 +1,6 @@
 import 'dart:async';
 import 'dart:math';
+import 'package:boby/controllers/app_controller.dart';
 import 'package:boby/services/storage_service.dart';
 import 'package:boby/ui/screens/bonus_sreen/to_be_bonus_screen/widgest/colored_button.dart';
 import 'package:boby/ui/screens/bonus_sreen/to_be_bonus_screen/widgest/to_be_sentences.dart';
@@ -67,6 +68,8 @@ class _ToBeBonusScreenState extends State<ToBeBonusScreen> {
 
       if (_elapsedTime >= _gameDuration) {
         _gameTimer?.cancel();
+        final appController = Get.find<AppController>();
+        appController.bonusScreen.value = 7;
         Get.back();
       }
     });
@@ -131,6 +134,7 @@ class _ToBeBonusScreenState extends State<ToBeBonusScreen> {
   }
 
   void _onAnswerSelected(String answer) {
+    final appController = Get.find<AppController>();
     StorageService storage = StorageService.instance;
     if (correctSelection != null) return; // Prevent interaction if already won
 
@@ -138,7 +142,7 @@ class _ToBeBonusScreenState extends State<ToBeBonusScreen> {
 
     setState(() {
       if (answer == correctAnswer) {
-        storage.incSoundCardsCorrect(); // Incrementa los puntos del score
+        storage.incScoreCorrect(appController.gameSelected.value);
 
         correctSelection = answer;
 
@@ -152,7 +156,7 @@ class _ToBeBonusScreenState extends State<ToBeBonusScreen> {
         });
       } else {
         wrongSelections.add(answer);
-        storage.incSoundCardsWrong(); // Incrementa los puntos del score
+        storage.incScoreWrong(appController.gameSelected.value);
       }
     });
   }
@@ -169,6 +173,7 @@ class _ToBeBonusScreenState extends State<ToBeBonusScreen> {
 
   @override
   Widget build(BuildContext context) {
+    final appController = Get.find<AppController>();
     return Scaffold(
       appBar: AppBar(title: WordOfImages(letters: 'BONUS', letterSize: 30)),
       body: Stack(
@@ -185,7 +190,7 @@ class _ToBeBonusScreenState extends State<ToBeBonusScreen> {
           ),
           Column(
             children: [
-              Score(game: "DragAndDrop"),
+              Score(game: appController.gameSelected.value),
               Container(
                 height: 20,
                 width: MediaQuery.of(context).size.width * 0.8,
