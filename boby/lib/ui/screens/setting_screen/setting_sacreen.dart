@@ -1,5 +1,6 @@
 import 'package:boby/ui/screens/setting_screen/widgets/background_settins.dart';
 import 'package:boby/ui/screens/setting_screen/widgets/badge_setting.dart';
+import 'package:boby/ui/screens/setting_screen/widgets/bonus_setting.dart';
 import 'package:boby/ui/screens/setting_screen/widgets/match_it_sattings.dart';
 import 'package:boby/ui/screens/setting_screen/widgets/memory_settings.dart';
 import 'package:boby/ui/screens/setting_screen/widgets/more_apps.dart';
@@ -52,6 +53,13 @@ class SettingScreen extends StatelessWidget {
             _buildSection(
               title: "BADGE INFORMATION",
               content: const BadgeSettings(),
+              color: Colors.green,
+            ),
+            const SizedBox(height: 25),
+            // Bonus Settings
+            _buildSection(
+              title: "BONUS INFORMATION",
+              content: const BonusSettings(),
               color: Colors.green,
             ),
             const SizedBox(height: 25),
