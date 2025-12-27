@@ -16,7 +16,6 @@
         <item name="android:statusBarColor">@android:color/transparent</item>
         <item name="android:navigationBarColor">@android:color/black</item>
     </style>
-
     <!-- Theme applied to the Android Window while the process is starting when the OS's Dark Mode setting is off -->
     <style name="LaunchTheme" parent="AppTheme">
         <!-- Show a splash screen on the activity. Automatically removed when
@@ -27,7 +26,6 @@
         <item name="android:windowDrawsSystemBarBackgrounds">false</item>
         <item name="android:windowLayoutInDisplayCutoutMode">shortEdges</item>
     </style>
-    
     <!-- Theme applied to the Android Window as soon as the process has started.
          This theme determines the color of the Android Window while your
          Flutter UI initializes, as well as behind your Flutter UI while its
@@ -37,7 +35,6 @@
     <style name="NormalTheme" parent="AppTheme">
         <item name="android:windowBackground">?android:colorBackground</item>
     </style>
-    
     <!-- Theme for Amazon Fire TV -->
     <style name="AppTheme.Leanback" parent="@android:style/Theme.DeviceDefault.NoActionBar">
         <item name="android:windowBackground">@android:color/black</item>

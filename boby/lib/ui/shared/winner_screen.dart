@@ -28,10 +28,7 @@ class _WinnerScreenState extends State<WinnerScreen>
     _scaleAnimation = Tween<double>(
       begin: 0.0,
       end: 1.0,
-    ).animate(CurvedAnimation(
-      parent: _controller,
-      curve: Curves.elasticOut,
-    ));
+    ).animate(CurvedAnimation(parent: _controller, curve: Curves.elasticOut));
 
     _controller.forward();
   }
@@ -57,24 +54,6 @@ class _WinnerScreenState extends State<WinnerScreen>
     return Stack(
       alignment: Alignment.center,
       children: [
-        Center(
-          child: Column(
-            children: [
-              Image.asset(
-                "assets/confeti.gif",
-                height: screenHeight / 2.5,
-                width: screenWidth,
-                fit: BoxFit.cover,
-              ),
-              Image.asset(
-                "assets/confeti.gif",
-                height: screenHeight / 2.5,
-                width: screenWidth,
-                fit: BoxFit.cover,
-              ),
-            ],
-          ),
-        ),
         Container(
           color: const Color.fromARGB(220, 245, 245, 245),
           child: Column(
@@ -95,15 +74,19 @@ class _WinnerScreenState extends State<WinnerScreen>
               Center(
                 child: ScaleTransition(
                   scale: _scaleAnimation,
-                  child: Image.asset("assets/winner-cup.png",
-                      width: minSize / 2, height: minSize / 2),
+                  child: Image.asset(
+                    "assets/winner-cup.png",
+                    width: minSize / 2,
+                    height: minSize / 2,
+                  ),
                 ),
               ),
               const SizedBox(height: 50),
               LetterButton(
-                  onTap: widget.onTap,
-                  letters: playAgain,
-                  letterSize: letterSize * 0.8),
+                onTap: widget.onTap,
+                letters: playAgain,
+                letterSize: letterSize * 0.8,
+              ),
             ],
           ),
         ),

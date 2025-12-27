@@ -48,6 +48,8 @@ class StorageService extends GetxService {
     talesWrong.value = getTalesWrong();
     scrambleWordCorrect.value = getScrambleWordCorrect();
     scrambleWordWrong.value = getScrambleWordWrong();
+    soundCardsCorrect.value = getSoundCardsCorrect();
+    soundCardsWrong.value = getSoundCardsWrong();
   }
 
   String? getBackground() => _box.get(_kBackground) as String?;
@@ -78,12 +80,12 @@ class StorageService extends GetxService {
 
   // Sound cards game scores
   int getSoundCardsCorrect() => (_box.get('sound_cards_correct') as int?) ?? 0;
-  Future<void> incSoundCardsCorrect([int by = 1]) =>
-      _box.put('sound_cards_correct', getSoundCardsCorrect() + by);
-  // Make sound cards scores reactive
-  RxInt get soundCardsCorrect =>
-      (_box.get('sound_cards_correct') as int? ?? 0).obs;
-  RxInt get soundCardsWrong => (_box.get('sound_cards_wrong') as int? ?? 0).obs;
+  final soundCardsCorrect = 0.obs;
+  Future<void> incSoundCardsCorrect([int by = 1]) async {
+    final newValue = getSoundCardsCorrect() + by;
+    await _box.put('sound_cards_correct', newValue);
+    soundCardsCorrect.value = newValue;
+  }
 
   Future<void> setSoundCardsCorrect(int value) async {
     await _box.put('sound_cards_correct', value);
@@ -103,6 +105,7 @@ class StorageService extends GetxService {
   Future<void> setMatchItWrong(int value) => _box.put('match_it_wrong', value);
 
   int getSoundCardsWrong() => (_box.get('sound_cards_wrong') as int?) ?? 0;
+  final soundCardsWrong = 0.obs;
 
   Future<void> setSoundCardsWrong(int value) async {
     await _box.put('sound_cards_wrong', value);

@@ -46,7 +46,7 @@ class Score extends StatelessWidget {
       case "Memory":
         return StorageService.instance.getMemoryCorrect().toString();
       case "DragAndDrop":
-        return StorageService.instance.getSoundCardsCorrect().toString();
+        return StorageService.instance.soundCardsCorrect.value.toString();
       case "MatchIt":
         return StorageService.instance.getMatchItCorrect().toString();
       case "Tales":
@@ -65,7 +65,7 @@ class Score extends StatelessWidget {
       case "Memory":
         return StorageService.instance.getMemoryWrong().toString();
       case "DragAndDrop":
-        return StorageService.instance.getSoundCardsWrong().toString();
+        return StorageService.instance.soundCardsWrong.value.toString();
       case "MatchIt":
         return StorageService.instance.getMatchItWrong().toString();
       case "Tales":

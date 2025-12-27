@@ -1,3 +1,4 @@
+import 'package:boby/utils/constants.dart';
 import 'package:flutter/material.dart';
 
 class ImageTale extends StatelessWidget {
@@ -7,6 +8,9 @@ class ImageTale extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final screenSize = MediaQuery.of(context).size;
+    final width = screenSize.width;
+    final bool isTablet = width >= Constants.tabletSize;
     return Container(
       margin: const EdgeInsets.only(bottom: 24),
       decoration: BoxDecoration(
@@ -23,7 +27,7 @@ class ImageTale extends StatelessWidget {
         borderRadius: BorderRadius.circular(20),
         child: Image.asset(
           image,
-          height: 220,
+          height: isTablet ? 500 : 220,
           width: double.infinity,
           fit: BoxFit.cover,
           errorBuilder: (context, error, stackTrace) => Container(

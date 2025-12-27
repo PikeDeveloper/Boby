@@ -104,13 +104,15 @@ class _ListCardSoundsState extends State<ListCardSounds> {
 
         // Hide celebration and load new cards after 1 second
         await Future.delayed(const Duration(seconds: 1));
-        app.celebrationVisible.value = false;
+        // app.celebrationVisible.value = false;
 
         app.setBonusScreen();
 
         setState(() {
           _loadRandomCards();
         });
+        await Future.delayed(const Duration(seconds: 5));
+        app.celebrationVisible.value = false;
       } else {
         // Some wrong - game over        _consecutiveWins = 0;
         await _playSound(_gameOverSound);

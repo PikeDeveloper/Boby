@@ -9,6 +9,8 @@ import 'package:get/get.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:just_audio/just_audio.dart';
 
+import '../../../utils/constants.dart';
+
 class TalesScreen extends StatefulWidget {
   static const String routeName = '/tales';
   const TalesScreen({super.key});
