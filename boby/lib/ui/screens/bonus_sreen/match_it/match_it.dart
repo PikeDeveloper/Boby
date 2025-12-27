@@ -300,7 +300,11 @@ class _MatchItScreenState extends State<MatchItScreen> {
     if (_isLocked) return;
     if (picked == _targetColor) {
       _app.playMenuSound(soundPathCorrectAnswer);
-      StorageService.instance.incScoreCorrect(appController.gameSelected.value);
+      if (!appController.isTrainingMode.value) {
+        StorageService.instance.incScoreCorrect(
+          appController.gameSelected.value,
+        );
+      }
       setState(() {
         _isLocked = true;
         _showCorrectOverlay = true;
@@ -313,7 +317,9 @@ class _MatchItScreenState extends State<MatchItScreen> {
       });
     } else {
       _app.playMenuSound(soundPathIncorrectAnswer);
-      StorageService.instance.incScoreWrong(appController.gameSelected.value);
+      if (!appController.isTrainingMode.value) {
+        StorageService.instance.incScoreWrong(appController.gameSelected.value);
+      }
       setState(() {
         _wrongColorLabels.add(picked.$1);
       });
@@ -325,7 +331,11 @@ class _MatchItScreenState extends State<MatchItScreen> {
     if (_isLocked) return;
     if (picked == _targetNumber) {
       _app.playMenuSound(soundPathCorrectAnswer);
-      StorageService.instance.incScoreCorrect(appController.gameSelected.value);
+      if (!appController.isTrainingMode.value) {
+        StorageService.instance.incScoreCorrect(
+          appController.gameSelected.value,
+        );
+      }
       setState(() {
         _isLocked = true;
         _showCorrectOverlay = true;
@@ -338,7 +348,9 @@ class _MatchItScreenState extends State<MatchItScreen> {
       });
     } else {
       _app.playMenuSound(soundPathIncorrectAnswer);
-      StorageService.instance.incScoreWrong(appController.gameSelected.value);
+      if (!appController.isTrainingMode.value) {
+        StorageService.instance.incScoreWrong(appController.gameSelected.value);
+      }
       setState(() {
         _wrongNumberValues.add(picked);
       });
@@ -350,7 +362,11 @@ class _MatchItScreenState extends State<MatchItScreen> {
     if (_isLocked) return;
     if (_targetFigure != null && picked == _targetFigure!["name"]) {
       _app.playMenuSound(soundPathCorrectAnswer);
-      StorageService.instance.incScoreCorrect(appController.gameSelected.value);
+      if (!appController.isTrainingMode.value) {
+        StorageService.instance.incScoreCorrect(
+          appController.gameSelected.value,
+        );
+      }
       setState(() {
         _isLocked = true;
         _showCorrectOverlay = true;
@@ -363,7 +379,9 @@ class _MatchItScreenState extends State<MatchItScreen> {
       });
     } else {
       _app.playMenuSound(soundPathIncorrectAnswer);
-      StorageService.instance.incScoreWrong(appController.gameSelected.value);
+      if (!appController.isTrainingMode.value) {
+        StorageService.instance.incScoreWrong(appController.gameSelected.value);
+      }
       setState(() {
         _wrongFigureLabels.add(picked);
       });

@@ -16,6 +16,7 @@ class AppController extends GetxController {
   var gameSelected = "DragAndDrop".obs;
   var menuOpen = false.obs;
   var celebrationVisible = false.obs; // controls celebration overlay visibility
+  var isTrainingMode = false.obs;
 
   // Tales Randomization
   final List<int> _availableTalesIndices = [];

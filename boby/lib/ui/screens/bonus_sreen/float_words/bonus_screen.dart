@@ -158,6 +158,7 @@ class _BonusScreenFloatWordsState extends State<BonusScreenFloatWords>
   }
 
   void _handleTap(FloatingWord word, String gameSelected) {
+    final appController = Get.find<AppController>();
     if (word.color != null) return; // Already tapped
 
     setState(() {
@@ -165,13 +166,17 @@ class _BonusScreenFloatWordsState extends State<BonusScreenFloatWords>
         word.color = Colors.green;
         _addFeedback(word, "+2", Colors.green);
         Get.find<AppController>().playGameBonus();
-        storage.incScoreCorrect(gameSelected);
-        storage.incScoreCorrect(gameSelected);
+        if (!appController.isTrainingMode.value) {
+          storage.incScoreCorrect(gameSelected);
+          storage.incScoreCorrect(gameSelected);
+        }
       } else {
         word.color = Colors.red;
         _addFeedback(word, "1", Colors.red);
         Get.find<AppController>().playBubblePop();
-        storage.incScoreWrong(gameSelected);
+        if (!appController.isTrainingMode.value) {
+          storage.incScoreWrong(gameSelected);
+        }
       }
     });
   }

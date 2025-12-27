@@ -2,6 +2,7 @@ import 'dart:math';
 
 import 'package:boby/controllers/app_controller.dart';
 import 'package:boby/services/storage_service.dart';
+import 'package:boby/utils/colors.dart';
 
 import 'dart:ui' as ui;
 import 'dart:typed_data';
@@ -33,7 +34,7 @@ class Score extends StatelessWidget {
     }
     return Image.asset(
       badge,
-      key: ValueKey(badge),
+      // key: ValueKey(badge),
       width: isTablet || isLandscape ? 40 : 30,
       height: isTablet || isLandscape ? 50 : 30,
     );
@@ -85,7 +86,9 @@ class Score extends StatelessWidget {
     bool istablet = screenSize.width > Constants.tabletSize;
 
     return GestureDetector(
-      onTap: () => _showRestoreDialog(context, istablet, isLandscape),
+      onTap: () => appController.isTrainingMode.value
+          ? null
+          : _showRestoreDialog(context, istablet, isLandscape),
       child: Container(
         width: isLandscape ? screenSize.width * 0.6 : screenSize.width * 0.9,
         margin: const EdgeInsets.symmetric(vertical: 10, horizontal: 20),
@@ -103,83 +106,105 @@ class Score extends StatelessWidget {
           ],
         ),
         child: Obx(
-          () => Row(
-            mainAxisAlignment: MainAxisAlignment.center,
-            children: [
-              // Level Badge
-              Container(
-                padding: const EdgeInsets.all(4),
-                decoration: BoxDecoration(
-                  color: Colors.blue.withOpacity(0.1),
-                  shape: BoxShape.circle,
-                ),
-                child: AnimatedSwitcher(
-                  duration: const Duration(milliseconds: 300),
-                  transitionBuilder:
-                      (Widget child, Animation<double> animation) {
-                        return ScaleTransition(scale: animation, child: child);
-                      },
-                  child: getBadge(
-                    double.parse(_getCorrectValue()),
-                    double.parse(_getWrongValue()),
-                    istablet,
-                    isLandscape,
-                  ),
-                ),
-              ),
-
-              // Stats - Centered with Expanded
-              Expanded(
-                child: Row(
+          () => !appController.isTrainingMode.value
+              ? Row(
                   mainAxisAlignment: MainAxisAlignment.center,
-                  mainAxisSize: MainAxisSize.min,
                   children: [
-                    _buildScoreItem(
-                      Icons.check_circle_rounded,
-                      _getCorrectValue(),
-                      Colors.green,
-                      isLandscape,
-                      istablet,
-                    ),
+                    // Level Badge
                     Container(
-                      height: 24,
-                      width: 2,
-                      margin: const EdgeInsets.symmetric(horizontal: 12),
-                      color: Colors.grey.shade300,
+                      padding: const EdgeInsets.all(4),
+                      decoration: BoxDecoration(
+                        color: Colors.blue.withOpacity(0.1),
+                        shape: BoxShape.circle,
+                      ),
+                      child: AnimatedSwitcher(
+                        duration: const Duration(milliseconds: 300),
+                        transitionBuilder:
+                            (Widget child, Animation<double> animation) {
+                              return ScaleTransition(
+                                scale: animation,
+                                child: child,
+                              );
+                            },
+                        child: getBadge(
+                          double.parse(_getCorrectValue()),
+                          double.parse(_getWrongValue()),
+                          istablet,
+                          isLandscape,
+                        ),
+                      ),
                     ),
-                    _buildScoreItem(
-                      Icons.cancel_rounded,
-                      _getWrongValue(),
-                      Colors.red,
-                      isLandscape,
-                      istablet,
+
+                    // Stats - Centered with Expanded
+                    Expanded(
+                      child: Row(
+                        mainAxisAlignment: MainAxisAlignment.center,
+                        mainAxisSize: MainAxisSize.min,
+                        children: [
+                          _buildScoreItem(
+                            Icons.check_circle_rounded,
+                            _getCorrectValue(),
+                            Colors.green,
+                            isLandscape,
+                            istablet,
+                          ),
+                          Container(
+                            height: 24,
+                            width: 2,
+                            margin: const EdgeInsets.symmetric(horizontal: 12),
+                            color: Colors.grey.shade300,
+                          ),
+                          _buildScoreItem(
+                            Icons.cancel_rounded,
+                            _getWrongValue(),
+                            Colors.red,
+                            isLandscape,
+                            istablet,
+                          ),
+                        ],
+                      ),
+                    ),
+
+                    // Hidden trigger for reactivity (kept but minimized)
+                    SizedBox(
+                      width: 0,
+                      height: 0,
+                      child: Text(appController.noShow.value),
+                    ),
+
+                    // Menu Icon
+                    Container(
+                      padding: const EdgeInsets.all(4),
+                      decoration: BoxDecoration(
+                        color: Colors.orange.withOpacity(0.1),
+                        shape: BoxShape.circle,
+                      ),
+                      child: const Icon(
+                        Icons.menu_rounded,
+                        color: Colors.orange,
+                        size: 28,
+                      ),
                     ),
                   ],
-                ),
-              ),
+                )
+              : Row(
+                  mainAxisAlignment: MainAxisAlignment.spaceAround,
+                  children: [
+                    getBadge(10, 0, istablet, isLandscape),
 
-              // Hidden trigger for reactivity (kept but minimized)
-              SizedBox(
-                width: 0,
-                height: 0,
-                child: Text(appController.noShow.value),
-              ),
-
-              // Menu Icon
-              Container(
-                padding: const EdgeInsets.all(4),
-                decoration: BoxDecoration(
-                  color: Colors.orange.withOpacity(0.1),
-                  shape: BoxShape.circle,
+                    getBadge(10, 2, istablet, isLandscape),
+                    Text(
+                      "Training Mode",
+                      style: TextStyle(
+                        color: MyColors.darkBlue,
+                        fontSize: 16,
+                        fontWeight: FontWeight.bold,
+                      ),
+                    ),
+                    getBadge(10, 4, istablet, isLandscape),
+                    getBadge(5, 10, istablet, isLandscape),
+                  ],
                 ),
-                child: const Icon(
-                  Icons.menu_rounded,
-                  color: Colors.orange,
-                  size: 28,
-                ),
-              ),
-            ],
-          ),
         ),
       ),
     );

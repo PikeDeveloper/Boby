@@ -142,7 +142,9 @@ class _ToBeBonusScreenState extends State<ToBeBonusScreen> {
 
     setState(() {
       if (answer == correctAnswer) {
-        storage.incScoreCorrect(appController.gameSelected.value);
+        if (!appController.isTrainingMode.value) {
+          storage.incScoreCorrect(appController.gameSelected.value);
+        }
 
         correctSelection = answer;
 
@@ -156,7 +158,9 @@ class _ToBeBonusScreenState extends State<ToBeBonusScreen> {
         });
       } else {
         wrongSelections.add(answer);
-        storage.incScoreWrong(appController.gameSelected.value);
+        if (!appController.isTrainingMode.value) {
+          storage.incScoreWrong(appController.gameSelected.value);
+        }
       }
     });
   }

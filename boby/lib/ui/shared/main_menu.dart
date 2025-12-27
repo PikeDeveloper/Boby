@@ -43,6 +43,7 @@ class MainMenu extends StatelessWidget {
             // Reproduce el sonido usando el AppController (persiste entre navegaciones)
             appController.playMenuSound(soundPath);
             appController.menuOpen.value = false;
+            appController.isTrainingMode.value = false;
             appController.currentPage.value = int.parse(option["route"]!);
             appController.gameSelected.value = option["name"]!;
           },

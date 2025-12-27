@@ -127,6 +127,7 @@ class MainScreen extends StatelessWidget {
   }
 
   Widget getBonusButton(int bonusScreen, int currentPage) {
+    final appController = Get.find<AppController>();
     if (currentPage == 1 || currentPage == 2 || currentPage == 4) {
       debugPrint("Bonus button hidden");
       return SizedBox();
@@ -135,6 +136,7 @@ class MainScreen extends StatelessWidget {
       case 0:
         return IconButton(
           onPressed: () {
+            appController.isTrainingMode.value = false;
             Get.toNamed(CompleteSentence.route);
           },
           icon: Image.asset("assets/bonus_purple.png"),
@@ -142,6 +144,7 @@ class MainScreen extends StatelessWidget {
       case 1:
         return IconButton(
           onPressed: () {
+            appController.isTrainingMode.value = false;
             Get.toNamed(BonusScreenFloatWords.route);
           },
           icon: Image.asset("assets/bonus_blue.png"),
@@ -149,6 +152,7 @@ class MainScreen extends StatelessWidget {
       case 2:
         return IconButton(
           onPressed: () {
+            appController.isTrainingMode.value = false;
             Get.toNamed(MatchItScreen.route);
           },
           icon: Image.asset("assets/bonus_yellow.png"),
@@ -156,6 +160,7 @@ class MainScreen extends StatelessWidget {
       case 3:
         return IconButton(
           onPressed: () {
+            appController.isTrainingMode.value = false;
             Get.toNamed(ToBeBonusScreen.routeName);
           },
           icon: Image.asset("assets/bonus_green.png"),

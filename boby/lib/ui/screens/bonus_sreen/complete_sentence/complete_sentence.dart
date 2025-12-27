@@ -75,9 +75,13 @@ class _CompleteSentenceState extends State<CompleteSentence> {
 
       // Update scores
       if (isCorrectAnswer) {
-        storage.incScoreCorrect(appController.gameSelected.value);
+        if (!appController.isTrainingMode.value) {
+          storage.incScoreCorrect(appController.gameSelected.value);
+        }
       } else {
-        storage.incScoreWrong(appController.gameSelected.value);
+        if (!appController.isTrainingMode.value) {
+          storage.incScoreWrong(appController.gameSelected.value);
+        }
       }
     });
 
