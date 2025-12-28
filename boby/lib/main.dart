@@ -1,4 +1,5 @@
 import 'package:boby/controllers/app_controller.dart';
+import 'package:boby/ui/screens/bonus_sreen/true_or_false_bonus/true_or_false.dart';
 import 'package:boby/ui/screens/main_screen/main_screen.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
@@ -27,7 +28,7 @@ class MainApp extends StatelessWidget {
     return GetMaterialApp(
       debugShowCheckedModeBanner: false,
       title: 'Material App',
-      initialRoute: MainScreen.route,
+      initialRoute: TrueOrFalseBonusScreen.routeName,
       getPages: Routes.routes,
       theme: ThemeData(
         textTheme: GoogleFonts.comicNeueTextTheme(),

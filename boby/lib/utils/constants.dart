@@ -303,11 +303,173 @@ class Constants {
       "name": "Tree",
       "sound": "assets/sound_names/tree.wav",
     },
-    /*
+  ];
+
+  static const List<Map<String, String>> assetsExtras = [
+    {
+      "image": "assets/images/backpack.jpg",
+      "name": "Backpack",
+      "sound": "assets/sound_names/backpack.wav",
+    },
+    {
+      "image": "assets/images/bear.jpg",
+      "name": "Bear",
+      "sound": "assets/sound_names/bear.wav",
+    },
+    {
+      "image": "assets/images/butterfly.jpg",
+      "name": "Butterfly",
+      "sound": "assets/sound_names/butterfly.wav",
+    },
+    {
+      "image": "assets/images/calenderdar.jpg",
+      "name": "Calendar",
+      "sound": "assets/sound_names/calendar.wav",
+    },
+    {
+      "image": "assets/images/clock.jpg",
+      "name": "Clock",
+      "sound": "assets/sound_names/clock.wav",
+    },
+    {
+      "image": "assets/images/cocnut.jpg",
+      "name": "Cocnut",
+      "sound": "assets/sound_names/cocnut.wav",
+    },
+    {
+      "image": "assets/images/crayon.jpg",
+      "name": "Crayon",
+      "sound": "assets/sound_names/crayon.wav",
+    },
+    {
+      "image": "assets/images/crocodile.jpg",
+      "name": "Crocodile",
+      "sound": "assets/sound_names/crocodile.wav",
+    },
+    {
+      "image": "assets/images/desk.jpg",
+      "name": "Desk",
+      "sound": "assets/sound_names/desk.wav",
+    },
+    {
+      "image": "assets/images/dolphin.jpg",
+      "name": "Dolphin",
+      "sound": "assets/sound_names/dolphin.wav",
+    },
+    {
+      "image": "assets/images/giraffe.jpg",
+      "name": "Giraffe",
+      "sound": "assets/sound_names/giraffe.wav",
+    },
+    {
+      "image": "assets/images/glue.jpg",
+      "name": "Glue",
+      "sound": "assets/sound_names/glue.wav",
+    },
+    {
+      "image": "assets/images/kiwi.jpg",
+      "name": "Kiwi",
+      "sound": "assets/sound_names/kiwi.wav",
+    },
+    {
+      "image": "assets/images/mango.jpg",
+      "name": "Mango",
+      "sound": "assets/sound_names/mango.wav",
+    },
+    {
+      "image": "assets/images/monkey.jpg",
+      "name": "Monkey",
+      "sound": "assets/sound_names/monkey.wav",
+    },
+    {
+      "image": "assets/images/papaya.jpg",
+      "name": "Papaya",
+      "sound": "assets/sound_names/papaya.wav",
+    },
+    {
+      "image": "assets/images/pencil.jpg",
+      "name": "Pencil",
+      "sound": "assets/sound_names/pencil.wav",
+    },
+    {
+      "image": "assets/images/penguin.jpg",
+      "name": "Penguin",
+      "sound": "assets/sound_names/penguin.wav",
+    },
+    {
+      "image": "assets/images/pineapple.jpg",
+      "name": "Pineapple",
+      "sound": "assets/sound_names/pineapple.wav",
+    },
+    {
+      "image": "assets/images/rabbit.jpg",
+      "name": "Rabbit",
+      "sound": "assets/sound_names/rabbit.wav",
+    },
+    {
+      "image": "assets/images/ruler.jpg",
+      "name": "Ruler",
+      "sound": "assets/sound_names/ruler.wav",
+    },
+    {
+      "image": "assets/images/scissors.jpg",
+      "name": "Scissors",
+      "sound": "assets/sound_names/scissors.wav",
+    },
+    {
+      "image": "assets/images/shark.jpg",
+      "name": "Shark",
+      "sound": "assets/sound_names/shark.wav",
+    },
+    {
+      "image": "assets/images/snake.jpg",
+      "name": "Snake",
+      "sound": "assets/sound_names/snake.wav",
+    },
+    {
+      "image": "assets/images/television.jpg",
+      "name": "Television",
+      "sound": "assets/sound_names/television.wav",
+    },
+    {
+      "image": "assets/images/turtle.jpg",
+      "name": "Turtle",
+      "sound": "assets/sound_names/turtle.wav",
+    },
+    {
+      "image": "assets/images/whale.jpg",
+      "name": "Whale",
+      "sound": "assets/sound_names/whale.wav",
+    },
+    {
+      "image": "assets/images/zebra.jpg",
+      "name": "Zebra",
+      "sound": "assets/sound_names/zebra.wav",
+    },
+    {
+      "image": "assets/images/fireworks.jpg",
+      "name": "Fireworks",
+      "sound": "assets/sound_names/fireworks.wav",
+    },
+    {
+      "image": "assets/images/accordeon.jpg",
+      "name": "Accordeon",
+      "sound": "assets/sound_names/accordeon.wav",
+    },
+    {
+      "image": "assets/images/strawberry.jpg",
+      "name": "Strawberry",
+      "sound": "assets/sound_names/strawberry.wav",
+    },
     {
       "image": "assets/images/watermelon.jpg",
       "name": "Watermelon",
       "sound": "assets/sound_names/watermelon.wav",
-    },*/
+    },
+    {
+      "image": "assets/images/xylophone.jpg",
+      "name": "Xylophone",
+      "sound": "assets/sound_names/xylophone.wav",
+    },
   ];
 }
