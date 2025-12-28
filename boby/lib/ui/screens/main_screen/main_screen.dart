@@ -4,6 +4,7 @@ import 'package:boby/ui/screens/bonus_sreen/complete_sentence/complete_sentence.
 import 'package:boby/ui/screens/bonus_sreen/float_words/bonus_screen.dart';
 import 'package:boby/ui/screens/bonus_sreen/match_it/match_it.dart';
 import 'package:boby/ui/screens/bonus_sreen/to_be_bonus_screen/to_be_bonus_screen.dart';
+import 'package:boby/ui/screens/bonus_sreen/true_or_false_bonus/true_or_false.dart';
 import 'package:boby/ui/screens/drag_and_drop_screen/drag_and_drop_screen.dart';
 import 'package:boby/ui/screens/letters_soup/letters_soup.dart';
 import 'package:boby/ui/screens/main_screen/widgets/background.dart';
@@ -164,6 +165,14 @@ class MainScreen extends StatelessWidget {
             Get.toNamed(ToBeBonusScreen.routeName);
           },
           icon: Image.asset("assets/bonus_green.png"),
+        );
+      case 4:
+        return IconButton(
+          onPressed: () {
+            appController.isTrainingMode.value = false;
+            Get.toNamed(TrueOrFalseBonusScreen.routeName);
+          },
+          icon: Image.asset("assets/bonus_true_or_false.png"),
         );
 
       default:

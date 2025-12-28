@@ -28,7 +28,7 @@ class MainApp extends StatelessWidget {
     return GetMaterialApp(
       debugShowCheckedModeBanner: false,
       title: 'Material App',
-      initialRoute: TrueOrFalseBonusScreen.routeName,
+      initialRoute: MainScreen.route,
       getPages: Routes.routes,
       theme: ThemeData(
         textTheme: GoogleFonts.comicNeueTextTheme(),

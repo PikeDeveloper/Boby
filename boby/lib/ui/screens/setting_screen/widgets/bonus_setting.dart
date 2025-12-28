@@ -2,9 +2,9 @@ import 'package:boby/controllers/app_controller.dart';
 import 'package:boby/ui/screens/bonus_sreen/float_words/bonus_screen.dart';
 import 'package:boby/ui/screens/bonus_sreen/match_it/match_it.dart';
 import 'package:boby/ui/screens/bonus_sreen/to_be_bonus_screen/to_be_bonus_screen.dart';
+import 'package:boby/ui/screens/bonus_sreen/true_or_false_bonus/true_or_false.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
-import 'package:get/get_core/src/get_main.dart';
 import 'package:boby/ui/screens/bonus_sreen/complete_sentence/complete_sentence.dart';
 
 class BonusSettings extends StatelessWidget {
@@ -40,6 +40,13 @@ class BonusSettings extends StatelessWidget {
         "color": Colors.purple,
         "explanation": "Finish the sentences to earn points.",
         "bonus_screen": CompleteSentence.route,
+      },
+      {
+        "name": "White",
+        "image": "assets/bonus_true_or_false.png",
+        "color": const Color.fromARGB(255, 212, 212, 212),
+        "explanation": "Select true or false to earn points.",
+        "bonus_screen": TrueOrFalseBonusScreen.routeName,
       },
     ];
 

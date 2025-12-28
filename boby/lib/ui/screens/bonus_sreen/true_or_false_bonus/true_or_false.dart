@@ -30,6 +30,10 @@ class _TrueOrFalseBonusScreenState extends State<TrueOrFalseBonusScreen> {
   late String nextDisplayedName;
   late bool nextIsCorrectName;
 
+  // Sound paths
+  final String soundPathIncorrectAnswer = "assets/sounds/bubble-pop.wav";
+  final String soundPathCorrectAnswer = "assets/sounds/game-bonus.wav";
+
   // Timer state
   Timer? _gameTimer;
   final Duration _gameDuration = const Duration(seconds: 15);
@@ -95,9 +99,11 @@ class _TrueOrFalseBonusScreenState extends State<TrueOrFalseBonusScreen> {
   }
 
   void _loadNextQuestion() {
+    List totalItems = [];
+    totalItems.addAll(Constants.assetsExtras);
+    totalItems.addAll(Constants.assets);
     // Select a random item from assetsExtras for next question
-    nextItem =
-        Constants.assetsExtras[random.nextInt(Constants.assetsExtras.length)];
+    nextItem = totalItems[random.nextInt(totalItems.length)];
 
     // Randomly decide if we show the correct name or a wrong one
     nextIsCorrectName = random.nextBool();
@@ -108,8 +114,7 @@ class _TrueOrFalseBonusScreenState extends State<TrueOrFalseBonusScreen> {
       // Get a different random item's name
       Map<String, String> wrongItem;
       do {
-        wrongItem = Constants
-            .assetsExtras[random.nextInt(Constants.assetsExtras.length)];
+        wrongItem = totalItems[random.nextInt(totalItems.length)];
       } while (wrongItem['name'] == nextItem['name']);
       nextDisplayedName = wrongItem['name']!;
     }
@@ -129,12 +134,15 @@ class _TrueOrFalseBonusScreenState extends State<TrueOrFalseBonusScreen> {
           (answer == false && !isCorrectName);
 
       if (isCorrect) {
+        // Play correct answer sound
+        appController.playMenuSound(soundPathCorrectAnswer);
+
         if (!appController.isTrainingMode.value) {
           storage.incScoreCorrect(appController.gameSelected.value);
         }
 
         // Wait 1 second before loading next question
-        Future.delayed(const Duration(milliseconds: 1000), () {
+        Future.delayed(const Duration(milliseconds: 500), () {
           if (mounted) {
             // Advance to next page in PageView
             _pageController.nextPage(
@@ -144,9 +152,23 @@ class _TrueOrFalseBonusScreenState extends State<TrueOrFalseBonusScreen> {
           }
         });
       } else {
+        // Play incorrect answer sound
+        appController.playMenuSound(soundPathIncorrectAnswer);
+
         if (!appController.isTrainingMode.value) {
           storage.incScoreWrong(appController.gameSelected.value);
         }
+
+        // Wait 1 second before loading next question (same as correct answer)
+        Future.delayed(const Duration(milliseconds: 500), () {
+          if (mounted) {
+            // Advance to next page in PageView
+            _pageController.nextPage(
+              duration: const Duration(milliseconds: 300),
+              curve: Curves.easeInOut,
+            );
+          }
+        });
       }
     });
   }
@@ -269,6 +291,17 @@ class _TrueOrFalseBonusScreenState extends State<TrueOrFalseBonusScreen> {
                                 decoration: BoxDecoration(
                                   borderRadius: BorderRadius.circular(20),
                                   color: Colors.white,
+                                  border: Border.all(
+                                    color: selectedAnswer == null
+                                        ? Colors.transparent
+                                        : ((selectedAnswer == true &&
+                                                  isCorrectName) ||
+                                              (selectedAnswer == false &&
+                                                  !isCorrectName))
+                                        ? Colors.green
+                                        : Colors.red,
+                                    width: 5,
+                                  ),
                                 ),
                                 child: Column(
                                   mainAxisSize: MainAxisSize.min,
@@ -281,11 +314,12 @@ class _TrueOrFalseBonusScreenState extends State<TrueOrFalseBonusScreen> {
                                       ),
                                     ),
 
-                                    // Name label
+                                    Spacer(),
                                     WordOfImages(
                                       letters: displayedName.toUpperCase(),
                                       letterSize: 25,
                                     ),
+                                    Spacer(),
                                   ],
                                 ),
                               ),
