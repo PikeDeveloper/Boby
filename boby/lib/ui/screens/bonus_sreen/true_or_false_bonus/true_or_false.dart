@@ -24,6 +24,12 @@ class _TrueOrFalseBonusScreenState extends State<TrueOrFalseBonusScreen> {
   late bool isCorrectName;
   bool? selectedAnswer;
 
+  // PageView controller for swipe transitions
+  late PageController _pageController;
+  late Map<String, String> nextItem;
+  late String nextDisplayedName;
+  late bool nextIsCorrectName;
+
   // Timer state
   Timer? _gameTimer;
   final Duration _gameDuration = const Duration(seconds: 15);
@@ -32,13 +38,16 @@ class _TrueOrFalseBonusScreenState extends State<TrueOrFalseBonusScreen> {
   @override
   void initState() {
     super.initState();
+    _pageController = PageController();
     _loadQuestion();
+    _loadNextQuestion();
     _startTimer();
   }
 
   @override
   void dispose() {
     _gameTimer?.cancel();
+    _pageController.dispose();
     super.dispose();
   }
 
@@ -85,6 +94,27 @@ class _TrueOrFalseBonusScreenState extends State<TrueOrFalseBonusScreen> {
     selectedAnswer = null;
   }
 
+  void _loadNextQuestion() {
+    // Select a random item from assetsExtras for next question
+    nextItem =
+        Constants.assetsExtras[random.nextInt(Constants.assetsExtras.length)];
+
+    // Randomly decide if we show the correct name or a wrong one
+    nextIsCorrectName = random.nextBool();
+
+    if (nextIsCorrectName) {
+      nextDisplayedName = nextItem['name']!;
+    } else {
+      // Get a different random item's name
+      Map<String, String> wrongItem;
+      do {
+        wrongItem = Constants
+            .assetsExtras[random.nextInt(Constants.assetsExtras.length)];
+      } while (wrongItem['name'] == nextItem['name']);
+      nextDisplayedName = wrongItem['name']!;
+    }
+  }
+
   void _onAnswerSelected(bool answer) {
     if (selectedAnswer != null) return; // Prevent multiple selections
 
@@ -106,9 +136,11 @@ class _TrueOrFalseBonusScreenState extends State<TrueOrFalseBonusScreen> {
         // Wait 1 second before loading next question
         Future.delayed(const Duration(milliseconds: 1000), () {
           if (mounted) {
-            setState(() {
-              _loadQuestion();
-            });
+            // Advance to next page in PageView
+            _pageController.nextPage(
+              duration: const Duration(milliseconds: 300),
+              curve: Curves.easeInOut,
+            );
           }
         });
       } else {
@@ -199,26 +231,91 @@ class _TrueOrFalseBonusScreenState extends State<TrueOrFalseBonusScreen> {
                     child: Column(
                       mainAxisAlignment: MainAxisAlignment.center,
                       children: [
-                        // Image
-                        Container(
-                          decoration: BoxDecoration(
-                            borderRadius: BorderRadius.circular(20),
-                            color: Colors.white,
-                          ),
-                          child: Column(
+                        // Image with swipe to skip - PageView for seamless transitions
+                        SizedBox(
+                          height: MediaQuery.of(context).size.height * 0.5,
+                          child: PageView(
+                            key: ValueKey(
+                              '${currentItem['image']}_${nextItem['image']}',
+                            ),
+                            controller: _pageController,
+                            onPageChanged: (index) {
+                              if (index > 0) {
+                                setState(() {
+                                  // Move next question to current
+                                  currentItem = nextItem;
+                                  displayedName = nextDisplayedName;
+                                  isCorrectName = nextIsCorrectName;
+                                  selectedAnswer = null;
+
+                                  // Load new next question
+                                  _loadNextQuestion();
+
+                                  // Reset page controller to first page
+                                  Future.delayed(Duration.zero, () {
+                                    if (mounted) {
+                                      _pageController.jumpToPage(0);
+                                    }
+                                  });
+                                });
+                              }
+                            },
                             children: [
-                              ClipRRect(
-                                borderRadius: BorderRadius.circular(20),
-                                child: Image.asset(
-                                  currentItem['image']!,
-                                  fit: BoxFit.cover,
+                              // Current image
+                              Container(
+                                margin: const EdgeInsets.symmetric(
+                                  horizontal: 10,
+                                ),
+                                decoration: BoxDecoration(
+                                  borderRadius: BorderRadius.circular(20),
+                                  color: Colors.white,
+                                ),
+                                child: Column(
+                                  mainAxisSize: MainAxisSize.min,
+                                  children: [
+                                    ClipRRect(
+                                      borderRadius: BorderRadius.circular(20),
+                                      child: Image.asset(
+                                        currentItem['image']!,
+                                        fit: BoxFit.cover,
+                                      ),
+                                    ),
+
+                                    // Name label
+                                    WordOfImages(
+                                      letters: displayedName.toUpperCase(),
+                                      letterSize: 25,
+                                    ),
+                                  ],
                                 ),
                               ),
+                              // Next image
+                              Container(
+                                margin: const EdgeInsets.symmetric(
+                                  horizontal: 10,
+                                ),
+                                decoration: BoxDecoration(
+                                  borderRadius: BorderRadius.circular(20),
+                                  color: Colors.white,
+                                ),
+                                child: Column(
+                                  mainAxisSize: MainAxisSize.min,
+                                  children: [
+                                    ClipRRect(
+                                      borderRadius: BorderRadius.circular(20),
+                                      child: Image.asset(
+                                        nextItem['image']!,
+                                        fit: BoxFit.cover,
+                                      ),
+                                    ),
 
-                              // Name label
-                              WordOfImages(
-                                letters: currentItem['name']!.toUpperCase(),
-                                letterSize: 25,
+                                    // Name label
+                                    WordOfImages(
+                                      letters: nextDisplayedName.toUpperCase(),
+                                      letterSize: 25,
+                                    ),
+                                  ],
+                                ),
                               ),
                             ],
                           ),
@@ -234,26 +331,54 @@ class _TrueOrFalseBonusScreenState extends State<TrueOrFalseBonusScreen> {
                             Expanded(
                               child: Padding(
                                 padding: const EdgeInsets.only(right: 10),
-                                child: ElevatedButton(
-                                  onPressed: selectedAnswer != null
+                                child: GestureDetector(
+                                  onTap: selectedAnswer != null
                                       ? null
                                       : () => _onAnswerSelected(true),
-                                  style: ElevatedButton.styleFrom(
-                                    backgroundColor: _getButtonColor(true),
+                                  child: Container(
                                     padding: const EdgeInsets.symmetric(
-                                      vertical: 20,
+                                      vertical: 10,
+                                      horizontal: 10,
                                     ),
-                                    shape: RoundedRectangleBorder(
-                                      borderRadius: BorderRadius.circular(15),
-                                    ),
-                                    elevation: 5,
-                                  ),
-                                  child: const Text(
-                                    'TRUE',
-                                    style: TextStyle(
-                                      fontSize: 28,
-                                      fontWeight: FontWeight.bold,
+                                    decoration: BoxDecoration(
                                       color: Colors.white,
+                                      borderRadius: BorderRadius.circular(20),
+                                      border: Border.all(
+                                        color:
+                                            _getButtonColor(true) ==
+                                                Colors.green
+                                            ? Colors.green
+                                            : _getButtonColor(true) ==
+                                                  Colors.red
+                                            ? Colors.red
+                                            : Colors.blue,
+                                        width: 3,
+                                      ),
+                                      boxShadow: [
+                                        BoxShadow(
+                                          color: Colors.black.withOpacity(0.1),
+                                          blurRadius: 10,
+                                          offset: const Offset(0, 3),
+                                        ),
+                                      ],
+                                    ),
+                                    child: Center(
+                                      child: Text(
+                                        'TRUE',
+                                        style: TextStyle(
+                                          fontSize: 20,
+                                          fontWeight: FontWeight.bold,
+                                          color:
+                                              _getButtonColor(true) ==
+                                                  Colors.green
+                                              ? Colors.green
+                                              : _getButtonColor(true) ==
+                                                    Colors.red
+                                              ? Colors.red
+                                              : Colors.blue,
+                                          letterSpacing: 2,
+                                        ),
+                                      ),
                                     ),
                                   ),
                                 ),
@@ -264,26 +389,54 @@ class _TrueOrFalseBonusScreenState extends State<TrueOrFalseBonusScreen> {
                             Expanded(
                               child: Padding(
                                 padding: const EdgeInsets.only(left: 10),
-                                child: ElevatedButton(
-                                  onPressed: selectedAnswer != null
+                                child: GestureDetector(
+                                  onTap: selectedAnswer != null
                                       ? null
                                       : () => _onAnswerSelected(false),
-                                  style: ElevatedButton.styleFrom(
-                                    backgroundColor: _getButtonColor(false),
+                                  child: Container(
                                     padding: const EdgeInsets.symmetric(
-                                      vertical: 20,
+                                      vertical: 10,
+                                      horizontal: 10,
                                     ),
-                                    shape: RoundedRectangleBorder(
-                                      borderRadius: BorderRadius.circular(15),
-                                    ),
-                                    elevation: 5,
-                                  ),
-                                  child: const Text(
-                                    'FALSE',
-                                    style: TextStyle(
-                                      fontSize: 28,
-                                      fontWeight: FontWeight.bold,
+                                    decoration: BoxDecoration(
                                       color: Colors.white,
+                                      borderRadius: BorderRadius.circular(20),
+                                      border: Border.all(
+                                        color:
+                                            _getButtonColor(false) ==
+                                                Colors.green
+                                            ? Colors.green
+                                            : _getButtonColor(false) ==
+                                                  Colors.red
+                                            ? Colors.red
+                                            : Colors.blue,
+                                        width: 3,
+                                      ),
+                                      boxShadow: [
+                                        BoxShadow(
+                                          color: Colors.black.withOpacity(0.1),
+                                          blurRadius: 10,
+                                          offset: const Offset(0, 3),
+                                        ),
+                                      ],
+                                    ),
+                                    child: Center(
+                                      child: Text(
+                                        'FALSE',
+                                        style: TextStyle(
+                                          fontSize: 20,
+                                          fontWeight: FontWeight.bold,
+                                          color:
+                                              _getButtonColor(false) ==
+                                                  Colors.green
+                                              ? Colors.green
+                                              : _getButtonColor(false) ==
+                                                    Colors.red
+                                              ? Colors.red
+                                              : Colors.blue,
+                                          letterSpacing: 2,
+                                        ),
+                                      ),
                                     ),
                                   ),
                                 ),

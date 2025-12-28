@@ -322,7 +322,7 @@ class Constants {
       "sound": "assets/sound_names/butterfly.wav",
     },
     {
-      "image": "assets/images/calenderdar.jpg",
+      "image": "assets/images/calendar.jpg",
       "name": "Calendar",
       "sound": "assets/sound_names/calendar.wav",
     },
@@ -332,9 +332,9 @@ class Constants {
       "sound": "assets/sound_names/clock.wav",
     },
     {
-      "image": "assets/images/cocnut.jpg",
-      "name": "Cocnut",
-      "sound": "assets/sound_names/cocnut.wav",
+      "image": "assets/images/coconut.jpg",
+      "name": "Coconut",
+      "sound": "assets/sound_names/coconut.wav",
     },
     {
       "image": "assets/images/crayon.jpg",
