@@ -42,9 +42,9 @@ class BonusSettings extends StatelessWidget {
         "bonus_screen": CompleteSentence.route,
       },
       {
-        "name": "White",
+        "name": "Orange",
         "image": "assets/bonus_true_or_false.png",
-        "color": const Color.fromARGB(255, 212, 212, 212),
+        "color": Colors.orange,
         "explanation": "Select true or false to earn points.",
         "bonus_screen": TrueOrFalseBonusScreen.routeName,
       },

@@ -3,16 +3,12 @@ import 'package:boby/ui/screens/word_guess/widgets/celebration_image.dart';
 import 'package:boby/ui/shared/score.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
-import 'package:dotted_border/dotted_border.dart'
-    show DottedBorder, RoundedRectDottedBorderOptions;
 import '../../../utils/constants.dart';
 import '../../shared/word_of_images.dart';
 import 'widgets/card_sound.dart';
 import 'package:boby/controllers/app_controller.dart';
 import 'package:just_audio/just_audio.dart';
 import 'package:boby/services/storage_service.dart';
-
-import 'dart:math'; // Added import
 
 class ListCardSounds extends StatefulWidget {
   const ListCardSounds({super.key});

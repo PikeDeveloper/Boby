@@ -19,25 +19,6 @@ class MatchItScreen extends StatefulWidget {
   State<MatchItScreen> createState() => _MatchItScreenState();
 }
 
-class _FigureTarget extends StatelessWidget {
-  final String imagePath;
-  const _FigureTarget({required this.imagePath});
-
-  @override
-  Widget build(BuildContext context) {
-    return AspectRatio(
-      aspectRatio: 1.3,
-      child: FittedBox(
-        fit: BoxFit.contain,
-        child: ClipRRect(
-          borderRadius: BorderRadius.circular(50),
-          child: Image.asset(imagePath),
-        ),
-      ),
-    );
-  }
-}
-
 enum _RoundType { shape, number, figure }
 
 class _MatchItScreenState extends State<MatchItScreen> {
@@ -99,6 +80,7 @@ class _MatchItScreenState extends State<MatchItScreen> {
   // Current round state
   _RoundType _roundType = _RoundType.shape;
   // Shape round
+  // ignore: unused_field
   String? _targetShapePath;
   (String, Color)? _targetColor;
   late List<(String, Color)> _colorOptions;
@@ -117,6 +99,7 @@ class _MatchItScreenState extends State<MatchItScreen> {
   List<Map<String, String>> _figureAssets = [];
   // Feedback state
   bool _isLocked = false; // prevents taps during feedback
+  // ignore: unused_field
   bool _showCorrectOverlay = false; // show green check over the target
 
   // Timer state

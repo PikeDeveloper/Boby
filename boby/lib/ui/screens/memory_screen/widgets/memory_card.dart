@@ -82,7 +82,6 @@ class _MemoryCardState extends State<MemoryCard>
   Widget build(BuildContext context) {
     final screenSize = MediaQuery.of(context).size;
     final width = screenSize.width;
-    final height = screenSize.height;
     final bool isLargeScreen = width > 600;
 
     return GestureDetector(
@@ -130,6 +129,7 @@ class _MemoryCardState extends State<MemoryCard>
         borderRadius: BorderRadius.circular(12),
         boxShadow: [
           BoxShadow(
+            // ignore: deprecated_member_use
             color: Colors.black.withOpacity(0.2),
             blurRadius: 4,
             offset: const Offset(0, 2),

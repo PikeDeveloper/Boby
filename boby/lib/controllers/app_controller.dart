@@ -144,11 +144,11 @@ class AppController extends GetxController {
   //functions for bonus screen
   //esta funcion guarda en bonusScreen un numero aleatorio entre 0 y 6
   void setBonusScreen() {
-    Random _rng = Random();
-    if (bonusScreen.value <= 3) {
-      bonusScreen.value = _rng.nextInt(4);
+    Random rng = Random();
+    if (bonusScreen.value <= 4) {
+      bonusScreen.value = rng.nextInt(5);
     } else {
-      bonusScreen.value = _rng.nextInt(10);
+      bonusScreen.value = rng.nextInt(10);
     }
   }
 }

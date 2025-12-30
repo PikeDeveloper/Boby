@@ -1,13 +1,11 @@
-import 'package:boby/utils/colors.dart';
 import 'package:flutter/material.dart';
-import 'package:boby/utils/functions.dart';
 import 'package:share_plus/share_plus.dart';
 
 class MoreApps extends StatelessWidget {
   const MoreApps({super.key});
 
   final List<Map<String, String>> apps = const [
-     {
+    {
       "name": "Boby",
       "image": "assets/icon/icon.jpg",
       "url": "https://apps.apple.com/hn/app/boby/id6753878717",
@@ -49,7 +47,8 @@ class MoreApps extends StatelessWidget {
                   // Share the app URL
                   Share.share(
                     'Check out ${app['name']} on the App Store: ${app['url']}',
-                    subject: '${app['name']} - ${app['description']?.split('.').first}...',
+                    subject:
+                        '${app['name']} - ${app['description']?.split('.').first}...',
                   );
                 },
                 child: Padding(
@@ -73,9 +72,7 @@ class MoreApps extends StatelessWidget {
                           children: [
                             Text(
                               app["name"]!,
-                              style: Theme.of(context)
-                                  .textTheme
-                                  .titleMedium
+                              style: Theme.of(context).textTheme.titleMedium
                                   ?.copyWith(
                                     fontWeight: FontWeight.w600,
                                     color: Colors.black87,
@@ -86,9 +83,7 @@ class MoreApps extends StatelessWidget {
                               app["description"]!,
                               maxLines: 5,
                               overflow: TextOverflow.ellipsis,
-                              style: Theme.of(context)
-                                  .textTheme
-                                  .bodyMedium
+                              style: Theme.of(context).textTheme.bodyMedium
                                   ?.copyWith(
                                     color: Colors.black54,
                                     height: 1.2,
@@ -98,11 +93,7 @@ class MoreApps extends StatelessWidget {
                         ),
                       ),
                       const SizedBox(width: 8),
-                       Icon(
-                        Icons.share,
-                        color: Colors.green,  
-                        size: 20,
-                      ),
+                      Icon(Icons.share, color: Colors.green, size: 20),
                     ],
                   ),
                 ),

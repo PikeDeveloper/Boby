@@ -1,7 +1,6 @@
 import 'package:boby/ui/screens/setting_screen/widgets/background_settins.dart';
 import 'package:boby/ui/screens/setting_screen/widgets/badge_setting.dart';
 import 'package:boby/ui/screens/setting_screen/widgets/bonus_setting.dart';
-import 'package:boby/ui/screens/setting_screen/widgets/match_it_sattings.dart';
 import 'package:boby/ui/screens/setting_screen/widgets/memory_settings.dart';
 import 'package:boby/ui/screens/setting_screen/widgets/more_apps.dart';
 import 'package:boby/ui/screens/setting_screen/widgets/scramble_setting.dart';

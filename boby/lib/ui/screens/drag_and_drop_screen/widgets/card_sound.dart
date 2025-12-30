@@ -139,6 +139,7 @@ class _CardSoundState extends State<CardSound>
 
   // Check if the device is an iPad
   bool get isTablet {
+    // ignore: deprecated_member_use
     final data = MediaQueryData.fromView(WidgetsBinding.instance.window);
     return data.size.shortestSide >=
         600; // 600 is a common breakpoint for tablets

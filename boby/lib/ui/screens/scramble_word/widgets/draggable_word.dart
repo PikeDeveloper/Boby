@@ -16,7 +16,6 @@ class DraggableWord extends StatelessWidget {
   Widget build(BuildContext context) {
     final screenSize = MediaQuery.of(context).size;
     final width = screenSize.width;
-    final height = screenSize.height;
     final bool isLargeScreen = width > 600;
 
     if (isUsed) {

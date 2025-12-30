@@ -193,6 +193,7 @@ class _TrueOrFalseBonusScreenState extends State<TrueOrFalseBonusScreen> {
   Widget build(BuildContext context) {
     final appController = Get.find<AppController>();
     final screenWidth = MediaQuery.of(context).size.width;
+    final isTablet = screenWidth > Constants.tabletSize;
 
     return Scaffold(
       appBar: AppBar(title: WordOfImages(letters: 'BONUS', letterSize: 30)),
@@ -244,6 +245,21 @@ class _TrueOrFalseBonusScreenState extends State<TrueOrFalseBonusScreen> {
                     },
                   ),
                 ),
+              ),
+
+              //True or false
+              Row(
+                mainAxisAlignment: MainAxisAlignment.center,
+                children: [
+                  WordOfImages(letters: 'TRUE', letterSize: isTablet ? 35 : 20),
+
+                  WordOfImages(letters: 'OR', letterSize: isTablet ? 35 : 20),
+
+                  WordOfImages(
+                    letters: 'FALSE',
+                    letterSize: isTablet ? 35 : 20,
+                  ),
+                ],
               ),
 
               Expanded(
@@ -315,9 +331,13 @@ class _TrueOrFalseBonusScreenState extends State<TrueOrFalseBonusScreen> {
                                     ),
 
                                     Spacer(),
-                                    WordOfImages(
-                                      letters: displayedName.toUpperCase(),
-                                      letterSize: 25,
+                                    Text(
+                                      displayedName,
+                                      style: TextStyle(
+                                        fontSize: 35,
+                                        fontWeight: FontWeight.bold,
+                                        color: MyColors.darkBlue,
+                                      ),
                                     ),
                                     Spacer(),
                                   ],

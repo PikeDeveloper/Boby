@@ -117,7 +117,6 @@ class _ScrambleScreenState extends State<ScrambleScreen> {
   Widget build(BuildContext context) {
     final screenSize = MediaQuery.of(context).size;
     final width = screenSize.width;
-    final height = screenSize.height;
     final appController = Get.find<AppController>();
     final bool isLargeScreen = width > 600;
 
