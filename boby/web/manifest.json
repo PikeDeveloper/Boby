@@ -1,11 +1,11 @@
 {
-    "name": "boby",
-    "short_name": "boby",
+    "name": "Boby - Learn English",
+    "short_name": "Boby",
     "start_url": ".",
     "display": "standalone",
-    "background_color": "#0175C2",
-    "theme_color": "#0175C2",
-    "description": "A new Flutter project.",
+    "background_color": "#6bdeff",
+    "theme_color": "#6bdeff",
+    "description": "Aprende inglés de forma divertida con juegos interactivos para niños",
     "orientation": "portrait-primary",
     "prefer_related_applications": false,
     "icons": [

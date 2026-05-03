@@ -1,9 +1,11 @@
 import 'package:boby/ui/screens/setting_screen/widgets/background_settins.dart';
 import 'package:boby/ui/screens/setting_screen/widgets/badge_setting.dart';
 import 'package:boby/ui/screens/setting_screen/widgets/bonus_setting.dart';
+import 'package:boby/ui/screens/setting_screen/widgets/install_app_button.dart';
 import 'package:boby/ui/screens/setting_screen/widgets/memory_settings.dart';
 import 'package:boby/ui/screens/setting_screen/widgets/more_apps.dart';
 import 'package:boby/ui/screens/setting_screen/widgets/scramble_setting.dart';
+import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 
 import '../../shared/word_of_images.dart';
@@ -69,6 +71,15 @@ class SettingScreen extends StatelessWidget {
               content: const MoreApps(),
               color: Colors.pink,
             ),
+            const SizedBox(height: 25),
+
+            // Install App (web only)
+            if (kIsWeb)
+              _buildSection(
+                title: "INSTALL APP",
+                content: const Center(child: InstallAppButton()),
+                color: Colors.indigo,
+              ),
             const SizedBox(height: 50),
           ],
         ),
