@@ -108,6 +108,25 @@
   </picture>
   
   
+  <!-- Firebase SDK -->
+  <script src="https://www.gstatic.com/firebasejs/10.7.0/firebase-app-compat.js"></script>
+  <script src="https://www.gstatic.com/firebasejs/10.7.0/firebase-analytics-compat.js"></script>
+  <script>
+    // Your web app's Firebase configuration
+    const firebaseConfig = {
+      apiKey: "AIzaSyDMMSFuSt3SXQnPqO0QbJPZVhH3CcuXWhk",
+      authDomain: "boby-english.firebaseapp.com",
+      projectId: "boby-english",
+      storageBucket: "boby-english.firebasestorage.app",
+      messagingSenderId: "862442070396",
+      appId: "1:862442070396:web:afea34797ace5d58fb44f9",
+      measurementId: "G-RVHR5M5JVP"
+    };
+    // Initialize Firebase
+    firebase.initializeApp(firebaseConfig);
+    firebase.analytics();
+  </script>
+
   <script src="flutter_bootstrap.js" async=""></script>
 
 
