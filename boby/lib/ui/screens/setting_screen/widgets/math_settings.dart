@@ -60,7 +60,7 @@ class MathSettings extends StatelessWidget {
       decoration: BoxDecoration(
         borderRadius: BorderRadius.circular(25),
         border: Border.all(color: Colors.indigo),
-        color: const Color.fromARGB(207, 255, 255, 255).withValues(alpha: 0.5),
+        color: const Color.fromARGB(207, 255, 255, 255).withOpacity(0.5),
       ),
       width: 80,
       child: CheckboxListTile(

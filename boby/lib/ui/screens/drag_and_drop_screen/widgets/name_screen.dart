@@ -39,12 +39,12 @@ class NameScreen extends StatelessWidget {
           Expanded(
             child: GridView.builder(
               gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
-                crossAxisCount: width > 710
-                    ? 4
-                    : width > 500
+                crossAxisCount: width > 800
                     ? 3
-                    : 2,
-                childAspectRatio: 0.8, // Adjust as needed
+                    : width > 500
+                        ? 3
+                        : 2,
+                childAspectRatio: 0.85, // Adjust as needed
               ),
               itemCount: cards.length,
               itemBuilder: (context, index) {

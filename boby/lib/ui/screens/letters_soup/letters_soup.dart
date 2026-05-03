@@ -115,8 +115,7 @@ class _LettersSoupState extends State<LettersSoup> {
                 borderRadius: BorderRadius.circular(10),
                 border: Border.all(
                   color:
-                      wordColorMap[w]?.withValues(alpha: 1) ??
-                      Colors.grey.shade300,
+                      wordColorMap[w]?.withOpacity(1) ?? Colors.grey.shade300,
                   width: 2,
                 ),
               ),

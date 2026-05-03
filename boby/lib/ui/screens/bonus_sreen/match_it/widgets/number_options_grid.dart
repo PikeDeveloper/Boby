@@ -48,8 +48,8 @@ class NumberOptionsGrid extends StatelessWidget {
                 color: wrong
                     ? Colors.red
                     : correct
-                    ? Colors.green
-                    : Colors.transparent,
+                        ? Colors.green
+                        : Colors.transparent,
                 width: 4,
               ),
               boxShadow: [
@@ -86,9 +86,8 @@ class NumberOptionsGrid extends StatelessWidget {
                   // Overlay for wrong/correct state
                   if (wrong || correct)
                     Container(
-                      color: (wrong ? Colors.red : Colors.green).withValues(
-                        alpha: 0.3,
-                      ),
+                      color:
+                          (wrong ? Colors.red : Colors.green).withOpacity(0.3),
                       child: Center(
                         child: Icon(
                           wrong ? Icons.close : Icons.check,

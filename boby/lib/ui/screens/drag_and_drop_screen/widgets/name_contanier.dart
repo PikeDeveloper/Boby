@@ -1,6 +1,5 @@
 import 'package:flutter/material.dart';
-import 'package:dotted_border/dotted_border.dart'
-    show DottedBorder, RoundedRectDottedBorderOptions;
+import 'package:dotted_border/dotted_border.dart';
 
 class NameContainer extends StatelessWidget {
   final List<String?> cardNames;
@@ -42,12 +41,11 @@ class NameContainer extends StatelessWidget {
             width: 150,
             padding: const EdgeInsets.symmetric(vertical: 8, horizontal: 12),
             child: DottedBorder(
-              options: RoundedRectDottedBorderOptions(
-                radius: const Radius.circular(20),
-                color: borderColor,
-                strokeWidth: 2,
-                dashPattern: const [6, 4],
-              ),
+              borderType: BorderType.RRect,
+              radius: const Radius.circular(20),
+              color: borderColor,
+              strokeWidth: 2,
+              dashPattern: const [6, 4],
               child: Container(
                 width: double.infinity,
                 padding: const EdgeInsets.symmetric(
@@ -81,12 +79,11 @@ class NameContainer extends StatelessWidget {
           width: 150,
           //     padding: const EdgeInsets.symmetric(vertical: 8, horizontal: 12),
           child: DottedBorder(
-            options: RoundedRectDottedBorderOptions(
-              color: borderColor,
-              strokeWidth: 2,
-              dashPattern: const [6, 4],
-              radius: const Radius.circular(20),
-            ),
+            borderType: BorderType.RRect,
+            color: borderColor,
+            strokeWidth: 2,
+            dashPattern: const [6, 4],
+            radius: const Radius.circular(20),
             child: Container(
               width: double.infinity,
               padding: const EdgeInsets.symmetric(vertical: 8, horizontal: 12),
@@ -111,12 +108,11 @@ class NameContainer extends StatelessWidget {
           width: 150,
           padding: const EdgeInsets.symmetric(vertical: 8, horizontal: 12),
           child: DottedBorder(
-            options: RoundedRectDottedBorderOptions(
-              color: isSelected ? Colors.blue : borderColor,
-              strokeWidth: 2,
-              dashPattern: const [6, 4],
-              radius: const Radius.circular(20),
-            ),
+            borderType: BorderType.RRect,
+            color: isSelected ? Colors.blue : borderColor,
+            strokeWidth: 2,
+            dashPattern: const [6, 4],
+            radius: const Radius.circular(20),
             child: Container(
               width: double.infinity,
               padding: const EdgeInsets.symmetric(vertical: 8, horizontal: 12),

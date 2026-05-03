@@ -111,9 +111,8 @@ class _CardSoundState extends State<CardSound>
 
       // Find an available color
       Color availableColor;
-      final availableColors = _borderColors
-          .where((color) => !usedColors.contains(color))
-          .toList();
+      final availableColors =
+          _borderColors.where((color) => !usedColors.contains(color)).toList();
 
       if (availableColors.isNotEmpty) {
         availableColor =
@@ -155,7 +154,7 @@ class _CardSoundState extends State<CardSound>
 
     if (((cardWidth * 4) + 20) > minSize && isLandscape) {
       cardWidth = minSize / 4;
-      cardHeight = cardWidth * 1.2; // Maintain aspect ratio
+      cardHeight = cardWidth * 1.25; // Maintain aspect ratio
     }
 
     // Animations disabled: static card
@@ -224,7 +223,6 @@ class _CardSoundState extends State<CardSound>
                   child: Stack(
                     children: [
                       Image.asset(widget.image, fit: BoxFit.cover),
-
                       Positioned(
                         bottom: 10,
                         left: 10,
@@ -237,12 +235,11 @@ class _CardSoundState extends State<CardSound>
                                   horizontal: 12,
                                 ),
                                 child: DottedBorder(
-                                  options: RoundedRectDottedBorderOptions(
-                                    color: const Color(0xFF1E88E5),
-                                    strokeWidth: 2,
-                                    dashPattern: const [6, 4],
-                                    radius: const Radius.circular(20),
-                                  ),
+                                  borderType: BorderType.RRect,
+                                  color: const Color(0xFF1E88E5),
+                                  strokeWidth: 2,
+                                  dashPattern: const [6, 4],
+                                  radius: const Radius.circular(20),
                                   child: Container(
                                     width: double.infinity,
                                     padding: const EdgeInsets.symmetric(

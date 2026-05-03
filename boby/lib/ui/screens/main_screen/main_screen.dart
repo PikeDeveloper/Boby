@@ -1,3 +1,5 @@
+import 'dart:math';
+
 import 'package:boby/controllers/app_controller.dart';
 
 import 'package:boby/ui/screens/bonus_sreen/complete_sentence/complete_sentence.dart';
@@ -39,6 +41,7 @@ class MainScreen extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final appController = Get.put<AppController>(AppController());
+    final screenSize = MediaQuery.of(context).size;
     return Scaffold(
       appBar: AppBar(
         leadingWidth: 120,
@@ -51,7 +54,6 @@ class MainScreen extends StatelessWidget {
               },
               icon: Image.asset("assets/settings_icon.png"),
             ),
-
             Obx(
               () => getBonusButton(
                 appController.bonusScreen.value,
@@ -62,7 +64,6 @@ class MainScreen extends StatelessWidget {
         ),
         actions: [
           Obx(() => getExplanationButton(appController.currentPage.value)),
-
           IconButton(
             onPressed: () {
               appController.menuOpen.value = !appController.menuOpen.value;
@@ -80,7 +81,9 @@ class MainScreen extends StatelessWidget {
             alignment: Alignment.center,
             children: [
               Background(),
-              screens[appController.currentPage.value],
+              SizedBox(
+                  width: min(screenSize.width, 900),
+                  child: screens[appController.currentPage.value]),
               appController.menuOpen.value ? MainMenu() : SizedBox(),
             ],
           ),
