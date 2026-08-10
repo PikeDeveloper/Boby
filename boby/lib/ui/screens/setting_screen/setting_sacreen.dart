@@ -1,3 +1,4 @@
+import 'package:animate_do/animate_do.dart';
 import 'package:boby/ui/screens/setting_screen/widgets/background_settins.dart';
 import 'package:boby/ui/screens/setting_screen/widgets/badge_setting.dart';
 import 'package:boby/ui/screens/setting_screen/widgets/bonus_setting.dart';
@@ -17,68 +18,106 @@ class SettingScreen extends StatelessWidget {
   Widget build(BuildContext context) {
     return SafeArea(
       child: SingleChildScrollView(
-        padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 10),
+        padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 10),
         child: Column(
           children: [
-            // Header
-            const SizedBox(height: 10),
-            const WordOfImages(letters: "SETTINGS", letterSize: 35),
-            const SizedBox(height: 30),
+            const SizedBox(height: 8),
 
-            // Background Settings
-            _buildSection(
-              title: "BACKGROUNDS IMAGES",
+            // ── Header animated ──────────────────────────────
+            BounceInDown(
+              duration: const Duration(milliseconds: 700),
+              child: Container(
+                padding: const EdgeInsets.symmetric(horizontal: 24, vertical: 10),
+                decoration: BoxDecoration(
+                  color: Colors.white.withValues(alpha: 0.92),
+                  borderRadius: BorderRadius.circular(30),
+                  border: Border.all(color: const Color(0xFFFFD54F), width: 3),
+                  boxShadow: [
+                    BoxShadow(
+                      color: Colors.black.withValues(alpha: 0.12),
+                      blurRadius: 12,
+                      offset: const Offset(0, 4),
+                    ),
+                  ],
+                ),
+                child: Row(
+                  mainAxisSize: MainAxisSize.min,
+                  children: [
+                    const Icon(Icons.settings_rounded, color: Color(0xFFFFB300), size: 28),
+                    const SizedBox(width: 10),
+                    const WordOfImages(letters: "SETTINGS", letterSize: 32),
+                    const SizedBox(width: 10),
+                    const Icon(Icons.settings_rounded, color: Color(0xFFFFB300), size: 28),
+                  ],
+                ),
+              ),
+            ),
+
+            const SizedBox(height: 24),
+
+            // ── Sections ─────────────────────────────────────
+            FadeInUp(delay: const Duration(milliseconds: 100), child: _buildSection(
+              title: "Backgrounds",
+              icon: Icons.wallpaper_rounded,
+              gradient: const LinearGradient(colors: [Color(0xFF29B6F6), Color(0xFF0277BD)]),
               content: const BackgroundSettings(),
-              color: Colors.blue,
-            ),
-            const SizedBox(height: 25),
+            )),
 
-            // Memory Settings
-            _buildSection(
-              title: "MEMORY LEVEL",
+            const SizedBox(height: 18),
+
+            FadeInUp(delay: const Duration(milliseconds: 200), child: _buildSection(
+              title: "Memory Level",
+              icon: Icons.grid_view_rounded,
+              gradient: const LinearGradient(colors: [Color(0xFFAB47BC), Color(0xFF6A1B9A)]),
               content: const MemrySettings(),
-              color: Colors.purple,
-            ),
-            const SizedBox(height: 25),
+            )),
 
-            // Match Settings
-            _buildSection(
-              title: "WORD ORGANIZATION",
+            const SizedBox(height: 18),
+
+            FadeInUp(delay: const Duration(milliseconds: 300), child: _buildSection(
+              title: "Word Organization",
+              icon: Icons.sort_by_alpha_rounded,
+              gradient: const LinearGradient(colors: [Color(0xFFFF9F43), Color(0xFFE67E22)]),
               content: const ScrambleSettings(),
-              color: Colors.orange,
-            ),
-            const SizedBox(height: 25),
+            )),
 
-            // Badge Settings
-            _buildSection(
-              title: "BADGE INFORMATION",
+            const SizedBox(height: 18),
+
+            FadeInUp(delay: const Duration(milliseconds: 400), child: _buildSection(
+              title: "Badges",
+              icon: Icons.emoji_events_rounded,
+              gradient: const LinearGradient(colors: [Color(0xFF26C281), Color(0xFF1A8A58)]),
               content: const BadgeSettings(),
-              color: Colors.green,
-            ),
-            const SizedBox(height: 25),
-            
-            // Parent Email
-            _buildSection(
-              title: "PARENT EMAIL",
-              content: const ParentEmail(),
-              color: Colors.blue,
-            ),
-            const SizedBox(height: 25),
-            // Bonus Settings
-            _buildSection(
-              title: "BONUS INFORMATION",
-              content: const BonusSettings(),
-              color: Colors.green,
-            ),
-            const SizedBox(height: 25),
+            )),
 
-            // More Apps
-            _buildSection(
-              title: "MORE APPS",
+            const SizedBox(height: 18),
+
+            FadeInUp(delay: const Duration(milliseconds: 500), child: _buildSection(
+              title: "Parent Email",
+              icon: Icons.email_rounded,
+              gradient: const LinearGradient(colors: [Color(0xFF42A5F5), Color(0xFF1565C0)]),
+              content: const ParentEmail(),
+            )),
+
+            const SizedBox(height: 18),
+
+            FadeInUp(delay: const Duration(milliseconds: 600), child: _buildSection(
+              title: "Bonus Games",
+              icon: Icons.stars_rounded,
+              gradient: const LinearGradient(colors: [Color(0xFF66BB6A), Color(0xFF2E7D32)]),
+              content: const BonusSettings(),
+            )),
+
+            const SizedBox(height: 18),
+
+            FadeInUp(delay: const Duration(milliseconds: 700), child: _buildSection(
+              title: "More Apps",
+              icon: Icons.apps_rounded,
+              gradient: const LinearGradient(colors: [Color(0xFFEC407A), Color(0xFFC2185B)]),
               content: const MoreApps(),
-              color: Colors.pink,
-            ),
-            const SizedBox(height: 50),
+            )),
+
+            const SizedBox(height: 40),
           ],
         ),
       ),
@@ -87,51 +126,71 @@ class SettingScreen extends StatelessWidget {
 
   Widget _buildSection({
     required String title,
+    required IconData icon,
+    required Gradient gradient,
     required Widget content,
-    required Color color,
   }) {
     return Container(
       width: double.infinity,
       decoration: BoxDecoration(
         color: Colors.white,
-        borderRadius: BorderRadius.circular(25),
+        borderRadius: BorderRadius.circular(28),
         boxShadow: [
           BoxShadow(
-            color: color.withValues(alpha: 0.2),
-            blurRadius: 15,
-            offset: const Offset(0, 5),
+            color: Colors.black.withValues(alpha: 0.13),
+            blurRadius: 18,
+            offset: const Offset(0, 7),
           ),
         ],
-        border: Border.all(color: color.withValues(alpha: 0.3), width: 2),
       ),
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
-          // Section Header
+          // ── Section header with gradient ──────────────────
           Container(
             width: double.infinity,
-            padding: const EdgeInsets.symmetric(vertical: 12, horizontal: 10),
+            padding: const EdgeInsets.symmetric(vertical: 14, horizontal: 16),
             decoration: BoxDecoration(
-              color: color.withValues(alpha: 0.1),
+              gradient: gradient,
               borderRadius: const BorderRadius.only(
-                topLeft: Radius.circular(23),
-                topRight: Radius.circular(23),
+                topLeft: Radius.circular(26),
+                topRight: Radius.circular(26),
               ),
             ),
-            child: Text(
-              title,
-              style: TextStyle(
-                fontSize: 20,
-                fontWeight: FontWeight.bold,
-                color: color,
-                letterSpacing: 1.5,
-              ),
+            child: Row(
+              children: [
+                Container(
+                  padding: const EdgeInsets.all(7),
+                  decoration: BoxDecoration(
+                    color: Colors.white.withValues(alpha: 0.25),
+                    borderRadius: BorderRadius.circular(12),
+                  ),
+                  child: Icon(icon, color: Colors.white, size: 22),
+                ),
+                const SizedBox(width: 12),
+                Text(
+                  title.toUpperCase(),
+                  style: const TextStyle(
+                    fontSize: 17,
+                    fontWeight: FontWeight.w900,
+                    color: Colors.white,
+                    letterSpacing: 1.8,
+                    shadows: [
+                      Shadow(
+                        color: Colors.black26,
+                        blurRadius: 4,
+                        offset: Offset(0, 2),
+                      ),
+                    ],
+                  ),
+                ),
+              ],
             ),
           ),
 
-          // Section Content
+          // ── Section content ───────────────────────────────
           Padding(
-            padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 10),
+            padding: const EdgeInsets.symmetric(horizontal: 14, vertical: 14),
             child: content,
           ),
         ],

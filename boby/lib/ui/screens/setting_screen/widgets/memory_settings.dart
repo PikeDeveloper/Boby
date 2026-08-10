@@ -70,24 +70,35 @@ class MemrySettings extends StatelessWidget {
     required double itemSize,
   }) {
     final selected = current == key;
-    final color = Colors.purple; // Theme color for Memory settings
+    const Map<String, Color> levelColors = {
+      'Easy': Color(0xFF26C281),
+      'Medium': Color(0xFFAB47BC),
+      'Hard': Color(0xFFFF5252),
+    };
+    const Map<String, String> levelEmojis = {
+      'Easy': '⭐',
+      'Medium': '🔥',
+      'Hard': '💎',
+    };
+    final color = levelColors[label] ?? Colors.purple;
+    final emoji = levelEmojis[label] ?? '⭐';
 
     return GestureDetector(
       onTap: () => StorageService.instance.setMemoryGrid(key),
       child: AnimatedContainer(
-        duration: const Duration(milliseconds: 200),
-        padding: const EdgeInsets.all(12),
+        duration: const Duration(milliseconds: 250),
+        padding: const EdgeInsets.all(14),
         decoration: BoxDecoration(
-          color: selected ? color.withValues(alpha: 0.1) : Colors.grey.shade50,
-          borderRadius: BorderRadius.circular(20),
+          color: selected ? color.withValues(alpha: 0.12) : Colors.grey.shade50,
+          borderRadius: BorderRadius.circular(22),
           border: Border.all(
             color: selected ? color : Colors.grey.shade300,
-            width: 1,
+            width: selected ? 2.5 : 1.5,
           ),
           boxShadow: [
             BoxShadow(
-              color: selected ? color.withValues(alpha: 0.3) : Colors.transparent,
-              blurRadius: 8,
+              color: selected ? color.withValues(alpha: 0.35) : Colors.black.withValues(alpha: 0.06),
+              blurRadius: selected ? 14 : 6,
               offset: const Offset(0, 4),
             ),
           ],
@@ -97,62 +108,79 @@ class MemrySettings extends StatelessWidget {
           children: [
             // Grid Preview
             Container(
-              width:
-                  cols * 15.0 +
-                  (cols - 1) * 2, // Approximate width based on mini-grid
-              height: rows * 15.0 + (rows - 1) * 2,
+              width: cols * 15.0 + (cols - 1) * 3,
+              height: rows * 15.0 + (rows - 1) * 3,
               constraints: const BoxConstraints(maxWidth: 80, maxHeight: 80),
               child: GridView.builder(
                 physics: const NeverScrollableScrollPhysics(),
                 gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
                   crossAxisCount: cols,
-                  mainAxisSpacing: 2,
-                  crossAxisSpacing: 2,
+                  mainAxisSpacing: 3,
+                  crossAxisSpacing: 3,
                 ),
                 itemCount: rows * cols,
                 itemBuilder: (context, index) => Container(
                   decoration: BoxDecoration(
-                    color: selected
-                        ? color.withValues(alpha: 0.8)
-                        : Colors.grey.shade400,
-                    borderRadius: BorderRadius.circular(2),
+                    color: selected ? color : Colors.grey.shade300,
+                    borderRadius: BorderRadius.circular(3),
+                    boxShadow: selected
+                        ? [
+                            BoxShadow(
+                              color: color.withValues(alpha: 0.5),
+                              blurRadius: 3,
+                            )
+                          ]
+                        : null,
                   ),
                 ),
               ),
             ),
-            const SizedBox(height: 12),
+            const SizedBox(height: 10),
 
-            // Label
+            // Emoji + Label
+            Text(
+              emoji,
+              style: const TextStyle(fontSize: 18),
+            ),
+            const SizedBox(height: 2),
             Text(
               label,
               style: TextStyle(
-                fontSize: 16,
-                fontWeight: FontWeight.bold,
-                color: selected ? color : Colors.grey,
+                fontSize: 15,
+                fontWeight: FontWeight.w800,
+                color: selected ? color : Colors.grey.shade600,
               ),
             ),
-            const SizedBox(height: 4),
+            const SizedBox(height: 2),
             Text(
               key,
               style: TextStyle(
-                fontSize: 12,
+                fontSize: 11,
                 fontWeight: FontWeight.w500,
-                color: selected ? color.withValues(alpha: 0.8) : Colors.grey.shade500,
+                color: selected ? color.withValues(alpha: 0.8) : Colors.grey.shade400,
               ),
             ),
 
             // Checkmark
-            if (selected) ...[
-              const SizedBox(height: 8),
-              Icon(Icons.check_circle, color: color, size: 24),
-            ] else ...[
-              const SizedBox(height: 8),
-              Icon(
-                Icons.circle_outlined,
-                color: Colors.grey.shade300,
-                size: 24,
+            const SizedBox(height: 8),
+            if (selected)
+              Container(
+                padding: const EdgeInsets.all(3),
+                decoration: BoxDecoration(
+                  color: color,
+                  shape: BoxShape.circle,
+                ),
+                child: const Icon(Icons.check_rounded, color: Colors.white, size: 16),
+              )
+            else
+              Container(
+                width: 22,
+                height: 22,
+                decoration: BoxDecoration(
+                  shape: BoxShape.circle,
+                  border: Border.all(color: Colors.grey.shade300, width: 2),
+                ),
               ),
-            ],
           ],
         ),
       ),
