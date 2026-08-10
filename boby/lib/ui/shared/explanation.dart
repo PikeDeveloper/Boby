@@ -88,7 +88,7 @@ class _ExplanationDialogState extends State<_ExplanationDialog> {
             border: Border.all(color: Colors.orange.shade200, width: 4),
             boxShadow: [
               BoxShadow(
-                color: Colors.black.withOpacity(0.1),
+                color: Colors.black.withValues(alpha: 0.1),
                 blurRadius: 20,
                 offset: const Offset(0, 10),
               ),

@@ -10,7 +10,7 @@ class ToBeOptionButton extends StatelessWidget {
   final bool isCorrect;
   final bool showResult;
 
-  ToBeOptionButton({
+  const ToBeOptionButton({
     super.key,
     required this.letter,
     required this.text,
@@ -95,7 +95,7 @@ class ToBeOptionButton extends StatelessWidget {
                       height: 30,
                       margin: const EdgeInsets.only(left: 8),
                       decoration: BoxDecoration(
-                        color: Colors.white.withOpacity(0.2),
+                        color: Colors.white.withValues(alpha: 0.2),
                         shape: BoxShape.circle,
                       ),
                       child: Center(

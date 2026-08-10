@@ -232,7 +232,7 @@ class _BonusScreenFloatWordsState extends State<BonusScreenFloatWords>
                     borderRadius: BorderRadius.circular(20),
                     boxShadow: [
                       BoxShadow(
-                        color: Colors.black.withOpacity(0.1),
+                        color: Colors.black.withValues(alpha: 0.1),
                         blurRadius: 4,
                         offset: const Offset(0, 2),
                       ),
@@ -302,12 +302,12 @@ class _BonusScreenFloatWordsState extends State<BonusScreenFloatWords>
                     borderRadius: BorderRadius.circular(20),
                     boxShadow: [
                       BoxShadow(
-                        color: Colors.black.withOpacity(0.1),
+                        color: Colors.black.withValues(alpha: 0.1),
                         blurRadius: 4,
                         offset: const Offset(0, 2),
                       ),
                     ],
-                    border: Border.all(color: Colors.blue.withOpacity(0.3)),
+                    border: Border.all(color: Colors.blue.withValues(alpha: 0.3)),
                   ),
                   child: Text(
                     word.text,
@@ -320,7 +320,7 @@ class _BonusScreenFloatWordsState extends State<BonusScreenFloatWords>
                 ),
               ),
             );
-          }).toList(),
+          }),
 
           // Score Feedbacks
           ..._feedbacks.map((feedback) {
@@ -359,7 +359,7 @@ class _BonusScreenFloatWordsState extends State<BonusScreenFloatWords>
                 ),
               ),
             );
-          }).toList(),
+          }),
         ],
       ),
     );

@@ -99,7 +99,7 @@ class Score extends StatelessWidget {
           border: Border.all(color: const Color(0xFF1E88E5), width: 3),
           boxShadow: [
             BoxShadow(
-              color: Colors.black.withOpacity(0.15),
+              color: Colors.black.withValues(alpha: 0.15),
               blurRadius: 8,
               offset: const Offset(0, 4),
             ),
@@ -114,7 +114,7 @@ class Score extends StatelessWidget {
                     Container(
                       padding: const EdgeInsets.all(4),
                       decoration: BoxDecoration(
-                        color: Colors.blue.withOpacity(0.1),
+                        color: Colors.blue.withValues(alpha: 0.1),
                         shape: BoxShape.circle,
                       ),
                       child: AnimatedSwitcher(
@@ -176,7 +176,7 @@ class Score extends StatelessWidget {
                     Container(
                       padding: const EdgeInsets.all(4),
                       decoration: BoxDecoration(
-                        color: Colors.orange.withOpacity(0.1),
+                        color: Colors.orange.withValues(alpha: 0.1),
                         shape: BoxShape.circle,
                       ),
                       child: const Icon(
@@ -417,7 +417,7 @@ class _ScoreDialogContentState extends State<_ScoreDialogContent> {
                 border: Border.all(color: const Color(0xFF1E88E5), width: 4),
                 boxShadow: [
                   BoxShadow(
-                    color: Colors.black.withOpacity(0.2),
+                    color: Colors.black.withValues(alpha: 0.2),
                     blurRadius: 15,
                     offset: const Offset(0, 5),
                   ),
@@ -444,7 +444,7 @@ class _ScoreDialogContentState extends State<_ScoreDialogContent> {
                       vertical: 10,
                     ),
                     decoration: BoxDecoration(
-                      color: widget.levelColor.withOpacity(0.1),
+                      color: widget.levelColor.withValues(alpha: 0.1),
                       borderRadius: BorderRadius.circular(20),
                       border: Border.all(color: widget.levelColor, width: 2),
                     ),
@@ -571,7 +571,7 @@ class _ScoreDialogContentState extends State<_ScoreDialogContent> {
           style: TextStyle(
             fontSize: 16,
             fontWeight: FontWeight.w500,
-            color: color.withOpacity(0.8),
+            color: color.withValues(alpha: 0.8),
           ),
         ),
       ],
@@ -592,7 +592,7 @@ class _ScoreDialogContentState extends State<_ScoreDialogContent> {
       child: Container(
         padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 10),
         decoration: BoxDecoration(
-          color: color.withOpacity(0.1),
+          color: color.withValues(alpha: 0.1),
           borderRadius: BorderRadius.circular(15),
           border: Border.all(color: color, width: 2),
         ),

@@ -5,12 +5,22 @@ import 'package:flutter/services.dart';
 import 'package:get/get.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'services/storage_service.dart';
+import 'services/firebase_service.dart';
 
 import 'utils/routes.dart';
 
 Future<void> main() async {
   WidgetsFlutterBinding.ensureInitialized();
   await SystemChrome.setPreferredOrientations([DeviceOrientation.portraitUp]);
+
+  // Initialize Firebase (try-catch to handle when not configured yet)
+  try {
+    await FirebaseService().initialize();
+    print('Firebase initialized successfully');
+  } catch (e) {
+    print('Firebase initialization failed: $e');
+    print('This is expected if Firebase is not properly configured');
+  }
 
   // Initialize services
   await Get.putAsync<StorageService>(() => StorageService.init());

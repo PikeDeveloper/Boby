@@ -279,7 +279,7 @@ class _ScrambleScreenState extends State<ScrambleScreen> {
                                               boxShadow: [
                                                 BoxShadow(
                                                   color: Colors.black
-                                                      .withOpacity(0.1),
+                                                      .withValues(alpha: 0.1),
                                                   blurRadius: 4,
                                                   offset: const Offset(0, 2),
                                                 ),
@@ -368,7 +368,7 @@ class _ScrambleScreenState extends State<ScrambleScreen> {
             boxShadow: clueMode
                 ? [
                     BoxShadow(
-                      color: Colors.amber.withOpacity(0.3),
+                      color: Colors.amber.withValues(alpha: 0.3),
                       blurRadius: 8,
                       offset: const Offset(0, 2),
                     ),

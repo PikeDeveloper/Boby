@@ -1,0 +1,26 @@
+rules_version = '2';
+service cloud.firestore {
+  match /databases/{database}/documents {
+    
+    // Reglas para padres
+    match /parents/{email} {
+      allow read, write: if true;
+    }
+    
+    // Reglas para hijos
+    match /children/{childId} {
+      allow read, write: if true;
+    }
+    
+    // Reglas para estadísticas
+    match /stats/{childId}/daily_stats/{date} {
+      allow read, write: if true;
+    }
+    
+    // Reglas para correos pendientes (para Cloud Functions)
+    match /pending_emails/{emailId} {
+      allow create: if true;
+      allow read, update, delete: if false; // Solo accesible/modificable por Cloud Functions o Admin
+    }
+  }
+}

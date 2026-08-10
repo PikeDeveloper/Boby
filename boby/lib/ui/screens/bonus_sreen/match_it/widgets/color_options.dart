@@ -8,7 +8,7 @@ class ColorOptionsGrid extends StatelessWidget {
   final bool Function(String) isWrong;
   final bool Function(String) isCorrect;
 
-  const ColorOptionsGrid({
+  const ColorOptionsGrid({super.key, 
     required this.options,
     required this.shapes,
     required this.onTap,
@@ -77,8 +77,8 @@ class ColorOptionsGrid extends StatelessWidget {
                   // Overlay for wrong/correct state
                   if (wrong || correct)
                     Container(
-                      color: (wrong ? Colors.red : Colors.green).withOpacity(
-                        0.3,
+                      color: (wrong ? Colors.red : Colors.green).withValues(
+                        alpha: 0.3,
                       ),
                       child: Center(
                         child: Icon(

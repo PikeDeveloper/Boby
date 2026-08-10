@@ -4,6 +4,7 @@ import 'package:boby/ui/screens/setting_screen/widgets/bonus_setting.dart';
 import 'package:boby/ui/screens/setting_screen/widgets/memory_settings.dart';
 import 'package:boby/ui/screens/setting_screen/widgets/more_apps.dart';
 import 'package:boby/ui/screens/setting_screen/widgets/scramble_setting.dart';
+import 'package:boby/ui/screens/setting_screen/widgets/parent_email.dart';
 import 'package:flutter/material.dart';
 
 import '../../shared/word_of_images.dart';
@@ -55,6 +56,14 @@ class SettingScreen extends StatelessWidget {
               color: Colors.green,
             ),
             const SizedBox(height: 25),
+            
+            // Parent Email
+            _buildSection(
+              title: "PARENT EMAIL",
+              content: const ParentEmail(),
+              color: Colors.blue,
+            ),
+            const SizedBox(height: 25),
             // Bonus Settings
             _buildSection(
               title: "BONUS INFORMATION",
@@ -88,12 +97,12 @@ class SettingScreen extends StatelessWidget {
         borderRadius: BorderRadius.circular(25),
         boxShadow: [
           BoxShadow(
-            color: color.withOpacity(0.2),
+            color: color.withValues(alpha: 0.2),
             blurRadius: 15,
             offset: const Offset(0, 5),
           ),
         ],
-        border: Border.all(color: color.withOpacity(0.3), width: 2),
+        border: Border.all(color: color.withValues(alpha: 0.3), width: 2),
       ),
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
@@ -103,7 +112,7 @@ class SettingScreen extends StatelessWidget {
             width: double.infinity,
             padding: const EdgeInsets.symmetric(vertical: 12, horizontal: 10),
             decoration: BoxDecoration(
-              color: color.withOpacity(0.1),
+              color: color.withValues(alpha: 0.1),
               borderRadius: const BorderRadius.only(
                 topLeft: Radius.circular(23),
                 topRight: Radius.circular(23),

@@ -151,8 +151,9 @@ class _MatchItScreenState extends State<MatchItScreen> {
     final enabled = <_RoundType>[];
     if (_app.enableColors.value) enabled.add(_RoundType.shape);
     if (_app.enableNumbers.value) enabled.add(_RoundType.number);
-    if (_app.enableObjects.value && Constants.assets.isNotEmpty)
+    if (_app.enableObjects.value && Constants.assets.isNotEmpty) {
       enabled.add(_RoundType.figure);
+    }
 
     // If nothing enabled, fallback to colors/shape
     if (enabled.isEmpty) {

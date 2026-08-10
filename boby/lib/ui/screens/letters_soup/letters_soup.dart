@@ -376,7 +376,7 @@ class _LettersSoupState extends State<LettersSoup> {
     for (var i = 0; i < foundPaths.length; i++) {
       if (foundPaths[i].any((point) => point.r == p.r && point.c == p.c)) {
         final word = _lettersFrom(foundPaths[i]);
-        return wordColorMap[word]?.withOpacity(0.3);
+        return wordColorMap[word]?.withValues(alpha: 0.3);
       }
     }
     return null;

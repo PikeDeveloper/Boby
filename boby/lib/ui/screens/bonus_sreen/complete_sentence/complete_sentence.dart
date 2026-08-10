@@ -230,7 +230,7 @@ class _CompleteSentenceState extends State<CompleteSentence> {
                             borderRadius: BorderRadius.circular(25),
                             boxShadow: [
                               BoxShadow(
-                                color: Colors.orange.withOpacity(0.2),
+                                color: Colors.orange.withValues(alpha: 0.2),
                                 blurRadius: 15,
                                 offset: const Offset(0, 8),
                               ),

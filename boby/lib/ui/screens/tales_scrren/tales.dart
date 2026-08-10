@@ -171,7 +171,7 @@ class _TalesScreenState extends State<TalesScreen> {
                         borderRadius: BorderRadius.circular(24),
                         boxShadow: [
                           BoxShadow(
-                            color: Colors.orange.withOpacity(0.05),
+                            color: Colors.orange.withValues(alpha: 0.05),
                             blurRadius: 15,
                             offset: const Offset(0, 4),
                           ),
@@ -400,7 +400,7 @@ class _TalesScreenState extends State<TalesScreen> {
                                 ),
                               ),
                             );
-                          }).toList(),
+                          }),
                         ],
                       ),
                     ),

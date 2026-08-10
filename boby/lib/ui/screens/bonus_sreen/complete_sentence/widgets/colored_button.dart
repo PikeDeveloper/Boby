@@ -10,7 +10,7 @@ class OptionButton extends StatelessWidget {
   final bool isCorrect;
   final bool showResult;
 
-   OptionButton({
+   const OptionButton({
     super.key,
     required this.letter,
     required this.text,
@@ -111,7 +111,7 @@ double lerp3 = 0.15;
                       height: 30,
                       margin: const EdgeInsets.only(left: 8),
                       decoration: BoxDecoration(
-                        color: Colors.white.withOpacity(0.2),
+                        color: Colors.white.withValues(alpha: 0.2),
                         shape: BoxShape.circle,
                       ),
                       child: Center(

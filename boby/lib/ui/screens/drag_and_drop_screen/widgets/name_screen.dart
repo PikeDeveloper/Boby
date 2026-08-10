@@ -1,7 +1,6 @@
 import 'package:boby/ui/screens/drag_and_drop_screen/widgets/card_sound.dart';
 import 'package:boby/utils/colors.dart';
 import 'package:boby/utils/constants.dart';
-import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 
 class NameScreen extends StatelessWidget {

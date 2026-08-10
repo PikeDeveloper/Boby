@@ -78,7 +78,7 @@ class MemrySettings extends StatelessWidget {
         duration: const Duration(milliseconds: 200),
         padding: const EdgeInsets.all(12),
         decoration: BoxDecoration(
-          color: selected ? color.withOpacity(0.1) : Colors.grey.shade50,
+          color: selected ? color.withValues(alpha: 0.1) : Colors.grey.shade50,
           borderRadius: BorderRadius.circular(20),
           border: Border.all(
             color: selected ? color : Colors.grey.shade300,
@@ -86,7 +86,7 @@ class MemrySettings extends StatelessWidget {
           ),
           boxShadow: [
             BoxShadow(
-              color: selected ? color.withOpacity(0.3) : Colors.transparent,
+              color: selected ? color.withValues(alpha: 0.3) : Colors.transparent,
               blurRadius: 8,
               offset: const Offset(0, 4),
             ),
@@ -113,7 +113,7 @@ class MemrySettings extends StatelessWidget {
                 itemBuilder: (context, index) => Container(
                   decoration: BoxDecoration(
                     color: selected
-                        ? color.withOpacity(0.8)
+                        ? color.withValues(alpha: 0.8)
                         : Colors.grey.shade400,
                     borderRadius: BorderRadius.circular(2),
                   ),
@@ -137,7 +137,7 @@ class MemrySettings extends StatelessWidget {
               style: TextStyle(
                 fontSize: 12,
                 fontWeight: FontWeight.w500,
-                color: selected ? color.withOpacity(0.8) : Colors.grey.shade500,
+                color: selected ? color.withValues(alpha: 0.8) : Colors.grey.shade500,
               ),
             ),
 

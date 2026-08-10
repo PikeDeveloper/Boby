@@ -274,4 +274,60 @@ class StorageService extends GetxService {
         break;
     }
   }
+  
+  // Firebase Child Profile Storage
+  static const String _kChildId = 'child_id';
+  static const String _kChildName = 'child_name';
+  static const String _kParentEmail = 'parent_email';
+  static const String _kParentEmailForSettings = 'parent_email_settings';
+  static const String _kChildNameForSettings = 'child_name_settings';
+  
+  Map<String, String>? getChildProfile() {
+    final childId = _box.get(_kChildId) as String?;
+    final childName = _box.get(_kChildName) as String?;
+    final parentEmail = _box.get(_kParentEmail) as String?;
+    
+    if (childId != null && childId.isNotEmpty) {
+      return {
+        'childId': childId,
+        'childName': childName ?? '',
+        'parentEmail': parentEmail ?? '',
+      };
+    }
+    return null;
+  }
+  
+  Future<void> saveChildProfile(String childId, String childName, String parentEmail) async {
+    await _box.put(_kChildId, childId);
+    await _box.put(_kChildName, childName);
+    await _box.put(_kParentEmail, parentEmail);
+  }
+  
+  Future<void> clearChildProfile() async {
+    await _box.delete(_kChildId);
+    await _box.delete(_kChildName);
+    await _box.delete(_kParentEmail);
+  }
+  
+  // Parent Email Storage (for settings)
+  String? getParentEmail() => _box.get(_kParentEmailForSettings) as String?;
+  
+  Future<void> saveParentEmail(String email) async {
+    await _box.put(_kParentEmailForSettings, email);
+  }
+  
+  Future<void> clearParentEmail() async {
+    await _box.delete(_kParentEmailForSettings);
+  }
+  
+  // Child Name Storage (for settings)
+  String? getChildName() => _box.get(_kChildNameForSettings) as String?;
+  
+  Future<void> saveChildName(String name) async {
+    await _box.put(_kChildNameForSettings, name);
+  }
+  
+  Future<void> clearChildName() async {
+    await _box.delete(_kChildNameForSettings);
+  }
 }

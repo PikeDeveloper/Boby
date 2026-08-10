@@ -83,7 +83,7 @@ class MatchItSettings extends StatelessWidget {
         width: 80,
         padding: const EdgeInsets.all(10),
         decoration: BoxDecoration(
-          color: isSelected ? color.withOpacity(0.1) : Colors.grey.shade50,
+          color: isSelected ? color.withValues(alpha: 0.1) : Colors.grey.shade50,
           borderRadius: BorderRadius.circular(20),
           border: Border.all(
             color: isSelected ? color : Colors.grey.shade300,
@@ -91,7 +91,7 @@ class MatchItSettings extends StatelessWidget {
           ),
           boxShadow: [
             BoxShadow(
-              color: isSelected ? color.withOpacity(0.3) : Colors.transparent,
+              color: isSelected ? color.withValues(alpha: 0.3) : Colors.transparent,
               blurRadius: 8,
               offset: const Offset(0, 4),
             ),

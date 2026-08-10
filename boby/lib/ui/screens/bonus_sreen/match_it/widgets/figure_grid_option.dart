@@ -8,7 +8,7 @@ class FigureOptionsGrid extends StatelessWidget {
   final bool Function(String) isWrong;
   final bool Function(String) isCorrect;
 
-  const FigureOptionsGrid({
+  const FigureOptionsGrid({super.key, 
     required this.options,
     required this.assets,
     required this.onTap,
@@ -64,7 +64,7 @@ class FigureOptionsGrid extends StatelessWidget {
               ),
               boxShadow: [
                 BoxShadow(
-                  color: Colors.black.withOpacity(0.1),
+                  color: Colors.black.withValues(alpha: 0.1),
                   blurRadius: 8,
                   offset: const Offset(0, 4),
                 ),
@@ -89,8 +89,8 @@ class FigureOptionsGrid extends StatelessWidget {
                   // Overlay for wrong/correct state
                   if (wrong || correct)
                     Container(
-                      color: (wrong ? Colors.red : Colors.green).withOpacity(
-                        0.3,
+                      color: (wrong ? Colors.red : Colors.green).withValues(
+                        alpha: 0.3,
                       ),
                       child: Center(
                         child: Icon(

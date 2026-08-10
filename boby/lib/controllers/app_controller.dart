@@ -4,6 +4,7 @@ import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:just_audio/just_audio.dart';
 import 'package:boby/services/storage_service.dart';
+import 'package:boby/services/firebase_service.dart';
 import 'dart:math';
 
 class AppController extends GetxController {
@@ -17,6 +18,12 @@ class AppController extends GetxController {
   var menuOpen = false.obs;
   var celebrationVisible = false.obs; // controls celebration overlay visibility
   var isTrainingMode = false.obs;
+  
+  // Firebase Stats Tracking
+  var currentChildId = "".obs;
+  var currentChildName = "".obs;
+  var currentParentEmail = "".obs;
+  var firebaseEnabled = false.obs;
 
   // Tales Randomization
   final List<int> _availableTalesIndices = [];
@@ -149,6 +156,84 @@ class AppController extends GetxController {
       bonusScreen.value = rng.nextInt(5);
     } else {
       bonusScreen.value = rng.nextInt(10);
+    }
+  }
+  
+  // Firebase Stats Tracking Methods
+  void setupChildProfile(String childId, String childName, String parentEmail) {
+    currentChildId.value = childId;
+    currentChildName.value = childName;
+    currentParentEmail.value = parentEmail;
+    firebaseEnabled.value = true;
+    
+    // Guardar en storage local
+    StorageService.instance.saveChildProfile(childId, childName, parentEmail);
+  }
+  
+  Future<void> trackWordLearned(int count) async {
+    if (!firebaseEnabled.value || currentChildId.value.isEmpty) return;
+    
+    try {
+      await FirebaseService().updateStats(
+        currentChildId.value,
+        wordsLearned: count,
+      );
+    } catch (e) {
+      debugPrint('Error tracking word learned: $e');
+    }
+  }
+  
+  Future<void> trackLevelCompleted(String gameType, String newLevel) async {
+    if (!firebaseEnabled.value || currentChildId.value.isEmpty) return;
+    
+    try {
+      await FirebaseService().updateStats(
+        currentChildId.value,
+        levelsCompleted: 1,
+        currentLevel: newLevel,
+      );
+      
+      // Also track game-specific progress
+      await FirebaseService().updateStats(
+        currentChildId.value,
+      );
+    } catch (e) {
+      debugPrint('Error tracking level completed: $e');
+    }
+  }
+  
+  Future<void> trackScore(int score) async {
+    if (!firebaseEnabled.value || currentChildId.value.isEmpty) return;
+    
+    try {
+      await FirebaseService().updateStats(
+        currentChildId.value,
+        score: score,
+      );
+    } catch (e) {
+      debugPrint('Error tracking score: $e');
+    }
+  }
+  
+  Future<void> trackAchievement(String achievement) async {
+    if (!firebaseEnabled.value || currentChildId.value.isEmpty) return;
+    
+    try {
+      // This would need to be implemented in FirebaseService
+      // For now, we'll just log it
+      debugPrint('Achievement unlocked: $achievement');
+    } catch (e) {
+      debugPrint('Error tracking achievement: $e');
+    }
+  }
+  
+  void loadChildProfile() {
+    final profile = StorageService.instance.getChildProfile();
+    if (profile != null) {
+      currentChildId.value = profile['childId'] ?? '';
+      currentChildName.value = profile['childName'] ?? '';
+      currentParentEmail.value = profile['parentEmail'] ?? '';
+      firebaseEnabled.value = profile['childId'] != null && profile['childId']!.isNotEmpty;
     }
   }
 }

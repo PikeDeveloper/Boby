@@ -61,7 +61,7 @@ class NameContainer extends StatelessWidget {
                     242,
                     242,
                     242,
-                  ).withOpacity(0.8),
+                  ).withValues(alpha: 0.8),
                 ),
                 child: Text(
                   name,
@@ -77,7 +77,7 @@ class NameContainer extends StatelessWidget {
           ),
         ),
         // Container con borde segmentado --------------//
-        childWhenDragging: Container(
+        childWhenDragging: SizedBox(
           width: 150,
           //     padding: const EdgeInsets.symmetric(vertical: 8, horizontal: 12),
           child: DottedBorder(
@@ -127,7 +127,7 @@ class NameContainer extends StatelessWidget {
                   242,
                   242,
                   242,
-                ).withOpacity(0.8),
+                ).withValues(alpha: 0.8),
                 border: isSelected
                     ? Border.all(color: Colors.blue, width: 2)
                     : null,

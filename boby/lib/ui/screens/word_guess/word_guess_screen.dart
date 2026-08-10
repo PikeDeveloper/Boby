@@ -222,11 +222,12 @@ class _WordGuessScreenState extends State<WordGuessScreen> {
         fit: StackFit.expand,
         children: [
           celebrationOverlay,
-          Column(
-            crossAxisAlignment: CrossAxisAlignment.center,
-            mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-            mainAxisSize: MainAxisSize.min,
-            children: [
+          SingleChildScrollView(
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.center,
+              mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+              mainAxisSize: MainAxisSize.min,
+              children: [
               Padding(
                 padding: const EdgeInsets.only(top: 8.0),
                 child: WordGuessWord(),
@@ -241,7 +242,7 @@ class _WordGuessScreenState extends State<WordGuessScreen> {
                   borderRadius: BorderRadius.circular(25),
                   boxShadow: [
                     BoxShadow(
-                      color: Colors.teal.withOpacity(0.2),
+                      color: Colors.teal.withValues(alpha: 0.2),
                       blurRadius: 15,
                       offset: const Offset(0, 8),
                     ),
@@ -302,12 +303,12 @@ class _WordGuessScreenState extends State<WordGuessScreen> {
                                 width: 2,
                               ),
                               color: s.char == null
-                                  ? Colors.white.withOpacity(0.5)
+                                  ? Colors.white.withValues(alpha: 0.5)
                                   : Colors.white,
                               boxShadow: s.char != null
                                   ? [
                                       BoxShadow(
-                                        color: Colors.black.withOpacity(0.1),
+                                        color: Colors.black.withValues(alpha: 0.1),
                                         blurRadius: 4,
                                         offset: const Offset(0, 2),
                                       ),
@@ -349,6 +350,7 @@ class _WordGuessScreenState extends State<WordGuessScreen> {
                 ],
               ),
             ],
+          ),
           ),
         ],
       ),

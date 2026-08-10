@@ -256,7 +256,7 @@ class _CardSoundState extends State<CardSound>
                                         242,
                                         242,
                                         242,
-                                      ).withOpacity(0.2),
+                                      ).withValues(alpha: 0.2),
                                     ),
                                     child: Text(
                                       "",
@@ -283,10 +283,10 @@ class _CardSoundState extends State<CardSound>
                                     242,
                                     242,
                                     242,
-                                  ).withOpacity(0.8), // Light blue background
+                                  ).withValues(alpha: 0.8), // Light blue background
                                   boxShadow: [
                                     BoxShadow(
-                                      color: Colors.black.withOpacity(0.2),
+                                      color: Colors.black.withValues(alpha: 0.2),
                                       blurRadius: 5,
                                       spreadRadius: 2,
                                     ),

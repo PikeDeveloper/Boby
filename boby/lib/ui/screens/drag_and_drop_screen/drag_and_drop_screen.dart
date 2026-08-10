@@ -216,7 +216,7 @@ class _ListCardSoundsState extends State<ListCardSounds> {
                         242,
                         242,
                         242,
-                      ).withOpacity(0.8),
+                      ).withValues(alpha: 0.8),
                     ),
                     child: Text(
                       name,
@@ -491,7 +491,8 @@ class _ListCardSoundsState extends State<ListCardSounds> {
         });
         return true;
       },
-      onAccept: (name) async {
+      onAcceptWithDetails: (details) async {
+        final name = details.data;
         // Play sound when dropping a name
         await _playSound(_wrongMatchSound);
 
