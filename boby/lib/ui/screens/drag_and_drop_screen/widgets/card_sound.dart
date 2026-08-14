@@ -209,106 +209,179 @@ class _CardSoundState extends State<CardSound>
               offset: Offset(0, _jumpY.value),
               child: child,
             ),
-            child: SizedBox(
-              width: cardWidth,
-              height: cardHeight,
-              child: Card(
-                elevation: 4,
-                color: Colors.white,
-                shape: RoundedRectangleBorder(
-                  borderRadius: BorderRadius.circular(20),
-                  side: BorderSide(color: _borderColor, width: 3),
-                ),
-                child: ClipRRect(
-                  borderRadius: BorderRadius.circular(20),
-                  child: Stack(
-                    children: [
-                      Image.asset(widget.image, fit: BoxFit.cover),
+            child: AnimatedScale(
+              scale: widget.isActive ? 1.06 : 1.0,
+              duration: const Duration(milliseconds: 200),
+              curve: Curves.easeOutCubic,
+              child: SizedBox(
+                width: cardWidth,
+                height: cardHeight,
+                child: Card(
+                  elevation: widget.isActive ? 10 : 5,
+                  color: Colors.white,
+                  shape: RoundedRectangleBorder(
+                    borderRadius: BorderRadius.circular(22),
+                    side: BorderSide(
+                      color: widget.isActive ? const Color(0xFF4CAF50) : _borderColor,
+                      width: widget.isActive ? 4 : 3,
+                    ),
+                  ),
+                  child: ClipRRect(
+                    borderRadius: BorderRadius.circular(20),
+                    child: Stack(
+                      children: [
+                        Positioned.fill(
+                          child: Image.asset(widget.image, fit: BoxFit.cover),
+                        ),
 
-                      Positioned(
-                        bottom: 10,
-                        left: 10,
-                        right: 10,
-                        child: !widget.name.isNotEmpty
-                            ? Container(
-                                width: 150,
-                                padding: const EdgeInsets.symmetric(
-                                  vertical: 1,
-                                  horizontal: 12,
-                                ),
-                                child: DottedBorder(
-                                  options: RoundedRectDottedBorderOptions(
-                                    color: const Color(0xFF1E88E5),
-                                    strokeWidth: 2,
-                                    dashPattern: const [6, 4],
-                                    radius: const Radius.circular(20),
-                                  ),
-                                  child: Container(
-                                    width: double.infinity,
-                                    padding: const EdgeInsets.symmetric(
-                                      vertical: 8,
-                                      horizontal: 12,
+                        // Soft gradient at the bottom so the label always stands out clearly
+                        Positioned(
+                          bottom: 0,
+                          left: 0,
+                          right: 0,
+                          height: 70,
+                          child: Container(
+                            decoration: BoxDecoration(
+                              gradient: LinearGradient(
+                                colors: [
+                                  Colors.transparent,
+                                  Colors.black.withValues(alpha: 0.35),
+                                ],
+                                begin: Alignment.topCenter,
+                                end: Alignment.bottomCenter,
+                              ),
+                            ),
+                          ),
+                        ),
+
+                        Positioned(
+                          bottom: 8,
+                          left: 8,
+                          right: 8,
+                          child: !widget.name.isNotEmpty
+                              ? SizedBox(
+                                  width: double.infinity,
+                                  child: DottedBorder(
+                                    options: RoundedRectDottedBorderOptions(
+                                      color: widget.isActive
+                                          ? const Color(0xFF2E7D32)
+                                          : const Color(0xFF29B6F6),
+                                      strokeWidth: widget.isActive ? 2.5 : 2,
+                                      dashPattern: widget.isActive
+                                          ? const [8, 3]
+                                          : const [6, 4],
+                                      radius: const Radius.circular(20),
                                     ),
-                                    decoration: BoxDecoration(
-                                      borderRadius: BorderRadius.circular(20),
-                                      color: const Color.fromARGB(
-                                        232,
-                                        242,
-                                        242,
-                                        242,
-                                      ).withValues(alpha: 0.2),
-                                    ),
-                                    child: Text(
-                                      "",
-                                      textAlign: TextAlign.center,
-                                      style: const TextStyle(
-                                        fontSize: 16,
-                                        fontWeight: FontWeight.w600,
-                                        color: Color.fromARGB(255, 6, 45, 243),
+                                    child: AnimatedContainer(
+                                      duration: const Duration(milliseconds: 180),
+                                      width: double.infinity,
+                                      padding: const EdgeInsets.symmetric(
+                                        vertical: 8,
+                                        horizontal: 10,
+                                      ),
+                                      decoration: BoxDecoration(
+                                        borderRadius: BorderRadius.circular(20),
+                                        color: widget.isActive
+                                            ? const Color(0xFFE8F5E9)
+                                            : Colors.white.withValues(alpha: 0.9),
+                                        boxShadow: [
+                                          BoxShadow(
+                                            color: Colors.black.withValues(alpha: 0.1),
+                                            blurRadius: 4,
+                                            offset: const Offset(0, 2),
+                                          ),
+                                        ],
+                                      ),
+                                      child: Row(
+                                        mainAxisAlignment: MainAxisAlignment.center,
+                                        mainAxisSize: MainAxisSize.min,
+                                        children: [
+                                          Icon(
+                                            widget.isActive
+                                                ? Icons.south_rounded
+                                                : Icons.south_rounded,
+                                            size: 15,
+                                            color: widget.isActive
+                                                ? const Color(0xFF2E7D32)
+                                                : const Color(0xFF0288D1),
+                                          ),
+                                          const SizedBox(width: 4),
+                                          Text(
+                                            widget.isActive ? "Drop here!" : "Place here",
+                                            textAlign: TextAlign.center,
+                                            style: TextStyle(
+                                              fontSize: 14,
+                                              fontWeight: FontWeight.bold,
+                                              color: widget.isActive
+                                                  ? const Color(0xFF2E7D32)
+                                                  : const Color(0xFF0288D1),
+                                            ),
+                                          ),
+                                        ],
                                       ),
                                     ),
                                   ),
-                                ),
-                              )
-                            : Container(
-                                width: 130,
-                                padding: const EdgeInsets.symmetric(
-                                  vertical: 8,
-                                  horizontal: 12,
-                                ),
-                                decoration: BoxDecoration(
-                                  borderRadius: BorderRadius.circular(20),
-                                  color: const Color.fromARGB(
-                                    232,
-                                    242,
-                                    242,
-                                    242,
-                                  ).withValues(alpha: 0.8), // Light blue background
-                                  boxShadow: [
-                                    BoxShadow(
-                                      color: Colors.black.withValues(alpha: 0.2),
-                                      blurRadius: 5,
-                                      spreadRadius: 2,
+                                )
+                              : Container(
+                                  width: double.infinity,
+                                  padding: const EdgeInsets.symmetric(
+                                    vertical: 8,
+                                    horizontal: 10,
+                                  ),
+                                  decoration: BoxDecoration(
+                                    borderRadius: BorderRadius.circular(20),
+                                    gradient: const LinearGradient(
+                                      colors: [
+                                        Color(0xFF29B6F6),
+                                        Color(0xFF0277BD),
+                                      ],
+                                      begin: Alignment.topCenter,
+                                      end: Alignment.bottomCenter,
                                     ),
-                                  ],
-                                ),
-                                child: Text(
-                                  widget.name,
-                                  textAlign: TextAlign.center,
-                                  style: const TextStyle(
-                                    fontSize: 16,
-                                    fontWeight: FontWeight.w600,
-                                    color: Color.fromARGB(
-                                      255,
-                                      0,
-                                      0,
-                                      200,
-                                    ), // Blue text
+                                    border: Border.all(
+                                      color: Colors.white,
+                                      width: 2,
+                                    ),
+                                    boxShadow: [
+                                      BoxShadow(
+                                        color: Colors.black.withValues(alpha: 0.25),
+                                        blurRadius: 6,
+                                        offset: const Offset(0, 3),
+                                      ),
+                                    ],
+                                  ),
+                                  child: Row(
+                                    mainAxisAlignment: MainAxisAlignment.center,
+                                    mainAxisSize: MainAxisSize.min,
+                                    children: [
+                                      const Icon(
+                                        Icons.check_rounded,
+                                        color: Colors.white,
+                                        size: 16,
+                                      ),
+                                      const SizedBox(width: 4),
+                                      Text(
+                                        widget.name,
+                                        textAlign: TextAlign.center,
+                                        style: const TextStyle(
+                                          fontSize: 16,
+                                          fontWeight: FontWeight.bold,
+                                          color: Colors.white,
+                                          shadows: [
+                                            Shadow(
+                                              color: Colors.black26,
+                                              offset: Offset(0, 1),
+                                              blurRadius: 2,
+                                            ),
+                                          ],
+                                        ),
+                                      ),
+                                    ],
                                   ),
                                 ),
-                              ),
-                      ),
-                    ],
+                        ),
+                      ],
+                    ),
                   ),
                 ),
               ),

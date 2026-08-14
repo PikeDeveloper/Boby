@@ -210,21 +210,28 @@ class _ListCardSoundsState extends State<ListCardSounds> {
                       horizontal: 12,
                     ),
                     decoration: BoxDecoration(
-                      borderRadius: BorderRadius.circular(20),
-                      color: const Color.fromARGB(
-                        232,
-                        242,
-                        242,
-                        242,
-                      ).withValues(alpha: 0.8),
+                      borderRadius: BorderRadius.circular(25),
+                      gradient: const LinearGradient(
+                        colors: [Color(0xFF29B6F6), Color(0xFF0277BD)],
+                        begin: Alignment.topCenter,
+                        end: Alignment.bottomCenter,
+                      ),
+                      border: Border.all(color: Colors.white, width: 2),
+                      boxShadow: [
+                        BoxShadow(
+                          color: Colors.black.withValues(alpha: 0.3),
+                          blurRadius: 10,
+                          offset: const Offset(0, 4),
+                        ),
+                      ],
                     ),
                     child: Text(
                       name,
                       textAlign: TextAlign.center,
                       style: const TextStyle(
-                        fontSize: 16,
-                        fontWeight: FontWeight.w600,
-                        color: Color.fromARGB(255, 6, 45, 243),
+                        fontSize: 17,
+                        fontWeight: FontWeight.bold,
+                        color: Colors.white,
                       ),
                     ),
                   ),
@@ -366,7 +373,21 @@ class _ListCardSoundsState extends State<ListCardSounds> {
                     onTap: () {
                       appController.currentPage.value = 7;
                     },
-                    child: Image.asset("assets/clue-icon.png", height: 30),
+                    child: Container(
+                      padding: const EdgeInsets.all(6),
+                      decoration: BoxDecoration(
+                        color: Colors.white,
+                        shape: BoxShape.circle,
+                        boxShadow: [
+                          BoxShadow(
+                            color: Colors.amber.withValues(alpha: 0.6),
+                            blurRadius: 10,
+                            spreadRadius: 2,
+                          ),
+                        ],
+                      ),
+                      child: Image.asset("assets/clue-icon.png", height: 32),
+                    ),
                   ),
                 ],
               ),
