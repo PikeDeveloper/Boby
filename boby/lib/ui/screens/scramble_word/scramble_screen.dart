@@ -147,58 +147,68 @@ class _ScrambleScreenState extends State<ScrambleScreen> {
                 ],
               ),
 
-              const SizedBox(height: 12),
-
-              // Clue button
-              const SizedBox(height: 20),
+              const SizedBox(height: 16),
 
               // Drop Zone (Top)
               Expanded(
-                flex: 2,
-                child: Container(
+                flex: 3,
+                child: AnimatedContainer(
+                  duration: const Duration(milliseconds: 250),
                   decoration: BoxDecoration(
                     color: showFeedback
                         ? (isCorrect
-                              ? Colors.green.shade100
-                              : Colors.red.shade100)
-                        : Colors.grey.shade200,
-                    borderRadius: BorderRadius.circular(16),
+                              ? const Color(0xFFE8F5E9)
+                              : const Color(0xFFFFEBEE))
+                        : Colors.white,
+                    borderRadius: BorderRadius.circular(24),
                     border: Border.all(
                       color: showFeedback
-                          ? (isCorrect ? Colors.green : Colors.red)
-                          : Colors.grey.shade400,
+                          ? (isCorrect ? const Color(0xFF4CAF50) : const Color(0xFFEF5350))
+                          : Colors.grey.shade300,
                       width: 3,
                     ),
+                    boxShadow: [
+                      BoxShadow(
+                        color: showFeedback
+                            ? (isCorrect
+                                  ? const Color(0xFF4CAF50).withValues(alpha: 0.3)
+                                  : const Color(0xFFEF5350).withValues(alpha: 0.3))
+                            : Colors.black.withValues(alpha: 0.08),
+                        blurRadius: 14,
+                        offset: const Offset(0, 5),
+                      ),
+                    ],
                   ),
                   child: Column(
                     mainAxisAlignment: MainAxisAlignment.center,
                     children: [
-                      // Drop zone area with multi-line support
-                      showFeedback
-                          ? Text(
-                              isCorrect ? "Correct!" : "Try again!",
-                              style: TextStyle(
-                                fontSize: isLargeScreen ? 26 : 22,
-                                fontWeight: FontWeight.bold,
-                                color: isCorrect ? Colors.green : Colors.red,
-                              ),
-                            )
-                          : const SizedBox(height: 20),
+                      if (showFeedback)
+                        Padding(
+                          padding: const EdgeInsets.only(top: 12.0),
+                          child: Text(
+                            isCorrect ? "🎉 Great job!" : "Try again! 💪",
+                            style: TextStyle(
+                              fontSize: isLargeScreen ? 26 : 22,
+                              fontWeight: FontWeight.bold,
+                              color: isCorrect
+                                  ? const Color(0xFF2E7D32)
+                                  : const Color(0xFFC62828),
+                            ),
+                          ),
+                        ),
                       Expanded(
                         child: Padding(
-                          padding: const EdgeInsets.all(16.0),
+                          padding: const EdgeInsets.all(14.0),
                           child: DragTarget<String>(
                             onWillAcceptWithDetails: (details) => !showFeedback,
                             onAcceptWithDetails: (details) {
                               setState(() {
-                                // Find the first empty slot
                                 final emptyIndex = droppedWords.indexOf(null);
                                 if (emptyIndex != -1) {
                                   droppedWords[emptyIndex] = details.data;
                                 }
                               });
 
-                              // Auto-check when all words are placed
                               if (droppedWords.every((word) => word != null)) {
                                 Future.delayed(
                                   const Duration(milliseconds: 300),
@@ -211,97 +221,173 @@ class _ScrambleScreenState extends State<ScrambleScreen> {
                             builder: (context, candidateData, rejectedData) {
                               bool isHighlighted = candidateData.isNotEmpty;
 
-                              return Container(
+                              return AnimatedContainer(
+                                duration: const Duration(milliseconds: 200),
                                 width: double.infinity,
                                 padding: const EdgeInsets.all(12),
                                 decoration: BoxDecoration(
                                   color: isHighlighted
-                                      ? Colors.blue.shade100
-                                      : Colors.white,
-                                  borderRadius: BorderRadius.circular(12),
+                                      ? const Color(0xFFE1F5FE)
+                                      : Colors.transparent,
+                                  borderRadius: BorderRadius.circular(18),
                                   border: Border.all(
                                     color: isHighlighted
-                                        ? Colors.blue.shade400
-                                        : Colors.grey.shade400,
-                                    width: 3,
+                                        ? const Color(0xFF0288D1)
+                                        : Colors.transparent,
+                                    width: 2,
                                   ),
                                 ),
                                 child: Center(
-                                  child: Wrap(
-                                    spacing: 8,
-                                    runSpacing: 8,
-                                    alignment: WrapAlignment.center,
-                                    crossAxisAlignment:
-                                        WrapCrossAlignment.center,
-                                    children: droppedWords.asMap().entries.map((
-                                      entry,
-                                    ) {
-                                      final index = entry.key;
-                                      final word = entry.value;
-
-                                      if (word != null) {
-                                        // Check if word is in correct position for clue mode
-                                        bool isWordCorrect =
-                                            word == correctWords[index];
-
-                                        // Determine color based on clue mode and correctness
-                                        Color wordColor;
-                                        if (showFeedback) {
-                                          // During feedback, use default blue
-                                          wordColor = Colors.blue.shade400;
-                                        } else if (clueMode) {
-                                          // In clue mode, show green for correct, light red for incorrect
-                                          wordColor = isWordCorrect
-                                              ? Colors.green.shade400
-                                              : Colors.red.shade300;
-                                        } else {
-                                          // Default blue when clue mode is off
-                                          wordColor = Colors.blue.shade400;
-                                        }
-
-                                        return GestureDetector(
-                                          onTap: () {
-                                            if (!showFeedback) {
-                                              setState(() {
-                                                droppedWords[index] = null;
-                                              });
-                                            }
-                                          },
-                                          child: Container(
-                                            padding: const EdgeInsets.symmetric(
-                                              horizontal: 16,
-                                              vertical: 12,
+                                  child: droppedWords.every((w) => w == null)
+                                      ? Column(
+                                          mainAxisAlignment:
+                                              MainAxisAlignment.center,
+                                          children: [
+                                            Icon(
+                                              Icons.touch_app_rounded,
+                                              size: isLargeScreen ? 38 : 30,
+                                              color: const Color(0xFF29B6F6)
+                                                  .withValues(alpha: 0.6),
                                             ),
-                                            decoration: BoxDecoration(
-                                              color: wordColor,
-                                              borderRadius:
-                                                  BorderRadius.circular(8),
-                                              boxShadow: [
-                                                BoxShadow(
-                                                  color: Colors.black
-                                                      .withValues(alpha: 0.1),
-                                                  blurRadius: 4,
-                                                  offset: const Offset(0, 2),
-                                                ),
-                                              ],
-                                            ),
-                                            child: Text(
-                                              word,
+                                            const SizedBox(height: 6),
+                                            Text(
+                                              "Tap or drag words here to build your sentence!",
+                                              textAlign: TextAlign.center,
                                               style: TextStyle(
-                                                fontSize: isLargeScreen
-                                                    ? 25
-                                                    : 18,
-                                                fontWeight: FontWeight.bold,
-                                                color: Colors.white,
+                                                fontSize:
+                                                    isLargeScreen ? 18 : 14,
+                                                fontWeight: FontWeight.w600,
+                                                color: Colors.grey.shade400,
                                               ),
                                             ),
-                                          ),
-                                        );
-                                      } else {
-                                        return const SizedBox.shrink();
-                                      }
-                                    }).toList(),
-                                  ),
+                                          ],
+                                        )
+                                      : Wrap(
+                                          spacing: 8,
+                                          runSpacing: 8,
+                                          alignment: WrapAlignment.center,
+                                          crossAxisAlignment:
+                                              WrapCrossAlignment.center,
+                                          children: droppedWords
+                                              .asMap()
+                                              .entries
+                                              .map((entry) {
+                                            final index = entry.key;
+                                            final word = entry.value;
+
+                                            if (word != null) {
+                                              bool isWordCorrect =
+                                                  word == correctWords[index];
+
+                                              List<Color> gradientColors;
+                                              if (showFeedback) {
+                                                gradientColors = isCorrect
+                                                    ? [
+                                                        const Color(0xFF66BB6A),
+                                                        const Color(0xFF388E3C),
+                                                      ]
+                                                    : [
+                                                        const Color(0xFFEF5350),
+                                                        const Color(0xFFD32F2F),
+                                                      ];
+                                              } else if (clueMode) {
+                                                gradientColors = isWordCorrect
+                                                    ? [
+                                                        const Color(0xFF26A69A),
+                                                        const Color(0xFF00695C),
+                                                      ]
+                                                    : [
+                                                        const Color(0xFFEF5350),
+                                                        const Color(0xFFD32F2F),
+                                                      ];
+                                              } else {
+                                                gradientColors = [
+                                                  const Color(0xFF29B6F6),
+                                                  const Color(0xFF0277BD),
+                                                ];
+                                              }
+
+                                              return GestureDetector(
+                                                onTap: () {
+                                                  if (!showFeedback) {
+                                                    setState(() {
+                                                      droppedWords[index] = null;
+                                                    });
+                                                  }
+                                                },
+                                                child: AnimatedContainer(
+                                                  duration: const Duration(
+                                                    milliseconds: 180,
+                                                  ),
+                                                  padding:
+                                                      const EdgeInsets.symmetric(
+                                                    horizontal: 14,
+                                                    vertical: 10,
+                                                  ),
+                                                  decoration: BoxDecoration(
+                                                    borderRadius:
+                                                        BorderRadius.circular(
+                                                      22,
+                                                    ),
+                                                    gradient: LinearGradient(
+                                                      colors: gradientColors,
+                                                      begin:
+                                                          Alignment.topCenter,
+                                                      end: Alignment.bottomCenter,
+                                                    ),
+                                                    border: Border.all(
+                                                      color: Colors.white,
+                                                      width: 2,
+                                                    ),
+                                                    boxShadow: [
+                                                      BoxShadow(
+                                                        color: gradientColors
+                                                            .last
+                                                            .withValues(
+                                                          alpha: 0.4,
+                                                        ),
+                                                        blurRadius: 6,
+                                                        offset: const Offset(
+                                                          0,
+                                                          3,
+                                                        ),
+                                                      ),
+                                                    ],
+                                                  ),
+                                                  child: Row(
+                                                    mainAxisSize:
+                                                        MainAxisSize.min,
+                                                    children: [
+                                                      Text(
+                                                        word,
+                                                        style: TextStyle(
+                                                          fontSize:
+                                                              isLargeScreen
+                                                                  ? 24
+                                                                  : 17,
+                                                          fontWeight:
+                                                              FontWeight.bold,
+                                                          color: Colors.white,
+                                                        ),
+                                                      ),
+                                                      const SizedBox(width: 6),
+                                                      Icon(
+                                                        Icons.close_rounded,
+                                                        color: Colors.white
+                                                            .withValues(
+                                                          alpha: 0.8,
+                                                        ),
+                                                        size: 16,
+                                                      ),
+                                                    ],
+                                                  ),
+                                                ),
+                                              );
+                                            } else {
+                                              return const SizedBox.shrink();
+                                            }
+                                          }).toList(),
+                                        ),
                                 ),
                               );
                             },
@@ -313,7 +399,7 @@ class _ScrambleScreenState extends State<ScrambleScreen> {
                 ),
               ),
 
-              const SizedBox(height: 20),
+              const SizedBox(height: 16),
 
               // Scrambled Words (Bottom)
               Expanded(
@@ -356,30 +442,31 @@ class _ScrambleScreenState extends State<ScrambleScreen> {
             clueMode = !clueMode;
           });
         },
-        child: Container(
+        child: AnimatedContainer(
+          duration: const Duration(milliseconds: 200),
           padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
           decoration: BoxDecoration(
-            color: clueMode ? Colors.amber.shade100 : Colors.grey.shade200,
-            borderRadius: BorderRadius.circular(20),
+            color: clueMode ? const Color(0xFFFFF8E1) : Colors.white,
+            borderRadius: BorderRadius.circular(22),
             border: Border.all(
-              color: clueMode ? Colors.amber.shade600 : Colors.grey.shade400,
+              color: clueMode ? Colors.amber.shade700 : Colors.grey.shade300,
               width: 2,
             ),
-            boxShadow: clueMode
-                ? [
-                    BoxShadow(
-                      color: Colors.amber.withValues(alpha: 0.3),
-                      blurRadius: 8,
-                      offset: const Offset(0, 2),
-                    ),
-                  ]
-                : null,
+            boxShadow: [
+              BoxShadow(
+                color: clueMode
+                    ? Colors.amber.withValues(alpha: 0.4)
+                    : Colors.black.withValues(alpha: 0.1),
+                blurRadius: clueMode ? 10 : 6,
+                offset: const Offset(0, 3),
+              ),
+            ],
           ),
           child: Row(
             mainAxisSize: MainAxisSize.min,
             children: [
               Image.asset('assets/clue-icon.png', width: 24, height: 24),
-              const SizedBox(width: 8),
+              const SizedBox(width: 6),
               Text(
                 clueMode ? 'Clue ON' : 'Clue OFF',
                 style: TextStyle(
@@ -387,7 +474,7 @@ class _ScrambleScreenState extends State<ScrambleScreen> {
                   fontWeight: FontWeight.bold,
                   color: clueMode
                       ? Colors.amber.shade900
-                      : Colors.grey.shade700,
+                      : const Color(0xFF546E7A),
                 ),
               ),
             ],
