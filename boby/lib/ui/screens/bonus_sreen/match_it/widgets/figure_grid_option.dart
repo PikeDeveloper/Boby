@@ -51,27 +51,33 @@ class FigureOptionsGrid extends StatelessWidget {
 
         return GestureDetector(
           onTap: () => onTap(label),
-          child: Container(
+          child: AnimatedContainer(
+            duration: const Duration(milliseconds: 200),
             decoration: BoxDecoration(
-              borderRadius: BorderRadius.circular(16),
+              color: Colors.white,
+              borderRadius: BorderRadius.circular(22),
               border: Border.all(
                 color: wrong
-                    ? Colors.red
+                    ? const Color(0xFFEF5350)
                     : correct
-                    ? Colors.green
-                    : colors[index],
-                width: 4,
+                    ? const Color(0xFF4CAF50)
+                    : colors[index % colors.length],
+                width: wrong || correct ? 4 : 3,
               ),
               boxShadow: [
                 BoxShadow(
-                  color: Colors.black.withValues(alpha: 0.1),
-                  blurRadius: 8,
+                  color: wrong
+                      ? const Color(0xFFEF5350).withValues(alpha: 0.3)
+                      : correct
+                      ? const Color(0xFF4CAF50).withValues(alpha: 0.3)
+                      : Colors.black.withValues(alpha: 0.12),
+                  blurRadius: wrong || correct ? 10 : 8,
                   offset: const Offset(0, 4),
                 ),
               ],
             ),
             child: ClipRRect(
-              borderRadius: BorderRadius.circular(12),
+              borderRadius: BorderRadius.circular(19),
               child: Stack(
                 fit: StackFit.expand,
                 children: [
@@ -89,14 +95,18 @@ class FigureOptionsGrid extends StatelessWidget {
                   // Overlay for wrong/correct state
                   if (wrong || correct)
                     Container(
-                      color: (wrong ? Colors.red : Colors.green).withValues(
-                        alpha: 0.3,
+                      color: (wrong ? const Color(0xFFEF5350) : const Color(0xFF4CAF50)).withValues(
+                        alpha: 0.25,
                       ),
                       child: Center(
-                        child: Icon(
-                          wrong ? Icons.close : Icons.check,
-                          color: Colors.white,
-                          size: 48,
+                        child: AnimatedScale(
+                          scale: 1.1,
+                          duration: const Duration(milliseconds: 200),
+                          child: Icon(
+                            wrong ? Icons.cancel_rounded : Icons.check_circle_rounded,
+                            color: wrong ? const Color(0xFFD32F2F) : const Color(0xFF2E7D32),
+                            size: 54,
+                          ),
                         ),
                       ),
                     ),

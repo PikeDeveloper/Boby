@@ -8,7 +8,8 @@ class ColorOptionsGrid extends StatelessWidget {
   final bool Function(String) isWrong;
   final bool Function(String) isCorrect;
 
-  const ColorOptionsGrid({super.key, 
+  const ColorOptionsGrid({
+    super.key, 
     required this.options,
     required this.shapes,
     required this.onTap,
@@ -32,8 +33,8 @@ class ColorOptionsGrid extends StatelessWidget {
       physics: const NeverScrollableScrollPhysics(),
       gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
         crossAxisCount: isLandscape || istablet ? 4 : 2,
-        mainAxisSpacing: 16,
-        crossAxisSpacing: 16,
+        mainAxisSpacing: 14,
+        crossAxisSpacing: 14,
         childAspectRatio: 1, // Square aspect ratio for shapes
       ),
       itemCount: options.length,
@@ -46,45 +47,63 @@ class ColorOptionsGrid extends StatelessWidget {
 
         return GestureDetector(
           onTap: () => onTap(opt),
-          child: Container(
+          child: AnimatedContainer(
+            duration: const Duration(milliseconds: 200),
             decoration: BoxDecoration(
-              borderRadius: BorderRadius.circular(16),
+              color: Colors.white,
+              borderRadius: BorderRadius.circular(22),
               border: Border.all(
                 color: wrong
-                    ? Colors.red
+                    ? const Color(0xFFEF5350)
                     : correct
-                    ? Colors.green
-                    : Colors.transparent,
-                width: 4,
+                    ? const Color(0xFF4CAF50)
+                    : Colors.white,
+                width: wrong || correct ? 4 : 2,
               ),
+              boxShadow: [
+                BoxShadow(
+                  color: wrong
+                      ? const Color(0xFFEF5350).withValues(alpha: 0.3)
+                      : correct
+                      ? const Color(0xFF4CAF50).withValues(alpha: 0.3)
+                      : Colors.black.withValues(alpha: 0.12),
+                  blurRadius: wrong || correct ? 10 : 8,
+                  offset: const Offset(0, 4),
+                ),
+              ],
             ),
             child: ClipRRect(
-              borderRadius: BorderRadius.circular(12),
+              borderRadius: BorderRadius.circular(20),
               child: Stack(
                 fit: StackFit.expand,
                 children: [
                   // Colored shape - same shape for all options
-                  ColorFiltered(
-                    colorFilter: ColorFilter.mode(opt.$2, BlendMode.srcIn),
-                    child: Image.asset(
-                      shapePath,
-                      fit: BoxFit.contain,
-                      width: double.infinity,
-                      height: double.infinity,
+                  Padding(
+                    padding: const EdgeInsets.all(12.0),
+                    child: ColorFiltered(
+                      colorFilter: ColorFilter.mode(opt.$2, BlendMode.srcIn),
+                      child: Image.asset(
+                        shapePath,
+                        fit: BoxFit.contain,
+                      ),
                     ),
                   ),
 
                   // Overlay for wrong/correct state
                   if (wrong || correct)
                     Container(
-                      color: (wrong ? Colors.red : Colors.green).withValues(
-                        alpha: 0.3,
+                      color: (wrong ? const Color(0xFFEF5350) : const Color(0xFF4CAF50)).withValues(
+                        alpha: 0.25,
                       ),
                       child: Center(
-                        child: Icon(
-                          wrong ? Icons.close : Icons.check,
-                          color: Colors.white,
-                          size: 48,
+                        child: AnimatedScale(
+                          scale: 1.1,
+                          duration: const Duration(milliseconds: 200),
+                          child: Icon(
+                            wrong ? Icons.cancel_rounded : Icons.check_circle_rounded,
+                            color: wrong ? const Color(0xFFD32F2F) : const Color(0xFF2E7D32),
+                            size: 54,
+                          ),
                         ),
                       ),
                     ),

@@ -28,8 +28,8 @@ class NumberOptionsGrid extends StatelessWidget {
       physics: const NeverScrollableScrollPhysics(),
       gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
         crossAxisCount: isLandscape || istablet ? 4 : 2,
-        mainAxisSpacing: 12,
-        crossAxisSpacing: 12,
+        mainAxisSpacing: 14,
+        crossAxisSpacing: 14,
         childAspectRatio: 1,
       ),
       itemCount: options.length,
@@ -40,60 +40,58 @@ class NumberOptionsGrid extends StatelessWidget {
         final correct = isCorrect(n);
         return GestureDetector(
           onTap: () => onTap(n),
-          child: Container(
+          child: AnimatedContainer(
+            duration: const Duration(milliseconds: 200),
             decoration: BoxDecoration(
               color: Colors.white,
-              borderRadius: BorderRadius.circular(16),
+              borderRadius: BorderRadius.circular(22),
               border: Border.all(
                 color: wrong
-                    ? Colors.red
+                    ? const Color(0xFFEF5350)
                     : correct
-                    ? Colors.green
-                    : Colors.transparent,
-                width: 4,
+                    ? const Color(0xFF4CAF50)
+                    : Colors.white,
+                width: wrong || correct ? 4 : 2,
               ),
               boxShadow: [
                 BoxShadow(
-                  color: Colors.black.withValues(alpha: 0.1),
-                  blurRadius: 8,
+                  color: wrong
+                      ? const Color(0xFFEF5350).withValues(alpha: 0.3)
+                      : correct
+                      ? const Color(0xFF4CAF50).withValues(alpha: 0.3)
+                      : Colors.black.withValues(alpha: 0.12),
+                  blurRadius: wrong || correct ? 10 : 8,
                   offset: const Offset(0, 4),
                 ),
               ],
             ),
             child: ClipRRect(
-              borderRadius: BorderRadius.circular(12),
+              borderRadius: BorderRadius.circular(20),
               child: Stack(
                 fit: StackFit.expand,
                 children: [
-                  // Colored shape - same shape for all options
-                  Container(
-                    decoration: BoxDecoration(
-                      border: Border.all(
-                        color: const Color.fromARGB(90, 255, 255, 255),
-                        width: 1,
-                      ),
-                      borderRadius: BorderRadius.circular(12),
-                      color: const Color.fromARGB(94, 255, 255, 255),
-                    ),
-                    child: Center(
-                      child: NumberOfImages(
-                        number: n.toString(),
-                        numberSize: 60,
-                      ),
+                  Center(
+                    child: NumberOfImages(
+                      number: n.toString(),
+                      numberSize: isLandscape || istablet ? 75 : 60,
                     ),
                   ),
 
                   // Overlay for wrong/correct state
                   if (wrong || correct)
                     Container(
-                      color: (wrong ? Colors.red : Colors.green).withValues(
-                        alpha: 0.3,
+                      color: (wrong ? const Color(0xFFEF5350) : const Color(0xFF4CAF50)).withValues(
+                        alpha: 0.25,
                       ),
                       child: Center(
-                        child: Icon(
-                          wrong ? Icons.close : Icons.check,
-                          color: Colors.white,
-                          size: 48,
+                        child: AnimatedScale(
+                          scale: 1.1,
+                          duration: const Duration(milliseconds: 200),
+                          child: Icon(
+                            wrong ? Icons.cancel_rounded : Icons.check_circle_rounded,
+                            color: wrong ? const Color(0xFFD32F2F) : const Color(0xFF2E7D32),
+                            size: 54,
+                          ),
                         ),
                       ),
                     ),

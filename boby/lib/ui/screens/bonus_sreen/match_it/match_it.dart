@@ -412,18 +412,27 @@ class _MatchItScreenState extends State<MatchItScreen> {
               children: [
                 Score(game: appController.gameSelected.value),
 
+                const SizedBox(height: 8),
                 Container(
-                  height: 20,
+                  height: 18,
                   width: MediaQuery.of(context).size.width * 0.8,
                   margin: const EdgeInsets.symmetric(horizontal: 20),
                   decoration: BoxDecoration(
-                    color: Colors.grey[200],
-                    borderRadius: BorderRadius.circular(10),
+                    color: Colors.white.withValues(alpha: 0.75),
+                    borderRadius: BorderRadius.circular(12),
+                    boxShadow: [
+                      BoxShadow(
+                        color: Colors.black.withValues(alpha: 0.08),
+                        blurRadius: 4,
+                        offset: const Offset(0, 2),
+                      ),
+                    ],
                   ),
                   child: Align(
                     alignment: Alignment.centerLeft,
-                    child: Container(
-                      height: 20,
+                    child: AnimatedContainer(
+                      duration: const Duration(milliseconds: 100),
+                      height: 18,
                       width:
                           (MediaQuery.of(context).size.width * 0.8) *
                           (1.0 -
@@ -431,22 +440,40 @@ class _MatchItScreenState extends State<MatchItScreen> {
                                       _gameDuration.inMilliseconds)
                                   .clamp(0.0, 1.0)),
                       decoration: BoxDecoration(
-                        color: Colors.blue,
-                        borderRadius: BorderRadius.circular(10),
+                        gradient: const LinearGradient(
+                          colors: [Color(0xFF29B6F6), Color(0xFF0288D1)],
+                        ),
+                        borderRadius: BorderRadius.circular(12),
                       ),
                     ),
                   ),
                 ),
 
-                Spacer(),
+                const Spacer(),
 
-                WordOfImages(
-                  letters: _currentTargetWord.toUpperCase(),
-                  letterSize: isLandscape || istablet ? 90 : 40,
+                // Target word banner card
+                Container(
+                  padding: const EdgeInsets.symmetric(
+                    horizontal: 24,
+                    vertical: 14,
+                  ),
+                  decoration: BoxDecoration(
+                    color: Colors.white.withValues(alpha: 0.95),
+                    borderRadius: BorderRadius.circular(24),
+                    boxShadow: [
+                      BoxShadow(
+                        color: Colors.black.withValues(alpha: 0.12),
+                        blurRadius: 16,
+                        offset: const Offset(0, 6),
+                      ),
+                    ],
+                  ),
+                  child: WordOfImages(
+                    letters: _currentTargetWord.toUpperCase(),
+                    letterSize: isLandscape || istablet ? 80 : 38,
+                  ),
                 ),
-                Spacer(),
 
-                // Main content area (now empty since we show the word at the top)
                 const Spacer(),
 
                 // Show the options at the bottom
@@ -483,7 +510,7 @@ class _MatchItScreenState extends State<MatchItScreen> {
                         _isLocked,
                   ),
                 ],
-                Spacer(),
+                const Spacer(),
                 // Options are now shown above in the main content area
               ],
             ),

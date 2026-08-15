@@ -29,19 +29,27 @@ class _BonusScreenFloatWordsState extends State<BonusScreenFloatWords>
   final List<FloatingWord> _activeWords = [];
   final List<ScoreFeedbackItem> _feedbacks = [];
 
-  //sounds
+  // Sounds
   final String soundPathIncorrectAnswer = "assets/sounds/bubble-pop.wav";
   final String soundPathCorrectAnswer = "assets/sounds/game-bonus.wav";
 
   // Configuration
-  final int _maxWords = 10;
-  final double _spawnInterval = 60.0; // Frames roughly
+  final int _maxWords = 9;
+  final double _spawnInterval = 50.0; // Frames roughly
   double _timeSinceLastSpawn = 0;
 
   // Timer
   final Duration _gameDuration = const Duration(seconds: 20);
   Duration _elapsedTime = Duration.zero;
   bool _isGameOver = false;
+
+  static const List<Color> _spawnColorOptions = [
+    Color(0xFF29B6F6), // Vibrant Sky Blue
+    Color(0xFFFF9800), // Vibrant Sunny Orange
+    Color(0xFFAB47BC), // Vibrant Playful Purple
+  ];
+
+  late Color _currentRoundColor;
 
   @override
   void initState() {
@@ -57,14 +65,15 @@ class _BonusScreenFloatWordsState extends State<BonusScreenFloatWords>
   }
 
   void _startNewGame() {
-    // Select a random category
     _targetCategory =
         BonusWords.bonusWords[_random.nextInt(BonusWords.bonusWords.length)];
+    _currentRoundColor =
+        _spawnColorOptions[_random.nextInt(_spawnColorOptions.length)];
     _activeWords.clear();
     _feedbacks.clear();
     _elapsedTime = Duration.zero;
     _isGameOver = false;
-    _timeSinceLastSpawn = _spawnInterval; // Force immediate spawn
+    _timeSinceLastSpawn = _spawnInterval;
   }
 
   Duration _lastElapsed = Duration.zero;
@@ -73,39 +82,38 @@ class _BonusScreenFloatWordsState extends State<BonusScreenFloatWords>
     if (_isGameOver) return;
 
     setState(() {
-      // Calculate delta time
       final delta = elapsed - _lastElapsed;
       _lastElapsed = elapsed;
 
-      // 0. Update Timer
+      // Update Timer
       _elapsedTime += delta;
       if (_elapsedTime >= _gameDuration) {
         _isGameOver = true;
-        _elapsedTime = _gameDuration; // Cap at max
+        _elapsedTime = _gameDuration;
         _handleGameOver();
         return;
       }
 
-      // 1. Update positions
+      // Update positions and wobble
       for (var word in _activeWords) {
         word.y -= word.speed;
+        word.wobble += 0.06;
       }
 
-      // 2. Remove off-screen words
-      _activeWords.removeWhere((word) => word.y < -0.1);
+      // Remove words when they float above the play area (y < -0.05)
+      _activeWords.removeWhere((word) => word.y < -0.05);
 
-      // 3. Spawn new words
+      // Spawn new words
       _timeSinceLastSpawn++;
       if (_activeWords.length < _maxWords &&
           _timeSinceLastSpawn > _spawnInterval) {
-        if (_random.nextDouble() < 0.8) {
-          // 80% chance to spawn if slot open
+        if (_random.nextDouble() < 0.85) {
           _spawnWord();
           _timeSinceLastSpawn = 0;
         }
       }
 
-      // 4. Update feedbacks (remove old ones)
+      // Update feedbacks
       final now = DateTime.now();
       _feedbacks.removeWhere(
         (item) => now.difference(item.creationTime).inMilliseconds > 1000,
@@ -128,7 +136,6 @@ class _BonusScreenFloatWordsState extends State<BonusScreenFloatWords>
     if (spawnCorrect) {
       wordText = correctOptions[_random.nextInt(correctOptions.length)];
     } else {
-      // Pick a random other category
       var otherCategories = BonusWords.bonusWords
           .where((c) => c != _targetCategory)
           .toList();
@@ -138,41 +145,41 @@ class _BonusScreenFloatWordsState extends State<BonusScreenFloatWords>
         List<String> otherOptions = List<String>.from(randomCat['options']);
         wordText = otherOptions[_random.nextInt(otherOptions.length)];
       } else {
-        // Fallback if no other categories (unlikely)
         wordText = "WRONG";
       }
     }
 
-    // Random X position (0.1 to 0.8 to keep within screen bounds mostly)
-    double startX = 0.1 + _random.nextDouble() * 0.7;
+    double startX = 0.08 + _random.nextDouble() * 0.65;
 
     _activeWords.add(
       FloatingWord(
         text: wordText,
         x: startX,
-        y: 1.1, // Start just below screen
-        speed: 0.002 + _random.nextDouble() * 0.002, // Random speed
+        y: 1.05, // Starts at bottom of play area
+        speed: 0.0022 + _random.nextDouble() * 0.002,
+        wobble: _random.nextDouble() * pi * 2,
         isTarget: correctOptions.contains(wordText),
+        badgeColor: _currentRoundColor,
       ),
     );
   }
 
   void _handleTap(FloatingWord word, String gameSelected) {
     final appController = Get.find<AppController>();
-    if (word.color != null) return; // Already tapped
+    if (word.resultColor != null) return; // Already tapped
 
     setState(() {
       if (word.isTarget) {
-        word.color = Colors.green;
-        _addFeedback(word, "+2", Colors.green);
+        word.resultColor = const Color(0xFF4CAF50);
+        _addFeedback(word, "+2", const Color(0xFF4CAF50));
         Get.find<AppController>().playGameBonus();
         if (!appController.isTrainingMode.value) {
           storage.incScoreCorrect(gameSelected);
           storage.incScoreCorrect(gameSelected);
         }
       } else {
-        word.color = Colors.red;
-        _addFeedback(word, "1", Colors.red);
+        word.resultColor = const Color(0xFFEF5350);
+        _addFeedback(word, "-1", const Color(0xFFEF5350));
         Get.find<AppController>().playBubblePop();
         if (!appController.isTrainingMode.value) {
           storage.incScoreWrong(gameSelected);
@@ -196,170 +203,247 @@ class _BonusScreenFloatWordsState extends State<BonusScreenFloatWords>
   @override
   Widget build(BuildContext context) {
     final appController = Get.find<AppController>();
+    final screenSize = MediaQuery.of(context).size;
+
     return Scaffold(
       body: Stack(
         children: [
-          // Background or other UI elements could go here
-          Container(
-            height: double.infinity,
-            width: double.infinity,
-            decoration: const BoxDecoration(
-              image: DecorationImage(
-                image: AssetImage('assets/images/bonus_background.png'),
-                fit: BoxFit.cover,
-              ),
+          // Background Image
+          Positioned.fill(
+            child: Image.asset(
+              'assets/images/bonus_background.png',
+              fit: BoxFit.cover,
             ),
           ),
 
-          // Header
-          Positioned(
-            top: 100,
-            left: 0,
-            right: 0,
+          // Main Layout Structure
+          SafeArea(
             child: Column(
               children: [
-                Score(game: appController.gameSelected.value),
-                Container(
-                  padding: const EdgeInsets.symmetric(
-                    horizontal: 20,
-                    vertical: 10,
-                  ),
-
-                  width: double.infinity,
-                  alignment: Alignment.center,
-                  decoration: BoxDecoration(
-                    color: Colors.white,
-                    borderRadius: BorderRadius.circular(20),
-                    boxShadow: [
-                      BoxShadow(
-                        color: Colors.black.withValues(alpha: 0.1),
-                        blurRadius: 4,
-                        offset: const Offset(0, 2),
-                      ),
-                    ],
-                  ),
+                // Top Header (Score + Category Prompt Banner)
+                Padding(
+                  padding: const EdgeInsets.symmetric(horizontal: 16.0, vertical: 4.0),
                   child: Column(
                     children: [
-                      //barra regresiva  de 10seg
+                      Score(game: appController.gameSelected.value),
+                      const SizedBox(height: 6),
                       Container(
-                        height: 20,
-                        width: MediaQuery.of(context).size.width * 0.8,
-                        margin: const EdgeInsets.symmetric(horizontal: 20),
+                        padding: const EdgeInsets.symmetric(
+                          horizontal: 20,
+                          vertical: 12,
+                        ),
                         decoration: BoxDecoration(
-                          color: Colors.grey[200],
-                          borderRadius: BorderRadius.circular(10),
-                        ),
-                        child: Align(
-                          alignment: Alignment.centerLeft,
-                          child: Container(
-                            height: 20,
-                            width:
-                                (MediaQuery.of(context).size.width * 0.8) *
-                                (1.0 -
-                                    (_elapsedTime.inMilliseconds /
-                                            _gameDuration.inMilliseconds)
-                                        .clamp(0.0, 1.0)),
-                            decoration: BoxDecoration(
-                              color: Colors.blue,
-                              borderRadius: BorderRadius.circular(10),
+                          color: Colors.white.withValues(alpha: 0.95),
+                          borderRadius: BorderRadius.circular(24),
+                          boxShadow: [
+                            BoxShadow(
+                              color: Colors.black.withValues(alpha: 0.12),
+                              blurRadius: 12,
+                              offset: const Offset(0, 4),
                             ),
-                          ),
+                          ],
                         ),
-                      ),
-                      Text(
-                        "Touch the words related to:",
-                        style: TextStyle(
-                          fontSize: 20,
-                          color: MyColors.darkBlue,
+                        child: Column(
+                          children: [
+                            // Progress bar
+                            Container(
+                              height: 16,
+                              width: screenSize.width * 0.75,
+                              decoration: BoxDecoration(
+                                color: Colors.grey.shade200,
+                                borderRadius: BorderRadius.circular(10),
+                              ),
+                              child: Align(
+                                alignment: Alignment.centerLeft,
+                                child: AnimatedContainer(
+                                  duration: const Duration(milliseconds: 100),
+                                  height: 16,
+                                  width: (screenSize.width * 0.75) *
+                                      (1.0 -
+                                          (_elapsedTime.inMilliseconds /
+                                                  _gameDuration.inMilliseconds)
+                                              .clamp(0.0, 1.0)),
+                                  decoration: BoxDecoration(
+                                    gradient: const LinearGradient(
+                                      colors: [
+                                        Color(0xFF29B6F6),
+                                        Color(0xFF0288D1),
+                                      ],
+                                    ),
+                                    borderRadius: BorderRadius.circular(10),
+                                  ),
+                                ),
+                              ),
+                            ),
+                            const SizedBox(height: 8),
+                            Text(
+                              "Touch the words related to:",
+                              style: TextStyle(
+                                fontSize: 16,
+                                fontWeight: FontWeight.bold,
+                                color: MyColors.darkBlue,
+                              ),
+                            ),
+                            const SizedBox(height: 6),
+                            WordOfImages(
+                              letters: _targetCategory['word'],
+                              letterSize: 22,
+                            ),
+                          ],
                         ),
-                      ),
-                      const SizedBox(height: 10),
-                      WordOfImages(
-                        letters: _targetCategory['word'],
-                        letterSize: 25,
                       ),
                     ],
+                  ),
+                ),
+
+                // Bounded Floating Words Play Area
+                Expanded(
+                  child: LayoutBuilder(
+                    builder: (context, constraints) {
+                      final playAreaWidth = constraints.maxWidth;
+                      final playAreaHeight = constraints.maxHeight;
+
+                      return Stack(
+                        clipBehavior: Clip.hardEdge,
+                        children: [
+                          // Active Floating Word Balloons
+                          ..._activeWords.map((word) {
+                            final double driftX = sin(word.wobble) * 12;
+                            final double leftPos = (playAreaWidth * word.x) + driftX;
+                            final double topPos = playAreaHeight * word.y;
+
+                            final Color displayColor =
+                                word.resultColor ?? word.badgeColor;
+
+                            return Positioned(
+                              left: leftPos.clamp(8.0, playAreaWidth - 140.0),
+                              top: topPos,
+                              child: GestureDetector(
+                                onTap: () => _handleTap(
+                                  word,
+                                  appController.gameSelected.value,
+                                ),
+                                child: Container(
+                                  padding: const EdgeInsets.symmetric(
+                                    horizontal: 18,
+                                    vertical: 10,
+                                  ),
+                                  decoration: BoxDecoration(
+                                    borderRadius: BorderRadius.circular(25),
+                                    color: displayColor,
+                                    gradient: LinearGradient(
+                                      colors: [
+                                        displayColor,
+                                        Color.alphaBlend(
+                                          Colors.black.withValues(alpha: 0.15),
+                                          displayColor,
+                                        ),
+                                      ],
+                                      begin: Alignment.topCenter,
+                                      end: Alignment.bottomCenter,
+                                    ),
+                                    border: Border.all(
+                                      color: Colors.white,
+                                      width: 2.5,
+                                    ),
+                                    boxShadow: [
+                                      BoxShadow(
+                                        color: displayColor.withValues(alpha: 0.45),
+                                        blurRadius: 8,
+                                        offset: const Offset(0, 4),
+                                      ),
+                                    ],
+                                  ),
+                                  child: Row(
+                                    mainAxisSize: MainAxisSize.min,
+                                    children: [
+                                      if (word.resultColor != null) ...[
+                                        Icon(
+                                          word.isTarget
+                                              ? Icons.check_circle_rounded
+                                              : Icons.cancel_rounded,
+                                          color: Colors.white,
+                                          size: 18,
+                                        ),
+                                        const SizedBox(width: 4),
+                                      ],
+                                      Text(
+                                        word.text,
+                                        style: const TextStyle(
+                                          fontSize: 18,
+                                          fontWeight: FontWeight.bold,
+                                          color: Colors.white,
+                                          shadows: [
+                                            Shadow(
+                                              color: Colors.black26,
+                                              offset: Offset(0, 1),
+                                              blurRadius: 2,
+                                            ),
+                                          ],
+                                        ),
+                                      ),
+                                    ],
+                                  ),
+                                ),
+                              ),
+                            );
+                          }),
+
+                          // Score Feedbacks (+2 / -1)
+                          ..._feedbacks.map((feedback) {
+                            final age = DateTime.now()
+                                .difference(feedback.creationTime)
+                                .inMilliseconds;
+                            final progress = (age / 1000.0).clamp(0.0, 1.0);
+                            final double currentY =
+                                (playAreaHeight * feedback.y) - (progress * 50);
+                            final double opacity = (1.0 - progress).clamp(0.0, 1.0);
+                            final double scale = 1.0 + (sin(progress * pi) * 0.4);
+
+                            return Positioned(
+                              left: (playAreaWidth * feedback.x).clamp(10.0, playAreaWidth - 60.0),
+                              top: currentY,
+                              child: Opacity(
+                                opacity: opacity,
+                                child: Transform.scale(
+                                  scale: scale,
+                                  child: Container(
+                                    padding: const EdgeInsets.symmetric(
+                                      horizontal: 12,
+                                      vertical: 6,
+                                    ),
+                                    decoration: BoxDecoration(
+                                      color: feedback.color,
+                                      borderRadius: BorderRadius.circular(20),
+                                      boxShadow: [
+                                        BoxShadow(
+                                          color: feedback.color.withValues(alpha: 0.4),
+                                          blurRadius: 6,
+                                          offset: const Offset(0, 3),
+                                        ),
+                                      ],
+                                    ),
+                                    child: Text(
+                                      feedback.text,
+                                      style: const TextStyle(
+                                        fontSize: 20,
+                                        fontWeight: FontWeight.bold,
+                                        color: Colors.white,
+                                      ),
+                                    ),
+                                  ),
+                                ),
+                              ),
+                            );
+                          }),
+                        ],
+                      );
+                    },
                   ),
                 ),
               ],
             ),
           ),
-
-          // Floating Words
-          ..._activeWords.map((word) {
-            return Positioned(
-              left: MediaQuery.of(context).size.width * word.x,
-              top: MediaQuery.of(context).size.height * word.y,
-              child: GestureDetector(
-                onTap: () => _handleTap(word, appController.gameSelected.value),
-                child: Container(
-                  padding: const EdgeInsets.symmetric(
-                    horizontal: 16,
-                    vertical: 8,
-                  ),
-                  decoration: BoxDecoration(
-                    color: word.color ?? Colors.white,
-                    borderRadius: BorderRadius.circular(20),
-                    boxShadow: [
-                      BoxShadow(
-                        color: Colors.black.withValues(alpha: 0.1),
-                        blurRadius: 4,
-                        offset: const Offset(0, 2),
-                      ),
-                    ],
-                    border: Border.all(color: Colors.blue.withValues(alpha: 0.3)),
-                  ),
-                  child: Text(
-                    word.text,
-                    style: TextStyle(
-                      fontSize: 20,
-                      fontWeight: FontWeight.bold,
-                      color: word.color != null ? Colors.white : Colors.black87,
-                    ),
-                  ),
-                ),
-              ),
-            );
-          }),
-
-          // Score Feedbacks
-          ..._feedbacks.map((feedback) {
-            final age = DateTime.now()
-                .difference(feedback.creationTime)
-                .inMilliseconds;
-            final progress = age / 1000.0; // 0.0 to 1.0
-
-            // Simple animation: Move up slightly and fade out
-            final double currentY = feedback.y - (progress * 0.1);
-            final double opacity = (1.0 - progress).clamp(0.0, 1.0);
-            final double scale = 1.0 + (sin(progress * pi) * 0.5); // Pop effect
-
-            return Positioned(
-              left: MediaQuery.of(context).size.width * feedback.x,
-              top: MediaQuery.of(context).size.height * currentY,
-              child: Opacity(
-                opacity: opacity,
-                child: Transform.scale(
-                  scale: scale,
-                  child: Container(
-                    padding: const EdgeInsets.all(8),
-                    decoration: BoxDecoration(
-                      color: feedback.color,
-                      shape: BoxShape.circle,
-                    ),
-                    child: Text(
-                      feedback.text,
-                      style: const TextStyle(
-                        fontSize: 24,
-                        fontWeight: FontWeight.bold,
-                        color: Colors.white,
-                      ),
-                    ),
-                  ),
-                ),
-              ),
-            );
-          }),
         ],
       ),
     );
@@ -369,18 +453,22 @@ class _BonusScreenFloatWordsState extends State<BonusScreenFloatWords>
 class FloatingWord {
   String text;
   double x; // 0.0 to 1.0
-  double y; // 0.0 to 1.0 (starts > 1.0)
+  double y; // 1.0 (bottom) to 0.0 (top of play area)
   double speed;
+  double wobble;
   bool isTarget;
-  Color? color;
+  Color badgeColor;
+  Color? resultColor;
 
   FloatingWord({
     required this.text,
     required this.x,
     required this.y,
     required this.speed,
+    required this.wobble,
     required this.isTarget,
-    this.color,
+    required this.badgeColor,
+    this.resultColor,
   });
 }
 
@@ -399,3 +487,4 @@ class ScoreFeedbackItem {
     required this.creationTime,
   });
 }
+
