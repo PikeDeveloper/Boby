@@ -15,8 +15,8 @@ class FirebaseService {
 
   Future<void> initialize() async {
     try {
-      // Para macOS, intentamos inicializar con el project ID directamente
-      if (Platform.isMacOS) {
+      // Para macOS o iOS, usamos las opciones directamente si el plist no está enlazado
+      if (Platform.isMacOS || Platform.isIOS) {
         await Firebase.initializeApp(
           options: const FirebaseOptions(
             apiKey: 'AIzaSyBs_xKAKdBWmT6Tn0lDFT5AbW4oXKWCgvM',
