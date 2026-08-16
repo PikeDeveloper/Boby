@@ -173,6 +173,12 @@ class _ListCardSoundsState extends State<ListCardSounds> {
     final nameContext = _nameKeys[nameIndex].currentContext;
     final cardContext = _cardKeys[cardIndex].currentContext;
 
+    // Clear selection immediately
+    setState(() {
+      selectedName = null;
+      selectedNameIndex = null;
+    });
+
     if (nameContext != null && cardContext != null) {
       final nameBox = nameContext.findRenderObject() as RenderBox;
       final cardBox = cardContext.findRenderObject() as RenderBox;
@@ -183,19 +189,16 @@ class _ListCardSoundsState extends State<ListCardSounds> {
       final namePos = nameBox.localToGlobal(Offset.zero);
       final cardPos = cardBox.localToGlobal(Offset.zero);
 
-      // Calculate target position to center the name at the bottom of the card
       final double targetX = cardPos.dx + (cardSize.width - nameSize.width) / 2;
       final double targetY =
-          cardPos.dy +
-          cardSize.height -
-          nameSize.height -
-          10; // 10 padding from bottom
+          cardPos.dy + cardSize.height - nameSize.height - 10;
 
-      final overlayEntry = OverlayEntry(
+      OverlayEntry? overlayEntry;
+      overlayEntry = OverlayEntry(
         builder: (context) {
           return TweenAnimationBuilder<Offset>(
             tween: Tween(begin: namePos, end: Offset(targetX, targetY)),
-            duration: const Duration(milliseconds: 500),
+            duration: const Duration(milliseconds: 450),
             curve: Curves.easeInOut,
             builder: (context, offset, child) {
               return Positioned(
@@ -239,25 +242,18 @@ class _ListCardSoundsState extends State<ListCardSounds> {
               );
             },
             onEnd: () {
-              // Animation complete
-              _handleMatch(cardIndex, name);
+              // Remove overlay once animation ends; the card already shows the name
+              overlayEntry?.remove();
+              overlayEntry = null;
             },
           );
         },
       );
 
-      Overlay.of(context).insert(overlayEntry);
+      Overlay.of(context).insert(overlayEntry!);
 
-      // Remove overlay after animation
-      Future.delayed(const Duration(milliseconds: 510), () {
-        overlayEntry.remove();
-      });
-
-      // Clear selection immediately so user can't double tap
-      setState(() {
-        selectedName = null;
-        selectedNameIndex = null;
-      });
+      // Update the card state right away — the overlay is only a visual effect
+      _handleMatch(cardIndex, name);
     } else {
       // Fallback if contexts are null
       _handleMatch(cardIndex, name);

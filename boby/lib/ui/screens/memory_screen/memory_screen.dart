@@ -235,11 +235,13 @@ class _MemoryScreenState extends State<MemoryScreen>
         }
       } else {
         // No coinciden, voltear de vuelta después de un delay
+        final i0 = flippedCards[0];
+        final i1 = flippedCards[1];
         Future.delayed(const Duration(milliseconds: 1000), () {
           if (mounted) {
             setState(() {
-              cards[flippedCards[0]].isFlipped = false;
-              cards[flippedCards[1]].isFlipped = false;
+              if (i0 < cards.length) cards[i0].isFlipped = false;
+              if (i1 < cards.length) cards[i1].isFlipped = false;
               flippedCards.clear();
               isProcessing = false;
             });

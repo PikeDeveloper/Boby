@@ -72,7 +72,7 @@ class AppController extends GetxController {
         debugPrint('Loading menu sound: $soundPath');
         await _menuAudioPlayer.setAsset(soundPath);
         debugPrint('Playing menu sound...');
-        _menuAudioPlayer.play();
+        await _menuAudioPlayer.play();
         debugPrint('Menu sound started playing');
       } else {
         debugPrint('Audio disabled on Linux');
@@ -191,11 +191,6 @@ class AppController extends GetxController {
         currentChildId.value,
         levelsCompleted: 1,
         currentLevel: newLevel,
-      );
-      
-      // Also track game-specific progress
-      await FirebaseService().updateStats(
-        currentChildId.value,
       );
     } catch (e) {
       debugPrint('Error tracking level completed: $e');

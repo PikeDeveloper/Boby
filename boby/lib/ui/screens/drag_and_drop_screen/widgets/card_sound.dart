@@ -138,11 +138,8 @@ class _CardSoundState extends State<CardSound>
   }
 
   // Check if the device is an iPad
-  bool get isTablet {
-    // ignore: deprecated_member_use
-    final data = MediaQueryData.fromView(WidgetsBinding.instance.window);
-    return data.size.shortestSide >=
-        600; // 600 is a common breakpoint for tablets
+  bool isTablet(BuildContext context) {
+    return MediaQuery.of(context).size.shortestSide >= 600;
   }
 
   @override
@@ -150,7 +147,7 @@ class _CardSoundState extends State<CardSound>
     final screenSize = MediaQuery.of(context).size;
     bool isLandscape = screenSize.width > screenSize.height;
     double minSize = min(screenSize.width, screenSize.height);
-    double cardWidth = isTablet ? 170.0 : 150.0;
+    double cardWidth = isTablet(context) ? 170.0 : 150.0;
     double cardHeight = cardWidth * 1.2; // Maintain aspect ratio
 
     if (((cardWidth * 4) + 20) > minSize && isLandscape) {
