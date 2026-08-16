@@ -390,7 +390,7 @@ class _MemoryScreenState extends State<MemoryScreen>
 
     return MemoryCard(
       key: ValueKey(
-        'card_${card.id}_${isFlipped ? 'flipped' : 'hidden'}_$_gameVersion',
+        'card_${card.id}_$_gameVersion',
       ),
       id: card.id,
       image: card.image,

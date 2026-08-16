@@ -42,7 +42,7 @@ class _MemoryCardState extends State<MemoryCard>
     super.initState();
     _flipController = AnimationController(
       vsync: this,
-      duration: const Duration(milliseconds: 300),
+      duration: const Duration(milliseconds: 450),
     );
     _flipAnimation = Tween<double>(begin: 0, end: 1).animate(
       CurvedAnimation(parent: _flipController, curve: Curves.easeInOut),
@@ -126,33 +126,38 @@ class _MemoryCardState extends State<MemoryCard>
   Widget _buildCardFront({required bool isLargeScreen}) {
     return Container(
       decoration: BoxDecoration(
-        borderRadius: BorderRadius.circular(12),
+        color: Colors.white,
+        borderRadius: BorderRadius.circular(16),
+        border: Border.all(color: const Color(0xFF4FC3F7), width: 3),
         boxShadow: [
           BoxShadow(
-            // ignore: deprecated_member_use
-            color: Colors.black.withOpacity(0.2),
-            blurRadius: 4,
-            offset: const Offset(0, 2),
+            color: const Color(0xFF0288D1).withValues(alpha: 0.3),
+            blurRadius: 8,
+            offset: const Offset(0, 5),
           ),
         ],
-        color: Colors.white,
       ),
       child: Stack(
         alignment: Alignment.bottomCenter,
         children: [
           Center(
-            child: ClipRRect(
-              borderRadius: BorderRadius.circular(12),
-              child: Image.asset(widget.image, fit: BoxFit.cover),
+            child: Padding(
+              padding: const EdgeInsets.only(bottom: 20.0, top: 8.0, left: 8.0, right: 8.0),
+              child: Image.asset(widget.image, fit: BoxFit.contain),
             ),
           ),
-
-          Text(
-            widget.name,
-            style: TextStyle(
-              color: MyColors.darkBlue,
-              fontSize: isLargeScreen ? 25 : 16,
-              fontWeight: FontWeight.bold,
+          Padding(
+            padding: const EdgeInsets.only(bottom: 4.0),
+            child: Text(
+              widget.name,
+              style: TextStyle(
+                color: const Color(0xFF0277BD),
+                fontSize: isLargeScreen ? 25 : 15,
+                fontWeight: FontWeight.w900,
+              ),
+              textAlign: TextAlign.center,
+              maxLines: 1,
+              overflow: TextOverflow.ellipsis,
             ),
           ),
         ],
@@ -161,6 +166,22 @@ class _MemoryCardState extends State<MemoryCard>
   }
 
   Widget _buildCardBack() {
-    return Center(child: Image.asset("assets/card.png", fit: BoxFit.cover));
+    return Container(
+      decoration: BoxDecoration(
+        color: Colors.white,
+        borderRadius: BorderRadius.circular(16),
+        boxShadow: [
+          BoxShadow(
+            color: Colors.black.withValues(alpha: 0.15),
+            blurRadius: 8,
+            offset: const Offset(0, 5),
+          ),
+        ],
+      ),
+      child: ClipRRect(
+        borderRadius: BorderRadius.circular(16),
+        child: Image.asset("assets/card.png", fit: BoxFit.cover, width: double.infinity, height: double.infinity),
+      ),
+    );
   }
 }
