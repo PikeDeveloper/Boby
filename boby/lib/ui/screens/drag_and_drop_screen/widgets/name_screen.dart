@@ -1,3 +1,4 @@
+import 'package:animate_do/animate_do.dart';
 import 'package:boby/ui/screens/drag_and_drop_screen/widgets/card_sound.dart';
 import 'package:boby/utils/colors.dart';
 import 'package:boby/utils/constants.dart';
@@ -47,13 +48,17 @@ class NameScreen extends StatelessWidget {
               ),
               itemCount: cards.length,
               itemBuilder: (context, index) {
-                return Padding(
-                  padding: const EdgeInsets.all(8.0),
-                  child: CardSound(
-                    sound: cards[index]["sound"]!,
-                    name: cards[index]["name"]!,
-                    image: cards[index]["image"]!,
-                    colorKey: 0,
+                return FadeInUp(
+                  delay: Duration(milliseconds: 50 * (index % 12)), // Cap delay
+                  duration: const Duration(milliseconds: 500),
+                  child: Padding(
+                    padding: const EdgeInsets.all(8.0),
+                    child: CardSound(
+                      sound: cards[index]["sound"]!,
+                      name: cards[index]["name"]!,
+                      image: cards[index]["image"]!,
+                      colorKey: 0,
+                    ),
                   ),
                 );
               },
