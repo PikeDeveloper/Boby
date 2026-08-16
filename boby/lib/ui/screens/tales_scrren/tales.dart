@@ -181,82 +181,86 @@ class _TalesScreenState extends State<TalesScreen> {
                       child: Column(
                         children: [
                           // Header with Audio Icon and Slider
+                          // Header with Audio Icon and Slider
                           if (hasAudio)
                             Container(
-                              padding: const EdgeInsets.only(bottom: 10),
-                              child: Row(
+                              padding: const EdgeInsets.only(bottom: 20),
+                              child: Column(
                                 children: [
                                   StreamBuilder<PlayerState>(
                                     stream: _audioPlayer.playerStateStream,
                                     builder: (context, snapshot) {
                                       final playerState = snapshot.data;
-                                      final processingState =
-                                          playerState?.processingState;
-                                      final playing =
-                                          playerState?.playing ?? false;
+                                      final processingState = playerState?.processingState;
+                                      final playing = playerState?.playing ?? false;
 
                                       IconData iconAsset;
-                                      String tooltip;
-                                      if (processingState ==
-                                          ProcessingState.completed) {
-                                        iconAsset =
-                                            Icons.replay_circle_filled_rounded;
-                                        tooltip = 'Replay Audio';
+                                      String label;
+                                      if (processingState == ProcessingState.completed) {
+                                        iconAsset = Icons.replay_rounded;
+                                        label = 'Read Again';
                                       } else if (playing) {
-                                        iconAsset =
-                                            Icons.pause_circle_filled_rounded;
-                                        tooltip = 'Pause Audio';
+                                        iconAsset = Icons.pause_rounded;
+                                        label = 'Pause';
                                       } else {
-                                        iconAsset =
-                                            Icons.play_circle_filled_rounded;
-                                        tooltip = 'Play Audio';
+                                        iconAsset = Icons.play_arrow_rounded;
+                                        label = 'Read to Me';
                                       }
 
-                                      return IconButton(
+                                      return ElevatedButton.icon(
                                         onPressed: _toggleAudio,
-                                        icon: Icon(
-                                          iconAsset,
-                                          color: Colors.orange,
-                                          size: 40,
+                                        icon: Icon(iconAsset, size: 36),
+                                        label: Text(
+                                          label,
+                                          style: GoogleFonts.comicNeue(
+                                            fontSize: 24,
+                                            fontWeight: FontWeight.bold,
+                                          ),
                                         ),
-                                        tooltip: tooltip,
+                                        style: ElevatedButton.styleFrom(
+                                          backgroundColor: Colors.orange,
+                                          foregroundColor: Colors.white,
+                                          elevation: 6,
+                                          shadowColor: Colors.orange.withValues(alpha: 0.5),
+                                          padding: const EdgeInsets.symmetric(horizontal: 24, vertical: 12),
+                                          shape: RoundedRectangleBorder(
+                                            borderRadius: BorderRadius.circular(30),
+                                            side: const BorderSide(color: Colors.white, width: 3),
+                                          ),
+                                        ),
                                       );
                                     },
                                   ),
-                                  Expanded(
-                                    child: StreamBuilder<Duration?>(
-                                      stream: _audioPlayer.durationStream,
-                                      builder: (context, snapshot) {
-                                        final duration =
-                                            snapshot.data ?? Duration.zero;
-                                        return StreamBuilder<Duration>(
-                                          stream: _audioPlayer.positionStream,
-                                          builder: (context, snapshot) {
-                                            var position =
-                                                snapshot.data ?? Duration.zero;
-                                            if (position > duration) {
-                                              position = duration;
-                                            }
-                                            return Slider(
-                                              value: position.inMilliseconds
-                                                  .toDouble(),
-                                              max: duration.inMilliseconds
-                                                  .toDouble(),
-                                              activeColor: Colors.orange,
-                                              inactiveColor:
-                                                  Colors.orange.shade100,
+                                  const SizedBox(height: 10),
+                                  StreamBuilder<Duration?>(
+                                    stream: _audioPlayer.durationStream,
+                                    builder: (context, snapshot) {
+                                      final duration = snapshot.data ?? Duration.zero;
+                                      return StreamBuilder<Duration>(
+                                        stream: _audioPlayer.positionStream,
+                                        builder: (context, snapshot) {
+                                          var position = snapshot.data ?? Duration.zero;
+                                          if (position > duration) position = duration;
+                                          return SliderTheme(
+                                            data: SliderTheme.of(context).copyWith(
+                                              trackHeight: 12,
+                                              thumbShape: const RoundSliderThumbShape(enabledThumbRadius: 14),
+                                              overlayShape: const RoundSliderOverlayShape(overlayRadius: 24),
+                                              activeTrackColor: Colors.orange,
+                                              inactiveTrackColor: Colors.orange.shade100,
+                                              thumbColor: Colors.orange.shade700,
+                                            ),
+                                            child: Slider(
+                                              value: position.inMilliseconds.toDouble(),
+                                              max: duration.inMilliseconds.toDouble(),
                                               onChanged: (value) {
-                                                _audioPlayer.seek(
-                                                  Duration(
-                                                    milliseconds: value.toInt(),
-                                                  ),
-                                                );
+                                                _audioPlayer.seek(Duration(milliseconds: value.toInt()));
                                               },
-                                            );
-                                          },
-                                        );
-                                      },
-                                    ),
+                                            ),
+                                          );
+                                        },
+                                      );
+                                    },
                                   ),
                                 ],
                               ),
@@ -264,16 +268,30 @@ class _TalesScreenState extends State<TalesScreen> {
 
                           // Image Card
                           if (taleData['image'] != null)
-                            ImageTale(image: taleData['image']!),
-                          Text(
-                            taleData['tale'] ?? '',
-                            style: GoogleFonts.comicNeue(
-                              fontSize: 22,
-                              height: 1.4,
-                              color: const Color(0xFF424242),
-                              fontWeight: FontWeight.w500,
+                            Padding(
+                              padding: const EdgeInsets.only(bottom: 24.0),
+                              child: ImageTale(image: taleData['image']!),
                             ),
-                            textAlign: TextAlign.justify,
+
+                          // Story Text
+                          Container(
+                            padding: const EdgeInsets.all(20),
+                            decoration: BoxDecoration(
+                              color: const Color(0xFFF1F8E9), // Light green background for readability
+                              borderRadius: BorderRadius.circular(20),
+                              border: Border.all(color: const Color(0xFFAED581), width: 3),
+                            ),
+                            child: Text(
+                              taleData['tale'] ?? '',
+                              style: GoogleFonts.comicNeue(
+                                fontSize: 26, // Much bigger for kids
+                                height: 1.6, // More line spacing
+                                color: const Color(0xFF33691E), // Darker green for contrast
+                                fontWeight: FontWeight.bold,
+                                letterSpacing: 0.5,
+                              ),
+                              textAlign: TextAlign.left,
+                            ),
                           ),
                         ],
                       ),
