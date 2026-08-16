@@ -40,15 +40,18 @@ class SettingScreen extends StatelessWidget {
                     ),
                   ],
                 ),
-                child: Row(
-                  mainAxisSize: MainAxisSize.min,
-                  children: [
-                    const Icon(Icons.settings_rounded, color: Color(0xFFFFB300), size: 28),
-                    const SizedBox(width: 10),
-                    const WordOfImages(letters: "SETTINGS", letterSize: 32),
-                    const SizedBox(width: 10),
-                    const Icon(Icons.settings_rounded, color: Color(0xFFFFB300), size: 28),
-                  ],
+                child: FittedBox(
+                  fit: BoxFit.scaleDown,
+                  child: Row(
+                    mainAxisSize: MainAxisSize.min,
+                    children: [
+                      const Icon(Icons.settings_rounded, color: Color(0xFFFFB300), size: 28),
+                      const SizedBox(width: 10),
+                      const WordOfImages(letters: "SETTINGS", letterSize: 32),
+                      const SizedBox(width: 10),
+                      const Icon(Icons.settings_rounded, color: Color(0xFFFFB300), size: 28),
+                    ],
+                  ),
                 ),
               ),
             ),
@@ -97,6 +100,78 @@ class SettingScreen extends StatelessWidget {
               icon: Icons.email_rounded,
               gradient: const LinearGradient(colors: [Color(0xFF42A5F5), Color(0xFF1565C0)]),
               content: const ParentEmail(),
+              trailing: Builder(
+                builder: (context) => IconButton(
+                  icon: const Icon(Icons.info_outline, color: Colors.white),
+                  padding: EdgeInsets.zero,
+                  constraints: const BoxConstraints(),
+                  onPressed: () {
+                    showDialog(
+                      context: context,
+                      builder: (context) => Dialog(
+                        shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(24)),
+                        elevation: 10,
+                        backgroundColor: Colors.white,
+                        child: Padding(
+                          padding: const EdgeInsets.all(24.0),
+                          child: Column(
+                            mainAxisSize: MainAxisSize.min,
+                            children: [
+                              Container(
+                                padding: const EdgeInsets.all(16),
+                                decoration: const BoxDecoration(
+                                  color: Color(0xFFE3F2FD),
+                                  shape: BoxShape.circle,
+                                ),
+                                child: const Icon(Icons.mark_email_unread_rounded, size: 48, color: Color(0xFF1E88E5)),
+                              ),
+                              const SizedBox(height: 20),
+                              const Text(
+                                'Parent Email',
+                                style: TextStyle(
+                                  fontSize: 22,
+                                  fontWeight: FontWeight.bold,
+                                  color: Color(0xFF1565C0),
+                                ),
+                              ),
+                              const SizedBox(height: 12),
+                              const Text(
+                                'We use this email to send progress updates to your parents! 📬',
+                                textAlign: TextAlign.center,
+                                style: TextStyle(
+                                  fontSize: 16,
+                                  color: Colors.black87,
+                                  height: 1.4,
+                                ),
+                              ),
+                              const SizedBox(height: 24),
+                              SizedBox(
+                                width: double.infinity,
+                                child: ElevatedButton(
+                                  style: ElevatedButton.styleFrom(
+                                    backgroundColor: const Color(0xFF1E88E5),
+                                    foregroundColor: Colors.white,
+                                    shape: RoundedRectangleBorder(
+                                      borderRadius: BorderRadius.circular(16),
+                                    ),
+                                    padding: const EdgeInsets.symmetric(vertical: 14),
+                                    elevation: 0,
+                                  ),
+                                  onPressed: () => Navigator.pop(context),
+                                  child: const Text(
+                                    'Got it!',
+                                    style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
+                                  ),
+                                ),
+                              ),
+                            ],
+                          ),
+                        ),
+                      ),
+                    );
+                  },
+                ),
+              ),
             )),
 
             const SizedBox(height: 18),
@@ -129,6 +204,7 @@ class SettingScreen extends StatelessWidget {
     required IconData icon,
     required Gradient gradient,
     required Widget content,
+    Widget? trailing,
   }) {
     return Container(
       width: double.infinity,
@@ -184,6 +260,8 @@ class SettingScreen extends StatelessWidget {
                     ],
                   ),
                 ),
+                if (trailing != null) const Spacer(),
+                if (trailing != null) trailing,
               ],
             ),
           ),

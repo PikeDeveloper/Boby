@@ -239,18 +239,18 @@ class _WordGuessScreenState extends State<WordGuessScreen> {
                 height: isLandscape ? minSize * 0.4 : min(minSize * 0.7, 300),
                 decoration: BoxDecoration(
                   color: Colors.white,
-                  borderRadius: BorderRadius.circular(25),
+                  borderRadius: BorderRadius.circular(32),
                   boxShadow: [
                     BoxShadow(
-                      color: Colors.teal.withValues(alpha: 0.2),
-                      blurRadius: 15,
-                      offset: const Offset(0, 8),
+                      color: const Color(0xFF0288D1).withValues(alpha: 0.3),
+                      blurRadius: 18,
+                      offset: const Offset(0, 10),
                     ),
                   ],
-                  border: Border.all(color: Colors.white, width: 4),
+                  border: Border.all(color: Colors.white, width: 6),
                 ),
                 child: ClipRRect(
-                  borderRadius: BorderRadius.circular(21),
+                  borderRadius: BorderRadius.circular(26),
                   child: PageView.builder(
                     controller: _pageController,
                     physics: const BouncingScrollPhysics(),
@@ -289,31 +289,38 @@ class _WordGuessScreenState extends State<WordGuessScreen> {
                           onTap: () => _onSlotTap(i),
                           child: AnimatedContainer(
                             duration: const Duration(milliseconds: 200),
-                            width: isLandscape || istablet ? 80 : 40,
-                            height: isLandscape || istablet ? 80 : 50,
+                            width: isLandscape || istablet ? 80 : 45,
+                            height: isLandscape || istablet ? 80 : 55,
                             alignment: Alignment.center,
                             decoration: BoxDecoration(
-                              borderRadius: BorderRadius.circular(12),
+                              borderRadius: BorderRadius.circular(14),
                               border: Border.all(
                                 color: _showError
-                                    ? Colors.red
+                                    ? const Color(0xFFEF5350)
                                     : (s.char != null
-                                          ? Colors.teal
-                                          : Colors.grey.shade400),
-                                width: 2,
+                                          ? const Color(0xFF29B6F6)
+                                          : Colors.white.withValues(alpha: 0.6)),
+                                width: s.char != null ? 3 : 2,
                               ),
                               color: s.char == null
-                                  ? Colors.white.withValues(alpha: 0.5)
+                                  ? Colors.white.withValues(alpha: 0.3)
                                   : Colors.white,
                               boxShadow: s.char != null
                                   ? [
                                       BoxShadow(
-                                        color: Colors.black.withValues(alpha: 0.1),
-                                        blurRadius: 4,
-                                        offset: const Offset(0, 2),
+                                        color: const Color(0xFF0277BD).withValues(alpha: 0.2),
+                                        blurRadius: 8,
+                                        offset: const Offset(0, 4),
                                       ),
                                     ]
-                                  : [],
+                                  : [
+                                      BoxShadow(
+                                        color: Colors.black.withValues(alpha: 0.05),
+                                        blurRadius: 2,
+                                        offset: const Offset(0, 2),
+                                        blurStyle: BlurStyle.inner,
+                                      ),
+                                    ],
                             ),
                             child: s.char == null
                                 ? const SizedBox.shrink()
@@ -381,28 +388,46 @@ class _KeysRow extends StatelessWidget {
         children: List.generate(keysRow.length, (i) {
           final k = keysRow[i];
           return SizedBox(
-            width: isLandscape || istablet ? 80 : 40,
-            height: isLandscape || istablet ? 80 : 45,
-            child: ElevatedButton(
-              onPressed: k.used ? null : () => onTap(i),
-              style: ElevatedButton.styleFrom(
-                padding: EdgeInsets.zero,
-                backgroundColor: Colors.white,
-                foregroundColor: Colors.teal.shade700,
-                elevation: k.used ? 0 : 2,
-                shape: RoundedRectangleBorder(
-                  borderRadius: BorderRadius.circular(12),
+            width: isLandscape || istablet ? 80 : 44,
+            height: isLandscape || istablet ? 80 : 52,
+            child: GestureDetector(
+              onTap: k.used ? null : () => onTap(i),
+              child: AnimatedContainer(
+                duration: const Duration(milliseconds: 150),
+                alignment: Alignment.center,
+                margin: EdgeInsets.only(top: k.used ? 6 : 0, bottom: k.used ? 0 : 6),
+                decoration: BoxDecoration(
+                  color: k.used ? Colors.grey.shade300 : Colors.white,
+                  borderRadius: BorderRadius.circular(14),
+                  border: Border.all(
+                    color: k.used ? Colors.grey.shade400 : const Color(0xFF81D4FA),
+                    width: 2,
+                  ),
+                  boxShadow: k.used
+                      ? []
+                      : [
+                          const BoxShadow(
+                            color: Color(0xFF29B6F6),
+                            offset: Offset(0, 5),
+                          ),
+                          BoxShadow(
+                            color: Colors.black.withValues(alpha: 0.1),
+                            blurRadius: 4,
+                            offset: const Offset(0, 8),
+                          ),
+                        ],
                 ),
-              ),
-              child: k.used
-                  ? const SizedBox.shrink()
-                  : Text(
-                      k.char,
-                      style: TextStyle(
-                        fontSize: isLandscape || istablet ? 40 : 20,
-                        fontWeight: FontWeight.bold,
+                child: k.used
+                    ? const SizedBox.shrink()
+                    : Text(
+                        k.char,
+                        style: TextStyle(
+                          fontSize: isLandscape || istablet ? 38 : 24,
+                          fontWeight: FontWeight.w900,
+                          color: const Color(0xFF0277BD),
+                        ),
                       ),
-                    ),
+              ),
             ),
           );
         }),
