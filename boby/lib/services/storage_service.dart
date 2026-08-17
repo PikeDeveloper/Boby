@@ -330,4 +330,26 @@ class StorageService extends GetxService {
   Future<void> clearChildName() async {
     await _box.delete(_kChildNameForSettings);
   }
+
+  // Daily Report Persistence Keys & Methods
+  static const String _kLastReportDate = 'last_report_date';
+  static const String _kAchievedMilestones = 'achieved_milestones';
+  static const String _kDayStreak = 'day_streak';
+  static const String _kLastPlayDate = 'last_play_date';
+
+  String? getLastReportDate() => _box.get(_kLastReportDate) as String?;
+  Future<void> setLastReportDate(String date) => _box.put(_kLastReportDate, date);
+
+  List<String> getAchievedMilestones() {
+    final data = _box.get(_kAchievedMilestones);
+    if (data == null) return [];
+    return List<String>.from(data);
+  }
+  Future<void> setAchievedMilestones(List<String> milestones) => _box.put(_kAchievedMilestones, milestones);
+
+  int getDayStreak() => (_box.get(_kDayStreak) as int?) ?? 0;
+  Future<void> setDayStreak(int streak) => _box.put(_kDayStreak, streak);
+
+  String? getLastPlayDate() => _box.get(_kLastPlayDate) as String?;
+  Future<void> setLastPlayDate(String date) => _box.put(_kLastPlayDate, date);
 }

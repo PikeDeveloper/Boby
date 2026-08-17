@@ -1,7 +1,7 @@
 name: boby
 description: "A new Flutter project."
 publish_to: 'none'
-version: 24.1.0+24 
+version: 25.1.0+25
 
 environment:
   sdk: ^3.9.2

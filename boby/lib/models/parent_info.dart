@@ -5,6 +5,7 @@ class ParentInfo {
   final DateTime createdAt;
   final bool emailEnabled;
   final String frequency; // 'daily', 'weekly', 'monthly'
+  final DateTime? lastReportSentAt;
 
   ParentInfo({
     required this.email,
@@ -13,6 +14,7 @@ class ParentInfo {
     DateTime? createdAt,
     this.emailEnabled = true,
     this.frequency = 'weekly',
+    this.lastReportSentAt,
   }) : childrenIds = childrenIds ?? [],
        createdAt = createdAt ?? DateTime.now();
 
@@ -24,6 +26,7 @@ class ParentInfo {
       'createdAt': createdAt.toIso8601String(),
       'emailEnabled': emailEnabled,
       'frequency': frequency,
+      'lastReportSentAt': lastReportSentAt?.toIso8601String(),
     };
   }
 
@@ -37,6 +40,9 @@ class ParentInfo {
           : DateTime.parse(map['createdAt'] ?? DateTime.now().toIso8601String()),
       emailEnabled: map['emailEnabled'] ?? true,
       frequency: map['frequency'] ?? 'weekly',
+      lastReportSentAt: map['lastReportSentAt'] != null 
+          ? DateTime.parse(map['lastReportSentAt']) 
+          : null,
     );
   }
 
@@ -47,6 +53,7 @@ class ParentInfo {
     DateTime? createdAt,
     bool? emailEnabled,
     String? frequency,
+    DateTime? lastReportSentAt,
   }) {
     return ParentInfo(
       email: email ?? this.email,
@@ -55,6 +62,7 @@ class ParentInfo {
       createdAt: createdAt ?? this.createdAt,
       emailEnabled: emailEnabled ?? this.emailEnabled,
       frequency: frequency ?? this.frequency,
+      lastReportSentAt: lastReportSentAt ?? this.lastReportSentAt,
     );
   }
 }

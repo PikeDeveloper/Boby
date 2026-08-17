@@ -179,4 +179,52 @@ class FirebaseService {
       rethrow;
     }
   }
+
+  // Enviar correo de logro al padre (máximo 1 al día)
+  Future<void> sendAchievementEmailIfAllowed(String parentEmail, String childName, String achievementDescription) async {
+    try {
+      final docRef = parentsCollection.doc(parentEmail);
+      
+      await firestore.runTransaction((transaction) async {
+        final docSnapshot = await transaction.get(docRef);
+        if (!docSnapshot.exists) return;
+        
+        final parentInfo = ParentInfo.fromMap(docSnapshot.data() as Map<String, dynamic>);
+        
+        bool canSend = false;
+        final now = DateTime.now();
+        if (parentInfo.lastReportSentAt == null) {
+          canSend = true;
+        } else {
+          final difference = now.difference(parentInfo.lastReportSentAt!);
+          if (difference.inDays >= 1) {
+            canSend = true;
+          }
+        }
+        
+        if (canSend) {
+          // Actualizar la fecha del último reporte
+          transaction.update(docRef, {'lastReportSentAt': now.toIso8601String()});
+          
+          // Encolar el correo de logro
+          final newEmailRef = firestore.collection('pending_emails').doc();
+          transaction.set(newEmailRef, {
+            'to': parentEmail,
+            'type': 'achievement',
+            'childName': childName,
+            'achievementDescription': achievementDescription,
+            'createdAt': FieldValue.serverTimestamp(),
+            'status': 'pending',
+          });
+          
+          print('Achievement email queued for $parentEmail: $achievementDescription');
+        } else {
+          print('Achievement email skipped for $parentEmail (Rate limit: 1 per day)');
+        }
+      });
+    } catch (e) {
+      print('Error queuing achievement email: $e');
+      rethrow;
+    }
+  }
 }
